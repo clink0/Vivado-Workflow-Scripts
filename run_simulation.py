@@ -101,7 +101,12 @@ def create_and_simulate(source_dir, sim_time="1000ns", open_gui=True, board="bas
         tcl_script = f"""
 # Create project
 create_project {project_name} {{{project_dir}}} -part {board_cfg['part']} -force
-set_property board_part {board_cfg['board_part']} [current_project]
+
+# Try to set board_part, but continue if it fails (for older Vivado versions)
+if {{[catch {{set_property board_part {board_cfg['board_part']} [current_project]}}]}} {{
+    puts "Note: Board part not available, using part only"
+}}
+
 set_property target_language Verilog [current_project]
 
 puts "Adding design files..."
@@ -191,7 +196,12 @@ puts "========================================="
         tcl_script = f"""
 # Create project
 create_project {project_name} {{{project_dir}}} -part {board_cfg['part']} -force
-set_property board_part {board_cfg['board_part']} [current_project]
+
+# Try to set board_part, but continue if it fails (for older Vivado versions)
+if {{[catch {{set_property board_part {board_cfg['board_part']} [current_project]}}]}} {{
+    puts "Note: Board part not available, using part only"
+}}
+
 set_property target_language Verilog [current_project]
 
 puts "Adding design files..."
@@ -334,7 +344,7 @@ def main():
         else:
             i += 1
     
-    vivado_path = "vivado"
+    vivado_path = "C:/Xilinx/Vivado/2018.3/bin/vivado.bat"
     
     success = create_and_simulate(source_dir, sim_time, open_gui, board, vivado_path)
     sys.exit(0 if success else 1)

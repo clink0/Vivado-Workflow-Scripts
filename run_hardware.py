@@ -95,7 +95,12 @@ def create_and_program(source_dir, program_device=True, board="basys3", vivado_p
     tcl_script = f"""
 # Create project
 create_project {project_name} {{{project_dir}}} -part {board_cfg['part']} -force
-set_property board_part {board_cfg['board_part']} [current_project]
+
+# Try to set board_part, but continue if it fails (for older Vivado versions)
+if {{[catch {{set_property board_part {board_cfg['board_part']} [current_project]}}]}} {{
+    puts "Note: Board part not available, using part only"
+}}
+
 set_property target_language Verilog [current_project]
 
 puts "Adding design files..."
@@ -166,38 +171,25 @@ puts "Bitstream generated successfully"
     if program_device:
         tcl_script += """
 puts "========================================="
-puts "Programming Device..."
+puts "Bitstream Location"
 puts "========================================="
 
-open_hw_manager
-connect_hw_server -allow_non_jtag
-
-if {[catch {open_hw_target}]} {
-    puts "ERROR: Could not connect to hardware target"
-    puts "Make sure FPGA board is connected and powered on"
-    exit 1
-}
-
-set device [lindex [get_hw_devices] 0]
-if {$device == ""} {
-    puts "ERROR: No hardware device found"
-    exit 1
-}
-
-current_hw_device $device
-refresh_hw_device $device
-
 set bit_file [get_property DIRECTORY [current_run]]/[get_property top [current_fileset]].bit
+puts "Bitstream file: $bit_file"
 
-set_property PROGRAM.FILE $bit_file $device
-program_hw_devices $device
-refresh_hw_device $device
-
-puts "Device programmed successfully!"
-
-close_hw_target
-disconnect_hw_server
-close_hw_manager
+# Hardware manager programming only works in GUI mode for Vivado 2018.x
+# User should program manually using the Hardware Manager GUI
+puts ""
+puts "========================================="
+puts "PROGRAMMING INSTRUCTIONS"
+puts "========================================="
+puts "Vivado 2018.3 requires GUI for programming."
+puts "To program your device:"
+puts "  1. Open Vivado GUI"
+puts "  2. Flow -> Open Hardware Manager"
+puts "  3. Open Target -> Auto Connect"
+puts "  4. Program Device -> Select the .bit file above"
+puts "========================================="
 """
     
     tcl_script += """
@@ -249,7 +241,16 @@ exit 0
             if runs_dir.exists() and design_top:
                 bit_file = runs_dir / f"{design_top}.bit"
                 if bit_file.exists():
-                    print(f"\nBitstream file: {bit_file}")
+                    print(f"\n✓ Bitstream: {bit_file}")
+                    print("\n" + "=" * 70)
+                    print("📟 TO PROGRAM YOUR FPGA:")
+                    print("=" * 70)
+                    print("1. Open Vivado (from Start Menu)")
+                    print("2. Flow → Open Hardware Manager")
+                    print("3. Open target → Auto Connect")
+                    print("4. Program device")
+                    print(f"5. Browse to: {bit_file}")
+                    print("6. Click 'Program'")
             
             print("=" * 70)
             return True
@@ -290,7 +291,7 @@ def main():
         else:
             i += 1
     
-    vivado_path = "vivado"
+    vivado_path = "C:/Xilinx/Vivado/2018.3/bin/vivado.bat"
     
     success = create_and_program(source_dir, program_device, board, vivado_path)
     sys.exit(0 if success else 1)
