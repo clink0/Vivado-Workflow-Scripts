@@ -1,318 +1,470 @@
-# Vivado Automation Scripts
+# Vivado Integrated Workflow Scripts
 
-Two Python scripts to automate Vivado workflows:
-1. **Hardware Flow**: Synthesis → Implementation → Bitstream → Program Device
-2. **Simulation Flow**: Compile → Elaborate → Simulate → View Waveforms
+**The simplest way to go from Verilog files to working FPGA**
 
-## Prerequisites
+Just write your `.v` files in a folder, run one command, and either see simulation results or have your design running on the FPGA!
 
-- Python 3.6 or higher
-- Xilinx Vivado installed (tested with 2023.x versions)
-- Vivado executable in your PATH, or specify the full path in the scripts
+## 🎯 Your Desired Workflow
 
-## Installation
+```
+Write .v files → Run script → See results
+```
 
-1. Make the scripts executable:
+That's it! No project setup, no GUI clicking, no file management.
+
+## 📦 What You Get
+
+### Two Simple Scripts:
+
+1. **`run_simulation.py`** - Auto-creates project & runs simulation
+2. **`run_hardware.py`** - Auto-creates project & programs FPGA
+
+## 🚀 Quick Start
+
+### Setup (One Time Only)
+
+1. Put these scripts somewhere accessible (e.g., `~/scripts/` or `~/.local/bin/`)
+2. Make them executable:
 ```bash
-chmod +x vivado_hardware_flow.py
-chmod +x vivado_simulation_flow.py
+chmod +x run_simulation.py run_hardware.py
 ```
 
-## Hardware Flow Script
+3. (Optional) Add to your PATH for even easier use
 
-### Basic Usage
+### Your Daily Workflow
 
-```bash
-python vivado_hardware_flow.py <project_path> <project_name>
-```
-
-### Examples
-
-```bash
-# Run full hardware flow including device programming
-python vivado_hardware_flow.py ~/fpgaProj my_project
-
-# Run hardware flow without programming the device
-python vivado_hardware_flow.py ~/fpgaProj my_project --no-program
-
-# Using absolute path
-python vivado_hardware_flow.py /home/username/vivado_projects/my_project my_project
-```
-
-### What it does:
-
-1. **Synthesis** - Synthesizes the design
-2. **Implementation** - Places and routes the design
-3. **Bitstream Generation** - Creates the .bit file
-4. **Device Programming** (optional) - Programs the connected FPGA
-
-### Customization
-
-Edit the script to specify a custom Vivado path:
-```python
-# Line ~175 in vivado_hardware_flow.py
-vivado_path = "/tools/Xilinx/Vivado/2023.2/bin/vivado"
-```
-
-## Simulation Flow Script
-
-### Basic Usage
-
-```bash
-python vivado_simulation_flow.py <project_path> <project_name> [options]
-```
-
-### Options
-
-- `--testbench <name>` - Specify the testbench module name
-- `--time <duration>` - Set simulation runtime (default: 1000ns)
-  - Examples: 100ns, 10us, 1ms, 100ms
-
-### Examples
-
-```bash
-# Run simulation with default settings (1000ns)
-python vivado_simulation_flow.py ~/fpgaProj my_project
-
-# Specify testbench and simulation time
-python vivado_simulation_flow.py ~/fpgaProj my_project --testbench first_system_tb --time 500ns
-
-# Longer simulation
-python vivado_simulation_flow.py ~/fpgaProj my_project --testbench test1_tb --time 10us
-```
-
-### What it does:
-
-1. **Compilation** - Compiles design and testbench files
-2. **Elaboration** - Elaborates the design hierarchy
-3. **Simulation** - Runs behavioral simulation for specified time
-4. **Waveform** - Saves waveform data (.wdb file)
-
-### Viewing Waveforms
-
-After simulation completes, view waveforms in Vivado GUI:
-
-```bash
-vivado -mode gui
-# Then: File → Open Waveform Database → select .wdb file
-```
-
-Or the script will show you the path to the .wdb files.
-
-## Project Structure Example
-
-Your Vivado project should have this structure:
+#### Step 1: Create a folder with your Verilog files
 
 ```
 my_project/
-├── my_project.xpr           # Vivado project file
-├── my_project.srcs/         # Source files
-│   ├── sources_1/
-│   │   └── new/
-│   │       └── module.v
-│   └── sim_1/
-│       └── new/
-│           └── testbench.v
-├── my_project.sim/          # Simulation output (generated)
-├── my_project.runs/         # Implementation runs (generated)
-└── my_project.hw/           # Hardware manager (generated)
+├── my_design.v           # Your design module
+├── my_design_tb.v        # Your testbench (ends with _tb)
+└── Basys3_Master.xdc     # Constraint file (for hardware)
 ```
 
-## Common Issues and Solutions
-
-### Issue: "Vivado executable not found"
-
-**Solution:** Add Vivado to your PATH or specify full path:
+#### Step 2: Run simulation OR hardware
 
 ```bash
-# Add to ~/.bashrc or ~/.zshrc
-export PATH=$PATH:/tools/Xilinx/Vivado/2023.2/bin
+# For simulation
+python ~/scripts/run_simulation.py .
 
-# Or specify in script (line ~175 in hardware flow, ~165 in simulation flow)
+# For hardware (synthesize + program FPGA)
+python ~/scripts/run_hardware.py .
+```
+
+That's it! Really!
+
+## 📋 Detailed Usage
+
+### Simulation Script
+
+```bash
+python run_simulation.py <directory> [options]
+```
+
+**Options:**
+- `--time <duration>` - How long to simulate (default: 1000ns)
+- `--board <name>` - Target board (default: basys3)
+
+**Examples:**
+
+```bash
+# Run simulation in current directory
+python run_simulation.py .
+
+# Run for 5 microseconds
+python run_simulation.py . --time 5us
+
+# Run simulation in another directory
+python run_simulation.py ~/my_fpga_lab/lab3 --time 500ns
+```
+
+### Hardware Script
+
+```bash
+python run_hardware.py <directory> [options]
+```
+
+**Options:**
+- `--no-program` - Just generate bitstream, don't program
+- `--board <name>` - Target board (default: basys3)
+
+**Examples:**
+
+```bash
+# Full flow: synthesize + implement + program FPGA
+python run_hardware.py .
+
+# Generate bitstream but don't program
+python run_hardware.py . --no-program
+
+# Program a different board
+python run_hardware.py . --board arty
+```
+
+## 📁 File Naming Conventions
+
+### The scripts automatically detect file types:
+
+**Design Files** (anything.v):
+- `my_module.v`
+- `digital_safe.v`
+- `home_alarm_top.v`
+
+**Testbench Files** (must contain `_tb`, `_test`, or `testbench`):
+- `my_module_tb.v` ✅
+- `testbench.v` ✅
+- `test_bench.v` ✅
+- `my_module_test.v` ✅
+
+**Constraint Files**:
+- `Basys3_Master.xdc`
+- `constraints.xdc`
+- Any `*.xdc` file
+
+**Top Module Detection:**
+- Files with `_top` in the name are automatically set as top
+- Otherwise, the first design file is used
+
+## 📂 What Happens Behind the Scenes
+
+Both scripts do this:
+
+1. **Scan your directory** for `.v` and `.xdc` files
+2. **Create a fresh Vivado project** in `vivado_project/` subdirectory
+3. **Add all files** automatically
+4. **Set the top module** based on naming or content
+5. **Run the workflow** (simulation or hardware)
+6. **Show results** location
+
+## 💡 Example: Your Lab 3 Seven-Segment Display
+
+Let's say you're working on Lab 3:
+
+```bash
+cd ~/fpga_labs/lab3
+
+# Create your files
+ls
+# homeAlarm.v
+# homeAlarm_tb.v
+# Basys3_Master.xdc
+
+# Test with simulation first
+python ~/scripts/run_simulation.py . --time 1ms
+
+# Looks good? Program the FPGA!
+python ~/scripts/run_hardware.py .
+```
+
+Done! The seven-segment display is now running on your Basys3 board.
+
+## 🎓 Example: Week 1 Modeling Exercises
+
+For the different modeling styles (dataflow, structural, behavioral):
+
+```bash
+# Directory structure
+week1_dataflow/
+├── first_system_merged.v     # Dataflow version
+├── first_system_tb.v          # Testbench
+└── Basys3_Master.xdc          # Constraints
+
+# Test it
+cd week1_dataflow
+python ~/scripts/run_simulation.py . --time 400ns
+
+# If it works, run on hardware
+python ~/scripts/run_hardware.py .
+```
+
+Repeat for each modeling style - each in its own folder.
+
+## 🔧 Generated Files
+
+Both scripts create a `vivado_project/` directory in your source folder:
+
+```
+my_project/
+├── my_design.v                    # Your files
+├── my_design_tb.v
+├── Basys3_Master.xdc
+├── vivado_project/                # Generated by scripts
+│   ├── my_project.xpr
+│   ├── my_project.sim/            # Simulation outputs
+│   │   └── ...
+│   │       └── *.wdb             # Waveform database
+│   └── my_project.runs/           # Hardware outputs
+│       └── impl_1/
+│           └── *.bit              # Bitstream file
+├── run_sim.tcl                    # Generated Tcl (can delete)
+└── run_hardware.tcl               # Generated Tcl (can delete)
+```
+
+**You can safely delete `vivado_project/` and the `.tcl` files anytime**
+- They're regenerated fresh each time you run the scripts
+- Keeps your source directory clean
+
+## 🎨 Viewing Simulation Waveforms
+
+After `run_simulation.py` completes:
+
+```bash
+cd my_project
+vivado -mode gui
+```
+
+Then in Vivado:
+- File → Open Waveform Database
+- Navigate to `vivado_project/my_project.sim/sim_1/behav/xsim/`
+- Select the `.wdb` file
+
+Or the script will tell you the exact path!
+
+## ⚙️ Customization
+
+### Different Vivado Installation
+
+Edit the scripts (near the bottom of `main()` function):
+
+```python
+# Change this line
+vivado_path = "vivado"
+
+# To your installation path
 vivado_path = "/tools/Xilinx/Vivado/2023.2/bin/vivado"
 ```
 
-### Issue: "Project file not found"
+### Add More Boards
 
-**Solution:** Ensure you're providing the correct paths:
-- First argument: Path to the directory containing the .xpr file
-- Second argument: Project name WITHOUT the .xpr extension
+Edit the `board_configs` dictionary in either script:
 
-Example:
-```bash
-# Correct
-python vivado_hardware_flow.py ~/fpgaProj my_project
-
-# Incorrect (don't include .xpr)
-python vivado_hardware_flow.py ~/fpgaProj my_project.xpr
+```python
+board_configs = {
+    "basys3": {
+        "part": "xc7a35tcpg236-1",
+        "board_part": "digilentinc.com:basys3:part0:1.2"
+    },
+    "my_custom_board": {
+        "part": "xc7a100tcsg324-1",
+        "board_part": "xilinx.com:ac701:part0:1.4"
+    }
+}
 ```
 
-### Issue: "Could not connect to hardware target"
+Then use: `--board my_custom_board`
 
-**Solution:**
-- Ensure FPGA board is connected and powered on
-- Check USB drivers are installed
-- Verify board shows up in Hardware Manager manually first
-- Use `--no-program` flag to skip device programming
+## 🆚 vs. Your Old Workflow
 
-### Issue: Synthesis or Implementation fails
+**Old workflow:**
+1. Open Vivado
+2. Open existing project
+3. Disable all current files
+4. Add new files
+5. Click through GUI for synthesis
+6. Click through GUI for implementation
+7. Click through GUI for bitstream
+8. Click through GUI for programming
 
-**Solution:**
-- Check the output logs for specific errors
-- Fix design errors in Vivado GUI first
-- Ensure all constraint files are properly added
-- Check for timing violations
-
-## Integrating with Your Workflow
-
-### Method 1: Command Line
-
-Run directly from terminal:
+**New workflow:**
 ```bash
-python vivado_hardware_flow.py ~/fpgaProj my_project
+python run_hardware.py .
 ```
 
-### Method 2: Makefile
+## 🛠️ Common Issues
 
-Create a Makefile in your project directory:
+### "No Verilog design files found"
+- Make sure your `.v` files are in the directory you specified
+- Check that you're in the right directory
+
+### "No testbench files found" (simulation only)
+- Testbench filename must contain `_tb`, `_test`, or `testbench`
+- Rename: `my_file.v` → `my_file_tb.v`
+
+### "No constraint file found" (hardware only)
+- Add a `.xdc` file with pin constraints
+- The script will warn you and ask if you want to continue
+
+### "Could not connect to hardware target"
+- Make sure FPGA board is connected via USB
+- Ensure board is powered on
+- Check that drivers are installed
+- Use `--no-program` to just generate bitstream
+
+### Simulation runs but no waveform appears
+- Waveforms are saved as `.wdb` files
+- Must open them manually in Vivado GUI
+- The script tells you where to find them
+
+## 🎯 Pro Tips
+
+### 1. Create Aliases
+
+Add to your `~/.bashrc` or `~/.zshrc`:
+
+```bash
+alias vsim='python ~/scripts/run_simulation.py'
+alias vhw='python ~/scripts/run_hardware.py'
+```
+
+Then just:
+```bash
+vsim .
+vhw .
+```
+
+### 2. Quick Test Pattern
+
+```bash
+# Quick workflow
+vsim . --time 500ns     # Verify logic
+vhw . --no-program      # Make sure it synthesizes
+vhw .                   # Program the FPGA
+```
+
+### 3. Keep Source Directories Clean
+
+```bash
+# Clean up after experiments
+rm -rf vivado_project run_*.tcl
+```
+
+Or add to a Makefile:
 
 ```makefile
-PROJECT_PATH = $(shell pwd)
-PROJECT_NAME = my_project
-
-.PHONY: hardware sim clean
-
-hardware:
-	python vivado_hardware_flow.py $(PROJECT_PATH) $(PROJECT_NAME)
-
-hardware-no-prog:
-	python vivado_hardware_flow.py $(PROJECT_PATH) $(PROJECT_NAME) --no-program
-
-sim:
-	python vivado_simulation_flow.py $(PROJECT_PATH) $(PROJECT_NAME)
-
-sim-long:
-	python vivado_simulation_flow.py $(PROJECT_PATH) $(PROJECT_NAME) --time 10us
-
 clean:
-	rm -f run_hardware_flow.tcl run_simulation_flow.tcl
+	rm -rf vivado_project/ *.tcl *.log *.jou
 ```
 
-Then run:
-```bash
-make hardware        # Run full hardware flow
-make hardware-no-prog  # Hardware flow without programming
-make sim            # Run simulation
-```
-
-### Method 3: Bash Script
-
-Create a wrapper script `run_fpga.sh`:
+### 4. Multiple Designs in One Session
 
 ```bash
-#!/bin/bash
+# Test design 1
+cd design1
+python ~/scripts/run_simulation.py .
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_NAME="my_project"
+# Test design 2
+cd ../design2
+python ~/scripts/run_simulation.py .
 
-case "$1" in
-    hw|hardware)
-        python $SCRIPT_DIR/vivado_hardware_flow.py $SCRIPT_DIR $PROJECT_NAME
-        ;;
-    sim|simulation)
-        python $SCRIPT_DIR/vivado_simulation_flow.py $SCRIPT_DIR $PROJECT_NAME "${@:2}"
-        ;;
-    *)
-        echo "Usage: $0 {hardware|simulation} [sim options]"
-        echo "Examples:"
-        echo "  $0 hardware"
-        echo "  $0 simulation --testbench tb_top --time 5us"
-        exit 1
-        ;;
-esac
+# Design 1 looks better, program it
+cd ../design1
+python ~/scripts/run_hardware.py .
 ```
 
-Make it executable and use:
+## 📚 Example Project Structures
+
+### Simple Module
+```
+simple_adder/
+├── adder.v
+├── adder_tb.v
+└── Basys3_Master.xdc
+```
+
+### Multi-Module Design
+```
+alarm_system/
+├── home_alarm_top.v        # Top module with _top suffix
+├── sensor_module.v          # Submodule
+├── alarm_control.v          # Submodule
+├── home_alarm_tb.v          # Testbench
+└── Basys3_Master.xdc
+```
+
+### Lab Assignment
+```
+lab3_ssd/
+├── ssd_display.v
+├── ssd_decoder.v
+├── ssd_top.v                # Top module
+├── ssd_tb.v                 # Testbench
+└── Basys3_Master.xdc
+```
+
+All these work with just:
 ```bash
-chmod +x run_fpga.sh
-./run_fpga.sh hardware
-./run_fpga.sh simulation --time 5us
+python run_simulation.py .
+python run_hardware.py .
 ```
 
-## Advanced Features
+## ❓ FAQ
 
-### Modifying the Hardware Flow
+**Q: Do I need to create a Vivado project first?**  
+A: No! The scripts create a fresh project automatically.
 
-Edit `vivado_hardware_flow.py` to add custom steps:
+**Q: What if I want to modify the project in Vivado GUI?**  
+A: Open `vivado_project/[name].xpr` in Vivado. But remember it'll be recreated next time you run the script.
 
-```python
-# Add before bitstream generation (around line 70):
-tcl_commands += """
-# Generate timing reports
-open_run impl_1
-report_timing_summary -file timing_summary.rpt
-report_utilization -file utilization.rpt
-"""
-```
+**Q: Can I use this for class assignments?**  
+A: Absolutely! It's your code, just automated. Just make sure your instructor allows automation tools.
 
-### Modifying the Simulation Flow
+**Q: Will this work on Windows?**  
+A: Yes, but you'll need Python installed. Path syntax might differ slightly.
 
-Edit `vivado_simulation_flow.py` to add waveform configuration:
+**Q: Can I use multiple constraint files?**  
+A: Currently it uses the first `.xdc` found. For multiple, you'd need to modify the script.
 
-```python
-# Add after launching simulation (around line 85):
-tcl_commands += """
-# Add all signals to waveform
-add_wave /*
+**Q: What if my testbench doesn't follow the naming convention?**  
+A: Rename it to include `_tb`, `_test`, or `testbench` in the filename.
 
-# Configure waveform display
-set_property display_name "Clock" [get_waves clk]
-```
-```
+## 🎓 Perfect for Students!
 
-## Tips for Your Lab Work
+This workflow is ideal for:
+- ✅ Lab assignments (quick iteration)
+- ✅ Testing different implementations
+- ✅ Learning Verilog (focus on code, not tools)
+- ✅ Homework verification
+- ✅ Final projects
 
-Based on your project files (dataflow, structural, behavioral modeling), here's how to use these scripts:
+## 🚦 Next Steps
 
-### For Week 1 Labs (Modeling Methods):
-
+1. Try it with a simple example:
 ```bash
-# Test dataflow modeling
-python vivado_simulation_flow.py ~/fpgaProj first_system --testbench first_system_tb --time 400ns
+mkdir test_and
+cd test_and
 
-# Test structural modeling
-python vivado_simulation_flow.py ~/fpgaProj first_system --testbench first_system_tb --time 400ns
+# Create a simple AND gate
+cat > and_gate.v << 'EOF'
+module and_gate(
+    input a, b,
+    output y
+);
+    assign y = a & b;
+endmodule
+EOF
 
-# Test behavioral modeling
-python vivado_simulation_flow.py ~/fpgaProj first_system --testbench first_system_tb --time 400ns
+# Create testbench
+cat > and_gate_tb.v << 'EOF'
+module and_gate_tb;
+    reg a, b;
+    wire y;
+    
+    and_gate uut(a, b, y);
+    
+    initial begin
+        a = 0; b = 0; #10;
+        a = 0; b = 1; #10;
+        a = 1; b = 0; #10;
+        a = 1; b = 1; #10;
+        $finish;
+    end
+endmodule
+EOF
+
+# Run simulation!
+python ~/scripts/run_simulation.py . --time 50ns
 ```
 
-### For Lab 3 (Seven Segment Display):
+2. Try it with your actual lab assignment
 
-```bash
-# Run simulation first to verify logic
-python vivado_simulation_flow.py ~/fpgaProj ssd_project --testbench ssd_tb --time 1ms
+3. Never look back at manual project setup! 🎉
 
-# Then program the hardware
-python vivado_hardware_flow.py ~/fpgaProj ssd_project
-```
+## 📝 Summary
 
-## Troubleshooting Checklist
+**Old way:** Open project, disable files, add files, click, click, click...  
+**New way:** `python run_hardware.py .`
 
-- [ ] Vivado is installed and in PATH
-- [ ] Project file (.xpr) exists
-- [ ] All source files are added to the project
-- [ ] Constraint file is added (for hardware flow)
-- [ ] Testbench is added to sim_1 fileset (for simulation)
-- [ ] FPGA board is connected and powered (for programming)
-- [ ] Python 3.6+ is installed
+Write code. Run script. Done.
 
-## Additional Resources
-
-- [Vivado Tcl Command Reference](https://docs.xilinx.com/r/en-US/ug835-vivado-tcl-commands)
-- [Vivado Design Suite User Guide](https://docs.xilinx.com/v/u/en-US/ug893-vivado-ide)
-- [Basys3 Reference Manual](https://digilent.com/reference/programmable-logic/basys-3/reference-manual)
-
-## License
-
-These scripts are provided as-is for educational purposes.# Vivado-Workflow-Scripts
+Enjoy your newfound productivity! 🚀
