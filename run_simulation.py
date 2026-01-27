@@ -53,7 +53,14 @@ def create_and_simulate(source_dir, sim_time="1000ns", open_gui=True, board="bas
     
     project_name = source_path.name
     project_dir = source_path / "vivado_project"
-    constraint_file = list(source_path.glob("*.xdc"))
+    
+    # Look for constraint file in script directory (project root)
+    script_dir = Path(__file__).parent.resolve()
+    constraint_file = list(script_dir.glob("*.xdc"))
+    
+    # Fall back to source directory if not found in script directory
+    if not constraint_file:
+        constraint_file = list(source_path.glob("*.xdc"))
     
     print("=" * 70)
     print("Integrated Vivado Simulation Workflow")

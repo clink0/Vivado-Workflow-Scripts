@@ -46,7 +46,14 @@ def create_and_program(source_dir, program_device=True, board="basys3", vivado_p
     
     project_name = source_path.name
     project_dir = source_path / "vivado_project"
-    constraint_files = list(source_path.glob("*.xdc"))
+    
+    # Look for constraint file in script directory (project root)
+    script_dir = Path(__file__).parent.resolve()
+    constraint_files = list(script_dir.glob("*.xdc"))
+    
+    # Fall back to source directory if not found in script directory
+    if not constraint_files:
+        constraint_files = list(source_path.glob("*.xdc"))
     
     if not constraint_files:
         print("WARNING: No constraint file (.xdc) found!")
@@ -64,6 +71,10 @@ def create_and_program(source_dir, program_device=True, board="basys3", vivado_p
         print(f"  - {df.name}")
     if constraint_files:
         print(f"Constraint file: {constraint_files[0].name}")
+        if constraint_files[0].parent == script_dir:
+            print(f"  (from script directory: {script_dir})")
+        else:
+            print(f"  (from source directory)")
     if design_top:
         print(f"Top module: {design_top}")
     print(f"Program device: {program_device}")
