@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-Integrated Vivado Simulation Workflow
-Automatically creates project from .v files and runs simulation
+Integrated Vivado Simulation Workflow with GUI
+Automatically creates project, runs simulation, and opens waveform viewer
 """
 
 import subprocess
 import sys
 from pathlib import Path
 import shutil
+import time
 
 def find_verilog_files(source_dir):
     """Find all .v files"""
@@ -32,8 +33,8 @@ def detect_top_module(vfile):
                 return module_name
     return None
 
-def create_and_simulate(source_dir, sim_time="1000ns", board="basys3", vivado_path="vivado"):
-    """Create project and run simulation"""
+def create_and_simulate(source_dir, sim_time="1000ns", open_gui=True, board="basys3", vivado_path="vivado"):
+    """Create project and run simulation with GUI"""
     
     design_files, testbench_files, source_path = find_verilog_files(source_dir)
     
@@ -69,6 +70,7 @@ def create_and_simulate(source_dir, sim_time="1000ns", board="basys3", vivado_pa
     if testbench_top:
         print(f"Testbench top module: {testbench_top}")
     print(f"Simulation time: {sim_time}")
+    print(f"Open GUI: {open_gui}")
     print("=" * 70)
     
     # Board configurations
@@ -82,8 +84,14 @@ def create_and_simulate(source_dir, sim_time="1000ns", board="basys3", vivado_pa
     
     board_cfg = board_configs[board]
     
-    # Create Tcl script
-    tcl_script = f"""
+    # Clean old project
+    if project_dir.exists():
+        print(f"\nRemoving old project: {project_dir}")
+        shutil.rmtree(project_dir)
+    
+    if open_gui:
+        # Create Tcl script for GUI mode
+        tcl_script = f"""
 # Create project
 create_project {project_name} {{{project_dir}}} -part {board_cfg['part']} -force
 set_property board_part {board_cfg['board_part']} [current_project]
@@ -91,24 +99,114 @@ set_property target_language Verilog [current_project]
 
 puts "Adding design files..."
 """
+        
+        for vfile in design_files:
+            tcl_script += f'add_files -norecurse {{{vfile}}}\n'
+        
+        tcl_script += '\nputs "Adding testbench files..."\n'
+        for vfile in testbench_files:
+            tcl_script += f'add_files -fileset sim_1 -norecurse {{{vfile}}}\n'
+        
+        if constraint_file:
+            tcl_script += f'add_files -fileset constrs_1 -norecurse {{{constraint_file[0]}}}\n'
+        
+        if design_top:
+            tcl_script += f'set_property top {design_top} [current_fileset]\n'
+        
+        if testbench_top:
+            tcl_script += f'set_property top {testbench_top} [get_filesets sim_1]\n'
+        
+        tcl_script += """
+update_compile_order -fileset sources_1
+update_compile_order -fileset sim_1
+
+puts "========================================="
+puts "Launching simulation in GUI mode..."
+puts "========================================="
+
+# Launch simulation in GUI mode
+launch_simulation -mode behavioral
+
+"""
+        
+        tcl_script += f"""
+# Run simulation
+run {sim_time}
+
+# Add all signals to waveform (if not already added)
+catch {{
+    add_wave {{/*}}
+}}
+
+puts "========================================="
+puts "Simulation completed!"
+puts "Waveform viewer is now open."
+puts "Close the waveform window when done viewing."
+puts "========================================="
+
+# Don't close automatically - let user view waveforms
+# User will close Vivado when done
+"""
+        
+        # Write Tcl script
+        tcl_file = source_path / "run_sim_gui.tcl"
+        with open(tcl_file, 'w') as f:
+            f.write(tcl_script)
+        
+        print(f"\nGenerated Tcl script: {tcl_file}")
+        print("=" * 70)
+        print("\nStarting Vivado in GUI mode...")
+        print("The waveform viewer will open automatically.")
+        print("Close Vivado when you're done viewing the waveforms.")
+        print("=" * 70)
+        
+        # Run Vivado in GUI mode
+        cmd = [vivado_path, "-mode", "gui", "-source", str(tcl_file)]
+        
+        try:
+            # Run in GUI mode - this will block until user closes Vivado
+            subprocess.run(cmd, cwd=str(source_path))
+            
+            print("\n" + "=" * 70)
+            print("Vivado closed. Simulation complete!")
+            print("=" * 70)
+            return True
+                
+        except FileNotFoundError:
+            print(f"ERROR: Vivado not found: {vivado_path}")
+            return False
+        except Exception as e:
+            print(f"ERROR: {e}")
+            return False
     
-    for vfile in design_files:
-        tcl_script += f'add_files -norecurse {{{vfile}}}\n'
-    
-    tcl_script += '\nputs "Adding testbench files..."\n'
-    for vfile in testbench_files:
-        tcl_script += f'add_files -fileset sim_1 -norecurse {{{vfile}}}\n'
-    
-    if constraint_file:
-        tcl_script += f'add_files -fileset constrs_1 -norecurse {{{constraint_file[0]}}}\n'
-    
-    if design_top:
-        tcl_script += f'set_property top {design_top} [current_fileset]\n'
-    
-    if testbench_top:
-        tcl_script += f'set_property top {testbench_top} [get_filesets sim_1]\n'
-    
-    tcl_script += """
+    else:
+        # Batch mode (original behavior)
+        tcl_script = f"""
+# Create project
+create_project {project_name} {{{project_dir}}} -part {board_cfg['part']} -force
+set_property board_part {board_cfg['board_part']} [current_project]
+set_property target_language Verilog [current_project]
+
+puts "Adding design files..."
+"""
+        
+        for vfile in design_files:
+            tcl_script += f'add_files -norecurse {{{vfile}}}\n'
+        
+        tcl_script += '\nputs "Adding testbench files..."\n'
+        for vfile in testbench_files:
+            tcl_script += f'add_files -fileset sim_1 -norecurse {{{vfile}}}\n'
+        
+        if constraint_file:
+            tcl_script += f'add_files -fileset constrs_1 -norecurse {{{constraint_file[0]}}}\n'
+        
+        if design_top:
+            tcl_script += f'set_property top {design_top} [current_fileset]\n'
+        
+        if testbench_top:
+            tcl_script += f'set_property top {testbench_top} [get_filesets sim_1]\n'
+        
+        tcl_script += """
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 
@@ -119,10 +217,10 @@ puts "========================================="
 launch_simulation -mode behavioral
 
 """
-    
-    tcl_script += f'run {sim_time}\n'
-    
-    tcl_script += """
+        
+        tcl_script += f'run {sim_time}\n'
+        
+        tcl_script += """
 puts "========================================="
 puts "Simulation completed!"
 puts "========================================="
@@ -135,64 +233,59 @@ close_project
 
 exit 0
 """
-    
-    # Clean old project
-    if project_dir.exists():
-        print(f"Removing old project: {project_dir}")
-        shutil.rmtree(project_dir)
-    
-    # Write Tcl script
-    tcl_file = source_path / "run_sim.tcl"
-    with open(tcl_file, 'w') as f:
-        f.write(tcl_script)
-    
-    print(f"\nGenerated Tcl script: {tcl_file}")
-    print("=" * 70)
-    
-    # Run Vivado
-    cmd = [vivado_path, "-mode", "batch", "-source", str(tcl_file)]
-    
-    try:
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-            cwd=str(source_path)
-        )
         
-        for line in process.stdout:
-            print(line, end='')
+        # Write Tcl script
+        tcl_file = source_path / "run_sim.tcl"
+        with open(tcl_file, 'w') as f:
+            f.write(tcl_script)
         
-        return_code = process.wait()
+        print(f"\nGenerated Tcl script: {tcl_file}")
+        print("=" * 70)
         
-        if return_code == 0:
-            print("\n" + "=" * 70)
-            print("SUCCESS: Simulation completed!")
+        # Run Vivado in batch mode
+        cmd = [vivado_path, "-mode", "batch", "-source", str(tcl_file)]
+        
+        try:
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                universal_newlines=True,
+                cwd=str(source_path)
+            )
             
-            # Find waveform file
-            sim_dir = project_dir / f"{project_name}.sim" / "sim_1" / "behav" / "xsim"
-            if sim_dir.exists():
-                wdb_files = list(sim_dir.glob("*.wdb"))
-                if wdb_files:
-                    print(f"\nWaveform database: {wdb_files[0]}")
-                    print("\nTo view waveform in GUI:")
-                    print(f"  cd {source_path}")
-                    print(f"  vivado -mode gui")
-                    print(f"  Then: File → Open Waveform Database → {wdb_files[0].name}")
+            for line in process.stdout:
+                print(line, end='')
             
-            print("=" * 70)
-            return True
-        else:
-            print(f"\nERROR: Simulation failed with return code {return_code}")
+            return_code = process.wait()
+            
+            if return_code == 0:
+                print("\n" + "=" * 70)
+                print("SUCCESS: Simulation completed!")
+                
+                # Find waveform file
+                sim_dir = project_dir / f"{project_name}.sim" / "sim_1" / "behav" / "xsim"
+                if sim_dir.exists():
+                    wdb_files = list(sim_dir.glob("*.wdb"))
+                    if wdb_files:
+                        print(f"\nWaveform database: {wdb_files[0]}")
+                        print("\nTo view waveform:")
+                        print(f"  cd {source_path}")
+                        print(f"  vivado -mode gui")
+                        print(f"  Then: File → Open Waveform Database → {wdb_files[0].name}")
+                
+                print("=" * 70)
+                return True
+            else:
+                print(f"\nERROR: Simulation failed with return code {return_code}")
+                return False
+                
+        except FileNotFoundError:
+            print(f"ERROR: Vivado not found: {vivado_path}")
             return False
-            
-    except FileNotFoundError:
-        print(f"ERROR: Vivado not found: {vivado_path}")
-        return False
-    except Exception as e:
-        print(f"ERROR: {e}")
-        return False
+        except Exception as e:
+            print(f"ERROR: {e}")
+            return False
 
 
 def main():
@@ -201,16 +294,20 @@ def main():
         print("\nOptions:")
         print("  --time <duration>  Simulation time (default: 1000ns)")
         print("                     Examples: 100ns, 10us, 1ms")
-        print("  --board <name>     Target board (default: basys3)")
+        print("  --gui              Open waveform viewer automatically (default)")
+        print("  --no-gui           Run in batch mode, save waveform for later")
+        print("  --board <n>     Target board (default: basys3)")
         print("\nExamples:")
-        print("  python run_simulation.py .")
-        print("  python run_simulation.py ~/my_design --time 500ns")
-        print("  python run_simulation.py . --time 10us --board arty")
+        print("  python run_simulation.py .                    # GUI mode")
+        print("  python run_simulation.py . --time 500ns        # GUI with custom time")
+        print("  python run_simulation.py . --no-gui            # Batch mode")
+        print("  python run_simulation.py ~/my_design --time 10us")
         sys.exit(1)
     
     source_dir = sys.argv[1]
     sim_time = "1000ns"
     board = "basys3"
+    open_gui = True  # Default to GUI mode
     
     # Parse options
     i = 2
@@ -221,12 +318,18 @@ def main():
         elif sys.argv[i] == "--board" and i + 1 < len(sys.argv):
             board = sys.argv[i + 1]
             i += 2
+        elif sys.argv[i] == "--no-gui":
+            open_gui = False
+            i += 1
+        elif sys.argv[i] == "--gui":
+            open_gui = True
+            i += 1
         else:
             i += 1
     
     vivado_path = "vivado"
     
-    success = create_and_simulate(source_dir, sim_time, board, vivado_path)
+    success = create_and_simulate(source_dir, sim_time, open_gui, board, vivado_path)
     sys.exit(0 if success else 1)
 
 
