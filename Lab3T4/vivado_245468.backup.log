@@ -1,0 +1,72 @@
+#-----------------------------------------------------------
+# Vivado v2018.3 (64-bit)
+# SW Build 2405991 on Thu Dec  6 23:38:27 MST 2018
+# IP Build 2404404 on Fri Dec  7 01:43:56 MST 2018
+# Start of session at: Tue Jan 27 16:31:36 2026
+# Process ID: 245468
+# Current directory: C:/Users/lebray/Vivado-Workflow-Scripts/Lab3T4
+# Command line: vivado.exe -mode batch -source C:\Users\lebray\Vivado-Workflow-Scripts\Lab3T4\run_hardware.tcl
+# Log file: C:/Users/lebray/Vivado-Workflow-Scripts/Lab3T4/vivado.log
+# Journal file: C:/Users/lebray/Vivado-Workflow-Scripts/Lab3T4\vivado.jou
+#-----------------------------------------------------------
+source {C:\Users\lebray\Vivado-Workflow-Scripts\Lab3T4\run_hardware.tcl}
+# create_project Lab3T4 {C:\Users\lebray\Vivado-Workflow-Scripts\Lab3T4\vivado_project} -part xc7a35tcpg236-1 -force
+# if {[catch {set_property board_part digilentinc.com:basys3:part0:1.2 [current_project]}]} {
+#     puts "Note: Board part not available, using part only"
+# }
+Note: Board part not available, using part only
+# set_property target_language Verilog [current_project]
+# puts "Adding design files..."
+Adding design files...
+# add_files -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\Lab3T4\7SegFLC.v}
+# add_files -fileset sim_1 -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\Lab3T4\7SegFLC_tb.v}
+# add_files -fileset constrs_1 -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\Basys3_Master.xdc}
+# set_property top SSDispFLC [current_fileset]
+# update_compile_order -fileset sources_1
+# puts "========================================="
+=========================================
+# puts "Running Synthesis..."
+Running Synthesis...
+# puts "========================================="
+=========================================
+# reset_run synth_1
+# launch_runs synth_1
+[Tue Jan 27 16:31:41 2026] Launched synth_1...
+Run output will be captured here: C:/Users/lebray/Vivado-Workflow-Scripts/Lab3T4/vivado_project/Lab3T4.runs/synth_1/runme.log
+# wait_on_run synth_1
+[Tue Jan 27 16:31:41 2026] Waiting for synth_1 to finish...
+
+*** Running vivado
+    with args -log SSDispFLC.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source SSDispFLC.tcl
+
+
+****** Vivado v2018.3 (64-bit)
+  **** SW Build 2405991 on Thu Dec  6 23:38:27 MST 2018
+  **** IP Build 2404404 on Fri Dec  7 01:43:56 MST 2018
+    ** Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+
+source SSDispFLC.tcl -notrace
+Command: synth_design -top SSDispFLC -part xc7a35tcpg236-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 242548 
+ERROR: [Synth 8-2715] syntax error near b [C:/Users/lebray/Vivado-Workflow-Scripts/Lab3T4/7SegFLC.v:37]
+ERROR: [Synth 8-2715] syntax error near ' [C:/Users/lebray/Vivado-Workflow-Scripts/Lab3T4/7SegFLC.v:37]
+INFO: [Synth 8-2350] module SSDispFLC ignored due to previous errors [C:/Users/lebray/Vivado-Workflow-Scripts/Lab3T4/7SegFLC.v:1]
+Failed to read verilog 'C:/Users/lebray/Vivado-Workflow-Scripts/Lab3T4/7SegFLC.v'
+INFO: [Common 17-83] Releasing license: Synthesis
+3 Infos, 0 Warnings, 0 Critical Warnings and 3 Errors encountered.
+synth_design failed
+ERROR: [Common 17-69] Command failed: Synthesis failed - please see the console or run log file for details
+INFO: [Common 17-206] Exiting Vivado at Tue Jan 27 16:31:48 2026...
+[Tue Jan 27 16:31:52 2026] synth_1 finished
+wait_on_run: Time (s): cpu = 00:00:00 ; elapsed = 00:00:10 . Memory (MB): peak = 262.906 ; gain = 0.000
+# set synth_status [get_property STATUS [get_runs synth_1]]
+# if {$synth_status != "synth_design Complete!"} {
+#     puts "ERROR: Synthesis failed: $synth_status"
+#     exit 1
+# }
+ERROR: Synthesis failed: synth_design ERROR
+INFO: [Common 17-206] Exiting Vivado at Tue Jan 27 16:31:52 2026...
