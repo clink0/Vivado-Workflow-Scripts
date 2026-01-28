@@ -1,0 +1,86 @@
+module SSDispFLC(clk, seg, dp, an);
+input clk;
+output dp;
+output reg [6:0] seg;
+output reg [3:0] an;
+
+reg [1:0] state = 2'b00;
+assign dp = 1'b1;
+parameter cntmax = 10'd1023;
+reg [9:0] cnt = 0;
+
+reg [25:0] timer = 0;
+reg [1:0] shift = 0;
+
+localparam C_CODE = 7'b1000110;
+localparam L_CODE = 7'b1000111;
+localparam F_CODE = 7'b0001110;
+localparam SPACE = 7'b1111111;
+
+always @(posedge clk)
+begin
+  if (timer >= 30000000)
+  begin
+    timer <= 0;
+    shift <= shift + 1;
+  end
+  else timer <= timer + 1;
+
+  if(cnt == cntmax)
+  begin
+    if (state == 2'b00)
+       begin
+         cnt <= 0;
+	 an <= 4'b1110;
+	 case(shift)
+           0 : seg <= C_CODE;
+	   1 : seg <= SPACE;
+	   2 : seg <= F_CODE;
+	   3 : seg <= L_CODE
+         endcase
+	 state <= state + 1;
+       end
+
+    else if (state == 2'b01)
+       begin
+         cnt <= 0;
+	 an <= 4'b1101;
+	 case(shift)
+           0 : seg <= L_CODE;
+           1 : seg <= C_CODE;
+	   2 : seg <= SPACE;
+	   3 : seg <= F_CODE;
+  	   endcase
+	 state <= state + 1;
+       end
+
+    else if (state == 2'b10)
+       begin
+         cnt <= 0;
+	 an <= 4'b1011;
+	 case(shift)
+           0 : seg <= F_CODE;
+	   1 : seg <= L_CODE;
+	   2 : seg <= C_CODE;
+	   3 : seg <= SPACE;
+	 endcase
+	 state <= state + 1;
+       end
+
+     else if (state == 2'b11)
+       begin
+         cnt <= 0;
+	 an <= 4'b0111;
+	 case(shift)
+           0 : seg <= SPACE;	  
+	   1 : seg <= F_CODE;
+	   2 : seg <= L_CODE;
+	   3 : seg <= C_CODE;
+         endcase
+	 state <= 2'b00;
+       end
+
+  end
+  else cnt <= cnt + 1;
+end
+endmodule
