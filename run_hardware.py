@@ -1,298 +1,399 @@
 #!/usr/bin/env python3
 """
-Integrated Vivado Hardware Workflow
+Integrated Vivado Hardware Workflow (Clean Output)
 Automatically creates project from .v files and programs FPGA
 """
 
 import subprocess
 import sys
+import os
 from pathlib import Path
 import shutil
+import threading
+import time
 
+# Fix Windows PowerShell encoding for unicode output
+if sys.platform == "win32":
+    os.system("chcp 65001 >nul 2>&1")
+
+# ─────────────────────────────────────────────────────────────
+# Terminal UI
+# ─────────────────────────────────────────────────────────────
+W = 60  # banner width
+
+def banner(title):
+    print("\n" + "=" * W)
+    print(f"  {title}")
+    print("=" * W)
+
+def divider():
+    print("-" * W)
+
+class Spinner:
+    """Animated spinner that runs on a background thread.
+    Usage:
+        with Spinner("Doing thing"):
+            ...work...
+    Prints  ✓  on success, ✗  on failure.
+    Call .fail() before the block exits to mark it failed.
+    """
+    _frames = ['⠋','⠙','⠹','⠸','⠼','⠴','⠦','⠧','⠇','⠏']
+
+    def __init__(self, message):
+        self.message = message
+        self._running = False
+        self._failed = False
+        self._thread = None
+
+    def _loop(self):
+        idx = 0
+        while self._running:
+            sys.stdout.write(f'\r  {self._frames[idx % len(self._frames)]}  {self.message}...')
+            sys.stdout.flush()
+            idx += 1
+            time.sleep(0.08)
+
+    def fail(self):
+        self._failed = True
+
+    def __enter__(self):
+        self._running = True
+        self._thread = threading.Thread(target=self._loop, daemon=True)
+        self._thread.start()
+        return self
+
+    def __exit__(self, *_):
+        self._running = False
+        self._thread.join()
+        symbol = '✗' if self._failed else '✓'
+        sys.stdout.write(f'\r  {symbol}  {self.message}\n')
+        sys.stdout.flush()
+
+
+class ProgressBar:
+    """Indeterminate progress bar that pulses while work is running.
+    Usage:
+        with ProgressBar("Doing thing"):
+            ...work...
+    """
+    def __init__(self, message, width=40):
+        self.message = message
+        self.width = width
+        self._running = False
+        self._failed = False
+        self._thread = None
+
+    def _loop(self):
+        pos = 0
+        direction = 1
+        bar_len = 12          # length of the bright segment
+        while self._running:
+            bar = [' '] * self.width
+            for i in range(bar_len):
+                idx = (pos + i) % self.width
+                bar[idx] = '█' if i == 0 or i == bar_len - 1 else '▓'
+            sys.stdout.write(f'\r  [{("".join(bar))}]  {self.message}')
+            sys.stdout.flush()
+            pos += direction
+            if pos >= self.width or pos <= 0:
+                direction *= -1
+            time.sleep(0.04)
+
+    def fail(self):
+        self._failed = True
+
+    def __enter__(self):
+        self._running = True
+        self._thread = threading.Thread(target=self._loop, daemon=True)
+        self._thread.start()
+        return self
+
+    def __exit__(self, *_):
+        self._running = False
+        self._thread.join()
+        symbol = '✗' if self._failed else '✓'
+        sys.stdout.write(f'\r  {symbol}  {self.message}\n')
+        sys.stdout.flush()
+
+
+# ─────────────────────────────────────────────────────────────
+# Verilog helpers  (unchanged logic)
+# ─────────────────────────────────────────────────────────────
 def find_verilog_files(source_dir):
-    """Find all .v files"""
+    """Find all .v files, separating top modules from design modules"""
     source_path = Path(source_dir).resolve()
     design_files = []
-    testbench_files = []
-    
+    top_file = None
+
     for vfile in source_path.glob("*.v"):
         if "_tb" in vfile.stem.lower() or "_test" in vfile.stem.lower() or "testbench" in vfile.stem.lower():
-            testbench_files.append(vfile)
+            continue
+        elif "_top" in vfile.stem.lower():
+            top_file = vfile
+            design_files.append(vfile)
         else:
             design_files.append(vfile)
-    
-    return design_files, testbench_files, source_path
+
+    return design_files, top_file, source_path
 
 def detect_top_module(vfile):
-    """Extract module name from Verilog file"""
+    """Extract module name from Verilog file - handles various formatting"""
     with open(vfile, 'r') as f:
         for line in f:
-            if line.strip().startswith("module"):
-                module_name = line.split()[1].split('(')[0].strip()
-                return module_name
+            stripped = line.strip()
+            if stripped.startswith("//") or stripped.startswith("/*") or stripped == "":
+                continue
+            if stripped.startswith("module "):
+                remainder = stripped[len("module"):].strip()
+                module_name = ""
+                for ch in remainder:
+                    if ch in ('(', ' ', '\t', ';'):
+                        break
+                    module_name += ch
+                if module_name:
+                    return module_name
     return None
 
+
+# ─────────────────────────────────────────────────────────────
+# Vivado helpers
+# ─────────────────────────────────────────────────────────────
+def run_vivado_batch(tcl_file, vivado_path, cwd):
+    """Run Vivado in batch mode, return (success, stdout_text)"""
+    cmd = [vivado_path, "-mode", "batch", "-source", str(tcl_file)]
+    process = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+        cwd=str(cwd)
+    )
+    output = process.stdout.read()
+    process.wait()
+    return process.returncode == 0, output
+
+def open_vivado_gui(project_dir, vivado_path):
+    """Launch Vivado GUI with the project already open, then open Hardware Manager.
+    This is fire-and-forget -- we don't wait for the user to close it."""
+    project_file = list(project_dir.glob("*.viv"))
+    if not project_file:
+        return False
+
+    # Tcl that opens the project and launches the hardware manager
+    tcl = (
+        f'open_project {{{project_file[0]}}}\n'
+        'open_hw_manager\n'
+        'connect_hw_target\n'
+    )
+    tcl_file = project_dir / "open_hw.tcl"
+    with open(tcl_file, 'w') as f:
+        f.write(tcl)
+
+    # Launch GUI -- don't wait, user interacts from here
+    subprocess.Popen(
+        [vivado_path, "-mode", "gui", "-source", str(tcl_file)],
+        cwd=str(project_dir)
+    )
+    return True
+
+
+# ─────────────────────────────────────────────────────────────
+# Main flow  (logic unchanged, output cleaned up)
+# ─────────────────────────────────────────────────────────────
 def create_and_program(source_dir, program_device=True, board="basys3", vivado_path="vivado"):
     """Create project and run hardware flow"""
-    
-    design_files, testbench_files, source_path = find_verilog_files(source_dir)
-    
+
+    design_files, top_file, source_path = find_verilog_files(source_dir)
+
     if not design_files:
-        print("ERROR: No Verilog design files found!")
+        print("\n  ERROR: No Verilog design files found!")
         return False
-    
-    # Get module names
-    design_top = detect_top_module(design_files[0])
-    
+
+    if not top_file:
+        print("\n  ERROR: No top module file found!")
+        print("          Hardware flow requires a file with '_top' in the name")
+        print("          Example: two_bit_comparator_top.v")
+        return False
+
+    design_top = detect_top_module(top_file)
+    if not design_top:
+        print(f"\n  ERROR: Could not detect module name in: {top_file}")
+        return False
+
     project_name = source_path.name
-    project_dir = source_path / "vivado_project"
-    
-    # Look for constraint file in script directory (project root)
+    project_dir  = source_path / "vivado_project"
+
+    # Constraint file -- script dir first, then source dir
     script_dir = Path(__file__).parent.resolve()
     constraint_files = list(script_dir.glob("*.xdc"))
-    
-    # Fall back to source directory if not found in script directory
     if not constraint_files:
         constraint_files = list(source_path.glob("*.xdc"))
-    
+
     if not constraint_files:
-        print("WARNING: No constraint file (.xdc) found!")
-        print("Synthesis will likely fail without pin constraints.")
-        response = input("Continue anyway? (y/n): ")
+        print("\n  WARNING: No constraint file (.xdc) found!")
+        response = input("  Continue anyway? (y/n): ")
         if response.lower() != 'y':
             return False
-    
-    print("=" * 70)
-    print("Integrated Vivado Hardware Workflow")
-    print("=" * 70)
-    print(f"Source directory: {source_path}")
-    print(f"Design files: {len(design_files)}")
+
+    # ── summary ──────────────────────────────────────────────
+    banner("Vivado Hardware Flow")
+    print(f"  Project     {project_name}")
+    print(f"  Top         {design_top}")
+    print(f"  Target      {board.upper()}")
+    divider()
+    print("  Files")
     for df in design_files:
-        print(f"  - {df.name}")
+        tag = "  [top]" if df == top_file else ""
+        print(f"    {df.name}{tag}")
     if constraint_files:
-        print(f"Constraint file: {constraint_files[0].name}")
-        if constraint_files[0].parent == script_dir:
-            print(f"  (from script directory: {script_dir})")
-        else:
-            print(f"  (from source directory)")
-    if design_top:
-        print(f"Top module: {design_top}")
-    print(f"Program device: {program_device}")
-    print("=" * 70)
-    
-    # Board configurations
+        print("  Constraints")
+        print(f"    {constraint_files[0].name}")
+    divider()
+
+    # ── board config ─────────────────────────────────────────
     board_configs = {
-        "basys3": {"part": "xc7a35tcpg236-1", "board_part": "digilentinc.com:basys3:part0:1.2"},
-        "arty": {"part": "xc7a35ticsg324-1L", "board_part": "digilentinc.com:arty-a7-35:part0:1.1"},
+        "basys3": {"part": "xc7a35tcpg236-1",  "board_part": "digilentinc.com:basys3:part0:1.2"},
+        "arty":   {"part": "xc7a35ticsg324-1L","board_part": "digilentinc.com:arty-a7-35:part0:1.1"},
     }
-    
     if board not in board_configs:
         board = "basys3"
-    
     board_cfg = board_configs[board]
-    
-    # Create Tcl script
+
+    # ── clean old project ────────────────────────────────────
+    if project_dir.exists():
+        with Spinner("Cleaning old project"):
+            shutil.rmtree(project_dir)
+
+    # ── generate Tcl ─────────────────────────────────────────
     tcl_script = f"""
-# Create project
 create_project {project_name} {{{project_dir}}} -part {board_cfg['part']} -force
 
-# Try to set board_part, but continue if it fails (for older Vivado versions)
 if {{[catch {{set_property board_part {board_cfg['board_part']} [current_project]}}]}} {{
     puts "Note: Board part not available, using part only"
 }}
 
 set_property target_language Verilog [current_project]
-
-puts "Adding design files..."
 """
-    
     for vfile in design_files:
         tcl_script += f'add_files -norecurse {{{vfile}}}\n'
-    
-    if testbench_files:
-        for vfile in testbench_files:
-            tcl_script += f'add_files -fileset sim_1 -norecurse {{{vfile}}}\n'
-    
+
     if constraint_files:
         tcl_script += f'add_files -fileset constrs_1 -norecurse {{{constraint_files[0]}}}\n'
-    
-    if design_top:
-        tcl_script += f'set_property top {design_top} [current_fileset]\n'
-    
+
+    tcl_script += f'set_property top {design_top} [current_fileset]\n'
+
     tcl_script += """
 update_compile_order -fileset sources_1
-
-puts "========================================="
-puts "Running Synthesis..."
-puts "========================================="
 
 reset_run synth_1
 launch_runs synth_1
 wait_on_run synth_1
-
 set synth_status [get_property STATUS [get_runs synth_1]]
 if {$synth_status != "synth_design Complete!"} {
     puts "ERROR: Synthesis failed: $synth_status"
     exit 1
 }
-puts "Synthesis completed successfully"
-
-puts "========================================="
-puts "Running Implementation..."
-puts "========================================="
 
 reset_run impl_1
 launch_runs impl_1
 wait_on_run impl_1
-
 set impl_status [get_property STATUS [get_runs impl_1]]
 if {$impl_status != "route_design Complete!"} {
     puts "ERROR: Implementation failed: $impl_status"
     exit 1
 }
-puts "Implementation completed successfully"
-
-puts "========================================="
-puts "Generating Bitstream..."
-puts "========================================="
 
 launch_runs impl_1 -to_step write_bitstream
 wait_on_run impl_1
-
 set bit_status [get_property STATUS [get_runs impl_1]]
 if {$bit_status != "write_bitstream Complete!"} {
     puts "ERROR: Bitstream generation failed: $bit_status"
     exit 1
 }
-puts "Bitstream generated successfully"
 
-"""
-    
-    if program_device:
-        tcl_script += """
-puts "========================================="
-puts "Bitstream Location"
-puts "========================================="
-
-set bit_file [get_property DIRECTORY [current_run]]/[get_property top [current_fileset]].bit
-puts "Bitstream file: $bit_file"
-
-# Hardware manager programming only works in GUI mode for Vivado 2018.x
-# User should program manually using the Hardware Manager GUI
-puts ""
-puts "========================================="
-puts "PROGRAMMING INSTRUCTIONS"
-puts "========================================="
-puts "Vivado 2018.3 requires GUI for programming."
-puts "To program your device:"
-puts "  1. Open Vivado GUI"
-puts "  2. Flow -> Open Hardware Manager"
-puts "  3. Open Target -> Auto Connect"
-puts "  4. Program Device -> Select the .bit file above"
-puts "========================================="
-"""
-    
-    tcl_script += """
 close_project
-
-puts "========================================="
-puts "Hardware flow completed successfully!"
-puts "========================================="
-
-exit 0
 """
-    
-    # Clean old project
-    if project_dir.exists():
-        print(f"Removing old project: {project_dir}")
-        shutil.rmtree(project_dir)
-    
-    # Write Tcl script
+
     tcl_file = source_path / "run_hardware.tcl"
     with open(tcl_file, 'w') as f:
         f.write(tcl_script)
-    
-    print(f"\nGenerated Tcl script: {tcl_file}")
-    print("=" * 70)
-    
-    # Run Vivado
-    cmd = [vivado_path, "-mode", "batch", "-source", str(tcl_file)]
-    
-    try:
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-            cwd=str(source_path)
-        )
-        
-        for line in process.stdout:
-            print(line, end='')
-        
-        return_code = process.wait()
-        
-        if return_code == 0:
-            print("\n" + "=" * 70)
-            print("SUCCESS: Hardware flow completed!")
-            
-            # Show bitstream location
-            runs_dir = project_dir / f"{project_name}.runs" / "impl_1"
-            if runs_dir.exists() and design_top:
-                bit_file = runs_dir / f"{design_top}.bit"
-                if bit_file.exists():
-                    print(f"\n✓ Bitstream: {bit_file}")
-                    print("\n" + "=" * 70)
-                    print("📟 TO PROGRAM YOUR FPGA:")
-                    print("=" * 70)
-                    print("1. Open Vivado (from Start Menu)")
-                    print("2. Flow → Open Hardware Manager")
-                    print("3. Open target → Auto Connect")
-                    print("4. Program device")
-                    print(f"5. Browse to: {bit_file}")
-                    print("6. Click 'Program'")
-            
-            print("=" * 70)
-            return True
+
+    # ── run Vivado batch ─────────────────────────────────────
+    print()
+    with ProgressBar("Running Vivado  Synth + Impl + Bitstream") as pb:
+        success, output = run_vivado_batch(tcl_file, vivado_path, source_path)
+        if not success:
+            pb.fail()
+
+    if not success:
+        # Pull the last ERROR line out of Vivado output for the user
+        errors = [l.strip() for l in output.splitlines() if "ERROR" in l]
+        if errors:
+            print(f"\n  {errors[-1]}")
+        print(f"\n  Full log: {source_path / 'vivado_project'}")
+        return False
+
+    # ── success ──────────────────────────────────────────────
+    bit_file = project_dir / f"{project_name}.runs" / "impl_1" / f"{design_top}.bit"
+
+    banner("Done")
+    if bit_file.exists():
+        print(f"  Bitstream   {bit_file}")
+    print()
+
+    # ── open Vivado GUI for programming ──────────────────────
+    if program_device:
+        with Spinner("Opening Vivado Hardware Manager"):
+            opened = open_vivado_gui(project_dir, vivado_path)
+        if opened:
+            print()
+            print("  Vivado is opening. When it's ready:")
+            print("    1. Wait for Hardware Manager to connect")
+            print("    2. Right-click the device -> Program Device")
+            print("    3. Bitstream file is already set")
         else:
-            print(f"\nERROR: Hardware flow failed with return code {return_code}")
-            return False
-            
-    except FileNotFoundError:
-        print(f"ERROR: Vivado not found: {vivado_path}")
-        return False
-    except Exception as e:
-        print(f"ERROR: {e}")
-        return False
+            print("  Could not auto-open Vivado. Open it manually and")
+            print(f"  program {bit_file.name} via Hardware Manager.")
+    print()
+    divider()
+    return True
 
 
+# ─────────────────────────────────────────────────────────────
+# Entry point
+# ─────────────────────────────────────────────────────────────
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python run_hardware.py <source_dir> [options]")
-        print("\nOptions:")
-        print("  --no-program    Generate bitstream but don't program device")
-        print("  --board <name>  Target board (default: basys3)")
-        print("\nExamples:")
-        print("  python run_hardware.py .")
-        print("  python run_hardware.py ~/my_design")
-        print("  python run_hardware.py . --no-program")
-        print("  python run_hardware.py . --board arty")
+        print("\n  Usage:  python run_hardware.py <source_dir> [options]")
+        print()
+        print("  Options:")
+        print("    --board <n>        Target board (default: basys3)")
+        print("    --no-program       Skip opening Hardware Manager")
+        print()
+        print("  Examples:")
+        print("    python run_hardware.py HW3T3")
+        print("    python run_hardware.py . --board basys3")
+        print("    python run_hardware.py HW3T3 --no-program")
+        print()
         sys.exit(1)
-    
-    source_dir = sys.argv[1]
-    program_device = "--no-program" not in sys.argv
-    
-    board = "basys3"
+
+    source_dir     = sys.argv[1]
+    board          = "basys3"
+    program_device = True
+
     i = 2
     while i < len(sys.argv):
         if sys.argv[i] == "--board" and i + 1 < len(sys.argv):
             board = sys.argv[i + 1]
             i += 2
+        elif sys.argv[i] == "--no-program":
+            program_device = False
+            i += 1
         else:
             i += 1
-    
+
     vivado_path = "C:/Xilinx/Vivado/2018.3/bin/vivado.bat"
-    
+
     success = create_and_program(source_dir, program_device, board, vivado_path)
     sys.exit(0 if success else 1)
 

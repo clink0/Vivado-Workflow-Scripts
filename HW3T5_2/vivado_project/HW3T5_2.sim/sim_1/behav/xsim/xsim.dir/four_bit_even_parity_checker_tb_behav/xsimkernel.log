@@ -1,0 +1,7 @@
+Running: xsim.dir/four_bit_even_parity_checker_tb_behav/xsimk.exe -simmode gui -wdb four_bit_even_parity_checker_tb_behav.wdb -simrunnum 0 -socket 51933
+Design successfully loaded
+Design Loading Memory Usage: 7748 KB (Peak: 7748 KB)
+Design Loading CPU Usage: 0 ms
+Simulation completed
+Simulation Memory Usage: 8380 KB (Peak: 8380 KB)
+Simulation CPU Usage: 15 ms

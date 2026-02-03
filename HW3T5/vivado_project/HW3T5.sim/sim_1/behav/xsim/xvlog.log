@@ -1,0 +1,6 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/lebray/Vivado-Workflow-Scripts/HW3T5/three_bit_even_parity_generator.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module three_bit_even_parity_generator
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/lebray/Vivado-Workflow-Scripts/HW3T5/three_bit_even_parity_generator_tb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module three_bit_even_parity_generator_tb
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/lebray/Vivado-Workflow-Scripts/HW3T5/vivado_project/HW3T5.sim/sim_1/behav/xsim/glbl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module glbl

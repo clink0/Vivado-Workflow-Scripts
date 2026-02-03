@@ -25,12 +25,25 @@ def find_verilog_files(source_dir):
     return design_files, testbench_files, source_path
 
 def detect_top_module(vfile):
-    """Extract module name from Verilog file"""
+    """Extract module name from Verilog file - handles various formatting"""
     with open(vfile, 'r') as f:
         for line in f:
-            if line.strip().startswith("module"):
-                module_name = line.split()[1].split('(')[0].strip()
-                return module_name
+            stripped = line.strip()
+            # Skip comments and blank lines
+            if stripped.startswith("//") or stripped.startswith("/*") or stripped == "":
+                continue
+            # Match lines that start with 'module'
+            if stripped.startswith("module "):
+                # Remove 'module' keyword
+                remainder = stripped[len("module"):].strip()
+                # Module name ends at '(' or whitespace or ';'
+                module_name = ""
+                for ch in remainder:
+                    if ch in ('(', ' ', '\t', ';'):
+                        break
+                    module_name += ch
+                if module_name:
+                    return module_name
     return None
 
 def create_and_simulate(source_dir, sim_time="1000ns", open_gui=True, board="basys3", vivado_path="vivado"):
@@ -50,6 +63,20 @@ def create_and_simulate(source_dir, sim_time="1000ns", open_gui=True, board="bas
     # Get module names
     design_top = detect_top_module(design_files[0])
     testbench_top = detect_top_module(testbench_files[0])
+
+    # Print detected modules for debugging
+    print(f"  [DEBUG] design_files[0]: {design_files[0].name} -> module: '{design_top}'")
+    print(f"  [DEBUG] testbench_files[0]: {testbench_files[0].name} -> module: '{testbench_top}'")
+
+    # Fail early if either module name wasn't detected
+    if not design_top:
+        print(f"ERROR: Could not detect top module name in: {design_files[0]}")
+        print("  Check that the file has a valid 'module <name>(...' line")
+        return False
+    if not testbench_top:
+        print(f"ERROR: Could not detect top module name in: {testbench_files[0]}")
+        print("  Check that the file has a valid 'module <name>(...' line")
+        return False
     
     project_name = source_path.name
     project_dir = source_path / "vivado_project"
@@ -72,10 +99,8 @@ def create_and_simulate(source_dir, sim_time="1000ns", open_gui=True, board="bas
     print(f"Testbench files: {len(testbench_files)}")
     for tf in testbench_files:
         print(f"  - {tf.name}")
-    if design_top:
-        print(f"Design top module: {design_top}")
-    if testbench_top:
-        print(f"Testbench top module: {testbench_top}")
+    print(f"Design top module: {design_top}")
+    print(f"Testbench top module: {testbench_top}")
     print(f"Simulation time: {sim_time}")
     print(f"Open GUI: {open_gui}")
     print("=" * 70)
@@ -122,11 +147,9 @@ puts "Adding design files..."
         if constraint_file:
             tcl_script += f'add_files -fileset constrs_1 -norecurse {{{constraint_file[0]}}}\n'
         
-        if design_top:
-            tcl_script += f'set_property top {design_top} [current_fileset]\n'
-        
-        if testbench_top:
-            tcl_script += f'set_property top {testbench_top} [get_filesets sim_1]\n'
+        # These are now guaranteed to be non-None (we returned early above if they were)
+        tcl_script += f'set_property top {design_top} [current_fileset]\n'
+        tcl_script += f'set_property top {testbench_top} [get_filesets sim_1]\n'
         
         tcl_script += """
 update_compile_order -fileset sources_1
@@ -192,7 +215,7 @@ puts "========================================="
             return False
     
     else:
-        # Batch mode (original behavior)
+        # Batch mode
         tcl_script = f"""
 # Create project
 create_project {project_name} {{{project_dir}}} -part {board_cfg['part']} -force
@@ -217,11 +240,8 @@ puts "Adding design files..."
         if constraint_file:
             tcl_script += f'add_files -fileset constrs_1 -norecurse {{{constraint_file[0]}}}\n'
         
-        if design_top:
-            tcl_script += f'set_property top {design_top} [current_fileset]\n'
-        
-        if testbench_top:
-            tcl_script += f'set_property top {testbench_top} [get_filesets sim_1]\n'
+        tcl_script += f'set_property top {design_top} [current_fileset]\n'
+        tcl_script += f'set_property top {testbench_top} [get_filesets sim_1]\n'
         
         tcl_script += """
 update_compile_order -fileset sources_1
@@ -289,7 +309,7 @@ exit 0
                         print("\nTo view waveform:")
                         print(f"  cd {source_path}")
                         print(f"  vivado -mode gui")
-                        print(f"  Then: File → Open Waveform Database → {wdb_files[0].name}")
+                        print(f"  Then: File -> Open Waveform Database -> {wdb_files[0].name}")
                 
                 print("=" * 70)
                 return True
@@ -307,18 +327,18 @@ exit 0
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python run_simulation.py <source_dir> [options]")
+        print("Usage: python run_simulation_gui.py <source_dir> [options]")
         print("\nOptions:")
         print("  --time <duration>  Simulation time (default: 1000ns)")
         print("                     Examples: 100ns, 10us, 1ms")
         print("  --gui              Open waveform viewer automatically (default)")
         print("  --no-gui           Run in batch mode, save waveform for later")
-        print("  --board <n>     Target board (default: basys3)")
+        print("  --board <n>        Target board (default: basys3)")
         print("\nExamples:")
-        print("  python run_simulation.py .                    # GUI mode")
-        print("  python run_simulation.py . --time 500ns        # GUI with custom time")
-        print("  python run_simulation.py . --no-gui            # Batch mode")
-        print("  python run_simulation.py ~/my_design --time 10us")
+        print("  python run_simulation_gui.py .                    # GUI mode")
+        print("  python run_simulation_gui.py . --time 500ns       # GUI with custom time")
+        print("  python run_simulation_gui.py . --no-gui           # Batch mode")
+        print("  python run_simulation_gui.py ~/my_design --time 10us")
         sys.exit(1)
     
     source_dir = sys.argv[1]

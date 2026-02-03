@@ -11,7 +11,7 @@ assign an = 4'b1110;
 
 assign act = {sw[4],1'b0,sw[4],1'b0};
 
-7seg ss(.in1(act), .out1(seg));
+decoder_7seg ss(.in1(act), .out1(seg));
 homealarm HA(.a(led), .s(sw[3:0]), .m(sw[4]));
 
 endmodule
