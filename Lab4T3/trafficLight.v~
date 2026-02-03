@@ -1,57 +1,92 @@
-module trafficLight(clk, light1, light2);
+module trafficLight(clk, light);
 input clk;
-output [2:0] light1;
-output [2:0] light2;
-reg [2:0] in = 3'b0;
+output reg [5:0] light;
+
+reg [2:0] state = 3'b000;
+reg [31:0] cnt;
 parameter cntmax = 32'd100000000;
-reg rush = 0;
 
 always @(posedge clk)
 begin
-case(rush)
-  0:
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-
-  begin
-  if(cnt == cntmax & in != 3'b101)
+case(state)
+  3'b000:
     begin
-      cnt <= 0;
-      in <= in + 1;
+      if(cnt == cntmax)
+      begin
+	      cnt <= 0;
+	      state <= state + 1;
+      end
+      else
+      begin
+	      cnt <= cnt + 1;
+	      light <= 6'b100001;
+      end
     end
-  else if (cnt == cntmax & in == 3'b101)
+  3'b001:
     begin
-      cnt <= 0;
-      in <= 0;
+      if(cnt == cntmax)
+      begin
+	      cnt <= 0;
+	      state <= state + 1;
+      end
+      else
+      begin
+	      cnt <= cnt + 1;
+	      light <= 6'b001010;
+      end
     end
-  else cnt <= cnt + 1;
-  end
-  1:
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-  light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-
-  begin
-  if(cnt == cntmax & in != 3'b101)
+  3'b010:
     begin
-      cnt <= 0;
-      in <= in + 1;
+      if(cnt == cntmax)
+      begin
+	      cnt <= 0;
+	      state <= state + 1;
+      end
+      else
+      begin
+	      cnt <= cnt + 1;
+	      light <= 6'b001001;
+      end
     end
-  else if (cnt == cntmax & in == 3'b101)
+  3'b011:
     begin
-      cnt <= 0;
-      in <= 0;
+      if(cnt == cntmax)
+      begin
+	      cnt <= 0;
+	      state <= state + 1;
+      end
+      else
+      begin
+	      cnt <= cnt + 1;
+	      light <= 6'b001100;
+      end
     end
-  else cnt <= cnt + 1;
-  end
-
-
+  3'b100:
+    begin
+      if(cnt == cntmax)
+      begin
+	      cnt <= 0;
+	      state <= state + 1;
+      end
+      else
+      begin
+	      cnt <= cnt + 1;
+	      light <= 6'b010001;
+      end
+    end
+  3'b101:
+    begin
+      if(cnt == cntmax)
+      begin
+	      cnt <= 0;
+	      state <= 3'b000;
+      end
+      else
+      begin
+	      cnt <= cnt + 1;
+	      light <= 6'b001001;
+      end
+    end
+  endcase
 end
 endmodule

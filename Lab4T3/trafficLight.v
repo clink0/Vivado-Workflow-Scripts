@@ -1,6 +1,7 @@
-module trafficLight(clk, light1, light2);
+module trafficLight(clk, light);
 input clk;
-output reg [5:0] G1Y1R1G2Y2R2;
+output reg [5:0] light;
+
 reg [2:0] state = 3'b000;
 reg [31:0] cnt;
 parameter cntmax = 32'd100000000;
@@ -18,10 +19,10 @@ case(state)
       else
       begin
 	      cnt <= cnt + 1;
-	      G1Y1R1G2Y2R2 <= 6'b001100;
+	      light <= 6'b001100;
       end
     end
-  3'b000:
+  3'b001:
     begin
       if(cnt == cntmax)
       begin
@@ -31,10 +32,10 @@ case(state)
       else
       begin
 	      cnt <= cnt + 1;
-	      G1Y1R1G2Y2R2 <= 6'b001100;
+	      light <= 6'b001010;
       end
     end
-  3'b000:
+  3'b010:
     begin
       if(cnt == cntmax)
       begin
@@ -44,10 +45,10 @@ case(state)
       else
       begin
 	      cnt <= cnt + 1;
-	      G1Y1R1G2Y2R2 <= 6'b001100;
+	      light <= 6'b001001;
       end
     end
-  3'b000:
+  3'b011:
     begin
       if(cnt == cntmax)
       begin
@@ -57,10 +58,10 @@ case(state)
       else
       begin
 	      cnt <= cnt + 1;
-	      G1Y1R1G2Y2R2 <= 6'b001100;
+	      light <= 6'b100001;
       end
     end
-  3'b000:
+  3'b100:
     begin
       if(cnt == cntmax)
       begin
@@ -70,24 +71,22 @@ case(state)
       else
       begin
 	      cnt <= cnt + 1;
-	      G1Y1R1G2Y2R2 <= 6'b001100;
+	      light <= 6'b010001;
       end
     end
-  3'b000:
+  3'b101:
     begin
       if(cnt == cntmax)
       begin
 	      cnt <= 0;
-	      state <= state + 1;
+	      state <= 3'b000;
       end
       else
       begin
 	      cnt <= cnt + 1;
-	      G1Y1R1G2Y2R2 <= 6'b001100;
+	      light <= 6'b001001;
       end
     end
-
-
-
+  endcase
 end
 endmodule
