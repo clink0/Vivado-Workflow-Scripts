@@ -1,7 +1,0 @@
-Running: xsim.dir/three_bit_even_parity_generator_tb_behav/xsimk.exe -simmode gui -wdb three_bit_even_parity_generator_tb_behav.wdb -simrunnum 0 -socket 60922
-Design successfully loaded
-Design Loading Memory Usage: 8404 KB (Peak: 8404 KB)
-Design Loading CPU Usage: 30 ms
-Simulation completed
-Simulation Memory Usage: 9040 KB (Peak: 9040 KB)
-Simulation CPU Usage: 30 ms
