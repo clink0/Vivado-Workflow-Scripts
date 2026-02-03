@@ -1,0 +1,34 @@
+#-----------------------------------------------------------
+# Vivado v2018.3 (64-bit)
+# SW Build 2405991 on Thu Dec  6 23:38:27 MST 2018
+# IP Build 2404404 on Fri Dec  7 01:43:56 MST 2018
+# Start of session at: Mon Feb  2 16:51:03 2026
+# Process ID: 35848
+# Current directory: C:/Users/lebray/Vivado-Workflow-Scripts/HW3T1
+# Command line: vivado.exe -mode gui -source C:\Users\lebray\Vivado-Workflow-Scripts\HW3T1\run_sim_gui.tcl
+# Log file: C:/Users/lebray/Vivado-Workflow-Scripts/HW3T1/vivado.log
+# Journal file: C:/Users/lebray/Vivado-Workflow-Scripts/HW3T1\vivado.jou
+#-----------------------------------------------------------
+start_gui
+source {C:\Users\lebray\Vivado-Workflow-Scripts\HW3T1\run_sim_gui.tcl}
+# create_project HW3T1 {C:\Users\lebray\Vivado-Workflow-Scripts\HW3T1\vivado_project} -part xc7a35tcpg236-1 -force
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/Xilinx/Vivado/2018.3/data/ip'.
+create_project: Time (s): cpu = 00:00:07 ; elapsed = 00:00:06 . Memory (MB): peak = 687.621 ; gain = 108.000
+# if {[catch {set_property board_part digilentinc.com:basys3:part0:1.2 [current_project]}]} {
+#     puts "Note: Board part not available, using part only"
+# }
+Note: Board part not available, using part only
+# set_property target_language Verilog [current_project]
+# puts "Adding design files..."
+Adding design files...
+# add_files -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\HW3T1\one_bit_comparator.v}
+# puts "Adding testbench files..."
+Adding testbench files...
+# add_files -fileset sim_1 -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\HW3T1\one_bit_comparator_tb.v}
+# add_files -fileset constrs_1 -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\Basys3_Master.xdc}
+# set_property top one_bit_comparator [current_fileset]
+# set_property top one_bit_comparator_tb;
+ERROR: [Common 17-163] Missing value for option 'objects', please type 'set_property -help' for usage info.
+update_compile_order -fileset sources_1
