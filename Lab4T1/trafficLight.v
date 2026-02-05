@@ -1,16 +1,21 @@
 module trafficLight(clk, light1, light2);
+
 input clk;
 output [2:0] light1;
 output [2:0] light2;
+
 reg [2:0] in = 3'b0;
+reg [31:0] cnt;
+
 parameter cntmax = 32'd100000000;
 
-assign light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-assign light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-assign light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-assign light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-assign light1[2] = (~in[2] & (in[1]) &  & (in[0]));
-assign light1[2] = (~in[2] & (in[1]) &  & (in[0]));
+assign light1[2] = (~in[2] & in[1] & in[0]);  
+assign light1[1] = (in[2] & ~in[1] & ~in[0]);  
+assign light1[0] = ~(light1[2] | light1[1]);
+
+assign light2[2] = (~in[2] & ~in[1] & ~in[0]);  
+assign light2[1] = (~in[2] & ~in[1] & in[0]);  
+assign light2[0] = in[2] | in[1];
 
 always @(posedge clk)
 begin
