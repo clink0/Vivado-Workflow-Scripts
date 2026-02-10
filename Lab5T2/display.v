@@ -23,10 +23,10 @@ module display (
   end
 
   always @(posedge clk) begin
-    if (an == 2'b1101) begin
+    if (an == 4'b1101) begin
       if (data[3] == 1) seg <= 7'b0111111;
       else seg <= 7'b1111111;
-    end else if (an == 2'b1110) begin
+    end else if (an == 4'b1110) begin
       case (data)
         4'b0000: seg <= 7'b1000000;  // 0
         4'b0001: seg <= 7'b1111001;  // 1
