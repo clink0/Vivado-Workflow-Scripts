@@ -8,7 +8,7 @@ module adder_top (
   input clk;
   input [15:0] sw;
   output [6:0] seg;
-  output [1:0] an;
+  output [3:0] an;
   output dp;
 
   wire [3:0] result_data;
@@ -23,7 +23,7 @@ module adder_top (
       .OV(overflow)
   );
 
-  disp U2 (
+  display U2 (
       .clk (clk),
       .dp  (dp),
       .seg (seg),
