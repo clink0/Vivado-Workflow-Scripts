@@ -20,7 +20,7 @@ module adder_top (
   wire [3:0] data_wire;
 
   assign led[3:0]  = data_wire;
-  assign led[15:4] = 0;  // Turn off unused LEDs
+  assign led[15:4] = 0;
 
   debounce U_Debounce (
       .clk(clk),
@@ -43,7 +43,7 @@ module adder_top (
       .OV(led[4])
   );
 
-  disp U_Disp (
+  display U_Display (
       .clk (clk),
       .seg (seg),
       .an  (an),
