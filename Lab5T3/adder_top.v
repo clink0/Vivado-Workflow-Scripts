@@ -11,7 +11,7 @@ module adder_top (
   input [15:0] sw;
   input btnC;
   output [6:0] seg;
-  output [1:0] an;
+  output [3:0] an;
   output dp;
   output [15:0] led;
 
