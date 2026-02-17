@@ -1,227 +1,78 @@
-module translator_top (
+module LCD_driver (
     clk,
     reset,
-    sw,
-    rs,
+    wr_en,
+    data_in,
+    data_out,
     en,
-    data_out
+    rs
 );
 
   input clk;
   input reset;
-  input [7:0] sw;
-  output rs;
-  output en;
-  output [7:0] data_out;
+  input wr_en;
+  input [7:0] data_in;
+  output reg [7:0] data_out;
+  output reg en;
+  output reg rs;
 
-  parameter clk_param = 16000000;
+  parameter clk_param = 100000;
 
-  reg [7:0] data[15:0];
-  reg [7:0] character;
-  wire [7:0] data_in;
-  integer counter = 0;
-  reg [3:0] index = 0;
+  localparam INIT = 2'b00, WAIT = 2'b01, WRITE = 2'b10;
+  reg [2:0] state = INIT;
 
-  reg wr_en = 0;
+  localparam init_index = 3;
+  localparam char_index = 15;
+  reg [3:0] init_count = 0;
+  integer limit_count = 0;
+  reg [7:0] init[3:0];
+  reg [3:0] clear = 0;
 
-  lcd_driver lcd1 (
-      .clk(clk),
-      .reset(reset),
-      .wr_en(wr_en),
-      .data_in(data_in),
-      .data_out(data_out),
-      .en(en),
-      .rs(rs)
-  );
-
-  assign data_in = character;
-
-  always @(posedge clk) begin
-    if (reset) counter <= 0;
-    else begin
-      if (counter == clk_param) counter <= 0;
-      else counter <= counter + 1;
-    end
+  initial begin
+    init[0] = 8'h30;  // 1 Line, 5x8 Dots
+    init[1] = 8'h01;  // Clear display
+    init[2] = 8'h06;  // Increment cursor (Shift cursor to right)
+    init[3] = 8'h0F;  // Display on cursor blinking
+    rs = 1'b1;
   end
 
-  always @(posedge clk) begin
+  always @(negedge clk) begin
+    rs <= 1'b1;
+    en <= 1'b1;
     if (reset) begin
-      wr_en <= 0;
-      index <= 0;
+      state <= INIT;
+      init_count <= 0;
+      limit_count <= 0;
+      clear <= 0;
     end else begin
-      if (counter == clk_param) begin
-        wr_en <= 1'b1;
-        character <= data[index];
-        index <= index + 1'b1;
-      end else wr_en <= 0;
+      case (state)
+        INIT: begin
+          rs <= 0;
+          data_out <= init[init_count];
+          if (limit_count == clk_param) begin
+            en <= 0;
+            limit_count <= 0;
+            init_count <= init_count + 1'b1;
+            if (init_count == init_index) begin
+              init_count <= 0;
+              state <= WAIT;
+            end
+          end else limit_count <= limit_count + 1;
+        end
+        WAIT: if (wr_en) state <= WRITE;
+        WRITE: begin
+          data_out <= data_in;
+          if (limit_count == clk_param) begin
+            en <= 0;
+            limit_count <= 0;
+            clear <= clear + 1'b1;
+            if (clear == char_index) begin
+              state <= INIT;
+              clear <= 0;
+            end else state <= WAIT;
+          end else limit_count <= limit_count + 1;
+        end
+      endcase
     end
   end
-
-  always @(posedge clk)
-    case (sw)
-      8'h01: begin  // ACTION - ACCION
-        data[0]  <= "A";
-        data[1]  <= "C";
-        data[2]  <= "C";
-        data[3]  <= "I";
-        data[4]  <= "O";
-        data[5]  <= "N";
-        data[6]  <= " ";
-        data[7]  <= " ";
-        data[8]  <= " ";
-        data[9]  <= " ";
-        data[10] <= " ";
-        data[11] <= " ";
-        data[12] <= " ";
-        data[13] <= " ";
-        data[14] <= " ";
-        data[15] <= " ";
-      end
-      8'h02: begin  // MOVE - MOVIMIENTO
-        data[0]  <= "M";
-        data[1]  <= "O";
-        data[2]  <= "V";
-        data[3]  <= "I";
-        data[4]  <= "M";
-        data[5]  <= "I";
-        data[6]  <= "E";
-        data[7]  <= "N";
-        data[8]  <= "T";
-        data[9]  <= "O";
-        data[10] <= " ";
-        data[11] <= " ";
-        data[12] <= " ";
-        data[13] <= " ";
-        data[14] <= " ";
-        data[15] <= " ";
-      end
-      8'h04: begin  // TURN - GIRO
-        data[0]  <= "G";
-        data[1]  <= "I";
-        data[2]  <= "R";
-        data[3]  <= "O";
-        data[4]  <= " ";
-        data[5]  <= " ";
-        data[6]  <= " ";
-        data[7]  <= " ";
-        data[8]  <= " ";
-        data[9]  <= " ";
-        data[10] <= " ";
-        data[11] <= " ";
-        data[12] <= " ";
-        data[13] <= " ";
-        data[14] <= " ";
-        data[15] <= " ";
-      end
-      8'h08: begin  // RUN - CORRER
-        data[0]  <= "C";
-        data[1]  <= "O";
-        data[2]  <= "R";
-        data[3]  <= "R";
-        data[4]  <= "E";
-        data[5]  <= "R";
-        data[6]  <= " ";
-        data[7]  <= " ";
-        data[8]  <= " ";
-        data[9]  <= " ";
-        data[10] <= " ";
-        data[11] <= " ";
-        data[12] <= " ";
-        data[13] <= " ";
-        data[14] <= " ";
-        data[15] <= " ";
-      end
-      8'h10: begin  // LOOK - MIRAR
-        data[0]  <= "M";
-        data[1]  <= "I";
-        data[2]  <= "R";
-        data[3]  <= "A";
-        data[4]  <= "R";
-        data[5]  <= " ";
-        data[6]  <= " ";
-        data[7]  <= " ";
-        data[8]  <= " ";
-        data[9]  <= " ";
-        data[10] <= " ";
-        data[11] <= " ";
-        data[12] <= " ";
-        data[13] <= " ";
-        data[14] <= " ";
-        data[15] <= " ";
-      end
-      8'h20: begin  // ATTACK - ATAQUE
-        data[0]  <= "A";
-        data[1]  <= "T";
-        data[2]  <= "A";
-        data[3]  <= "Q";
-        data[4]  <= "U";
-        data[5]  <= "E";
-        data[6]  <= " ";
-        data[7]  <= " ";
-        data[8]  <= " ";
-        data[9]  <= " ";
-        data[10] <= " ";
-        data[11] <= " ";
-        data[12] <= " ";
-        data[13] <= " ";
-        data[14] <= " ";
-        data[15] <= " ";
-      end
-      8'h40: begin  // STOP - DETENER
-        data[0]  <= "D";
-        data[1]  <= "E";
-        data[2]  <= "T";
-        data[3]  <= "E";
-        data[4]  <= "N";
-        data[5]  <= "E";
-        data[6]  <= "R";
-        data[7]  <= " ";
-        data[8]  <= " ";
-        data[9]  <= " ";
-        data[10] <= " ";
-        data[11] <= " ";
-        data[12] <= " ";
-        data[13] <= " ";
-        data[14] <= " ";
-        data[15] <= " ";
-      end
-      8'h80: begin  // HELLO - HOLA
-        data[0]  <= "H";
-        data[1]  <= "O";
-        data[2]  <= "L";
-        data[3]  <= "A";
-        data[4]  <= " ";
-        data[5]  <= " ";
-        data[6]  <= " ";
-        data[7]  <= " ";
-        data[8]  <= " ";
-        data[9]  <= " ";
-        data[10] <= " ";
-        data[11] <= " ";
-        data[12] <= " ";
-        data[13] <= " ";
-        data[14] <= " ";
-        data[15] <= " ";
-      end
-      default: begin  // MAKE A SELECTION - HAS UNA ELECCION
-        data[0]  <= "H";
-        data[1]  <= "A";
-        data[2]  <= "S";
-        data[3]  <= " ";
-        data[4]  <= "U";
-        data[5]  <= "N";
-        data[6]  <= "A";
-        data[7]  <= " ";
-        data[8]  <= "E";
-        data[9]  <= "L";
-        data[10] <= "E";
-        data[11] <= "C";
-        data[12] <= "C";
-        data[13] <= "I";
-        data[14] <= "O";
-        data[15] <= "N";
-      end
-    endcase
-
 endmodule
-

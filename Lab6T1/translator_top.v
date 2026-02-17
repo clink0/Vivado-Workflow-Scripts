@@ -1,4 +1,4 @@
-module translator_topmodule (
+module translator_top (
     clk,
     reset,
     sw,
@@ -24,7 +24,7 @@ module translator_topmodule (
 
   reg wr_en = 0;
 
-  LCD_driver_0 lcd1 (
+  LCD_driver lcd1 (
       .clk(clk),
       .reset(reset),
       .wr_en(wr_en),
