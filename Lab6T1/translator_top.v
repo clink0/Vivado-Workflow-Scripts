@@ -1,18 +1,16 @@
-module translator_top (
+module translator_topmodule (
     clk,
-    reset,
+    btnC,
     sw,
-    rs,
-    en,
-    data_out
+    JB,
+    JA
 );
 
   input clk;
-  input reset;
+  input btnC;
   input [7:0] sw;
-  output rs;
-  output en;
-  output [7:0] data_out;
+  output [7:0] JA;
+  output [7:0] JB;
 
   parameter clk_param = 16000000;
 
@@ -24,9 +22,20 @@ module translator_top (
 
   reg wr_en = 0;
 
+  // JA = data_out (LCD data bus D0-D7)
+  // JB[0] = en (LCD Enable)
+  // JB[2] = rs (LCD Register Select)
+  wire en;
+  wire rs;
+  wire [7:0] data_out;
+
+  assign JA = data_out;
+  assign JB[0] = en;
+  assign JB[2] = rs;
+
   LCD_driver lcd1 (
       .clk(clk),
-      .reset(reset),
+      .reset(btnC),
       .wr_en(wr_en),
       .data_in(data_in),
       .data_out(data_out),
@@ -37,7 +46,7 @@ module translator_top (
   assign data_in = character;
 
   always @(posedge clk) begin
-    if (reset) counter <= 0;
+    if (btnC) counter <= 0;
     else begin
       if (counter == clk_param) counter <= 0;
       else counter <= counter + 1;
@@ -45,7 +54,7 @@ module translator_top (
   end
 
   always @(posedge clk) begin
-    if (reset) begin
+    if (btnC) begin
       wr_en <= 0;
       index <= 0;
     end else begin
