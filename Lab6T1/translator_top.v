@@ -1,4 +1,4 @@
-module translator_topmodule (
+module translator_top (
     clk,
     btnC,
     sw,
