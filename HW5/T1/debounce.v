@@ -6,11 +6,9 @@ module debounce (
   input clk;
   input btn;
   output reg btn_clr;
-
   parameter delay = 650000;
   integer count = 0;
   reg xnew = 0;
-
   always @(posedge clk) begin
     if (btn != xnew) begin
       count <= 0;
@@ -19,4 +17,3 @@ module debounce (
     else count <= count + 1;
   end
 endmodule
-
