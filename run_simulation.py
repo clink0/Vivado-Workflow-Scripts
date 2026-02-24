@@ -120,10 +120,12 @@ class ProgressBar:
 # Verilog helpers
 # ─────────────────────────────────────────────────────────────
 def find_verilog_files(source_dir):
-    """Find all .v files, separating design and testbench"""
+    """Find all .v files, separating design and testbench.
+    Also finds .mem files to add as design sources."""
     source_path = Path(source_dir).resolve()
     design_files = []
     testbench_files = []
+    mem_files = []
 
     for vfile in source_path.glob("*.v"):
         if "_tb" in vfile.stem.lower() or "_test" in vfile.stem.lower() or "testbench" in vfile.stem.lower():
@@ -131,7 +133,10 @@ def find_verilog_files(source_dir):
         else:
             design_files.append(vfile)
 
-    return design_files, testbench_files, source_path
+    for mfile in source_path.glob("*.mem"):
+        mem_files.append(mfile)
+
+    return design_files, testbench_files, mem_files, source_path
 
 def detect_top_module(vfile):
     """Extract module name from Verilog file - handles various formatting"""
@@ -174,7 +179,7 @@ def run_vivado_batch(tcl_file, vivado_path, cwd):
 # Tcl generation  (shared between GUI and batch paths)
 # ─────────────────────────────────────────────────────────────
 def build_tcl_project(project_name, project_dir, board_cfg, design_files,
-                      testbench_files, constraint_file, design_top, testbench_top):
+                      testbench_files, mem_files, constraint_file, design_top, testbench_top):
     """Generate the project-setup portion of the Tcl script.
     Returns the Tcl string up to (but not including) the simulation commands."""
     tcl = f"""
@@ -188,6 +193,9 @@ set_property target_language Verilog [current_project]
 """
     for vfile in design_files:
         tcl += f'add_files -norecurse {{{vfile}}}\n'
+
+    for mfile in mem_files:
+        tcl += f'add_files -norecurse {{{mfile}}}\n'
 
     for vfile in testbench_files:
         tcl += f'add_files -fileset sim_1 -norecurse {{{vfile}}}\n'
@@ -211,7 +219,7 @@ update_compile_order -fileset sim_1
 def create_and_simulate(source_dir, sim_time="1000ns", open_gui=True, board="basys3", vivado_path="vivado"):
     """Create project and run simulation"""
 
-    design_files, testbench_files, source_path = find_verilog_files(source_dir)
+    design_files, testbench_files, mem_files, source_path = find_verilog_files(source_dir)
 
     # ── early validation ─────────────────────────────────────
     if not design_files:
@@ -253,6 +261,10 @@ def create_and_simulate(source_dir, sim_time="1000ns", open_gui=True, board="bas
     print("  Design files")
     for df in design_files:
         print(f"    {df.name}")
+    if mem_files:
+        print("  Memory files")
+        for mf in mem_files:
+            print(f"    {mf.name}")
     print("  Testbench files")
     for tf in testbench_files:
         print(f"    {tf.name}")
@@ -278,7 +290,7 @@ def create_and_simulate(source_dir, sim_time="1000ns", open_gui=True, board="bas
     # ── shared project Tcl ───────────────────────────────────
     tcl_project = build_tcl_project(
         project_name, project_dir, board_cfg,
-        design_files, testbench_files, constraint_file,
+        design_files, testbench_files, mem_files, constraint_file,
         design_top, testbench_top
     )
 

@@ -1,0 +1,9 @@
+0.6
+2018.3
+Dec  7 2018
+00:33:28
+C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_4/rom_3bit.v,1771378959,verilog,,C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_4/rom_3bit_tb.v,,rom,,,,,,,,
+C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_4/rom_3bit_tb.v,1771378959,verilog,,,,rom_tb,,,,,,,,
+C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_4/vivado_project/HW4T3_4.sim/sim_1/behav/xsim/glbl.v,1544155481,verilog,,,,glbl,,,,,,,,
+C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_4/vivado_project/HW4T3_4.srcs/sources_1/ip/myRom/sim/myRom.v,1771379437,verilog,,C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_5/myRom_tb.v,,myRom,,,,,,,,
+C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_5/myRom_tb.v,1771379537,verilog,,,,myRom_tb,,,,,,,,

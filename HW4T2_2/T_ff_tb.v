@@ -1,4 +1,3 @@
-
 `timescale 1ns / 1ps
 module T_flip_flop_tb;
 reg t,clk,clr;
