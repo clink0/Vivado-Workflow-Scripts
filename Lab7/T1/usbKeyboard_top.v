@@ -1,0 +1,62 @@
+module USB_keyboard_top(clk, PS2Clk, PS2Data, led);
+
+input clk;
+input PS2Clk;
+input PS2Data;
+output [15:0] led;
+
+localparam PRESS=2'b00, EXTEND=2'b01, RLS=2'b10, CHECK=2'b11;
+
+reg [1:0] state = PRESS;
+reg [23:0] received;
+wire ready;
+wire [7:0] data;
+reg [7:0] ledreg=0;
+reg ready_prev;
+
+USB_keyboard kb1(.ps2data(PS2Data), .ps2clk(PS2Clk), .data(data), .ready(ready));
+
+always @ (posedge clk)
+begin
+  ready_prev <= ready;
+  case (state)
+    PRESS:
+      if (ready_prev==0 && ready==1)
+      begin
+        received[23:16] <= data;
+        state <= EXTEND;
+      end
+    EXTEND:
+      if (ready_prev==0 && ready==1)
+      begin
+        received[15:8] <= data;
+        state <= RLS;
+      end
+    RLS:
+      if (received[15:8] != 8'hF0)
+        state <= EXTEND;
+      else if (ready_prev==0 && ready==1)
+      begin
+        received[7:0] <= data;
+        state <= CHECK;
+      end
+    CHECK:
+      begin
+        case (received[7:0])
+          8'h16: ledreg[0] <= ~ledreg[0]; // toggle if 1 is pressed
+          8'h1E: ledreg[1] <= ~ledreg[1]; // toggle if 2 is pressed
+          8'h26: ledreg[2] <= ~ledreg[2]; // toggle if 3 is pressed
+          8'h25: ledreg[3] <= ~ledreg[3]; // toggle if 4 is pressed
+          8'h2E: ledreg[4] <= ~ledreg[4]; // toggle if 5 is pressed
+          8'h36: ledreg[5] <= ~ledreg[5]; // toggle if 6 is pressed
+          8'h3D: ledreg[6] <= ~ledreg[6]; // toggle if 7 is pressed
+          8'h3E: ledreg[7] <= ~ledreg[7]; // toggle if 8 is pressed
+        endcase
+        state <= PRESS;
+      end
+  endcase
+end
+
+assign led = {received[7:0], ledreg};
+
+endmodule
