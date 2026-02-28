@@ -22,9 +22,6 @@ module translator_top (
 
   reg wr_en = 0;
 
-  // JA = data_out (LCD data bus D0-D7)
-  // JB[0] = en (LCD Enable)
-  // JB[2] = rs (LCD Register Select)
   wire en;
   wire rs;
   wire [7:0] data_out;
@@ -68,7 +65,7 @@ module translator_top (
 
   always @(posedge clk)
     case (sw)
-      8'h01: begin  // ACTION - ACCION
+      8'h01: begin
         data[0]  <= "A";
         data[1]  <= "C";
         data[2]  <= "C";
@@ -86,7 +83,7 @@ module translator_top (
         data[14] <= " ";
         data[15] <= " ";
       end
-      8'h02: begin  // MOVE - MOVIMIENTO
+      8'h02: begin
         data[0]  <= "M";
         data[1]  <= "O";
         data[2]  <= "V";
@@ -104,7 +101,7 @@ module translator_top (
         data[14] <= " ";
         data[15] <= " ";
       end
-      8'h04: begin  // TURN - GIRO
+      8'h04: begin
         data[0]  <= "G";
         data[1]  <= "I";
         data[2]  <= "R";
@@ -122,7 +119,7 @@ module translator_top (
         data[14] <= " ";
         data[15] <= " ";
       end
-      8'h08: begin  // RUN - CORRER
+      8'h08: begin
         data[0]  <= "C";
         data[1]  <= "O";
         data[2]  <= "R";
@@ -140,7 +137,7 @@ module translator_top (
         data[14] <= " ";
         data[15] <= " ";
       end
-      8'h10: begin  // LOOK - MIRAR
+      8'h10: begin
         data[0]  <= "M";
         data[1]  <= "I";
         data[2]  <= "R";
@@ -158,7 +155,7 @@ module translator_top (
         data[14] <= " ";
         data[15] <= " ";
       end
-      8'h20: begin  // ATTACK - ATAQUE
+      8'h20: begin
         data[0]  <= "A";
         data[1]  <= "T";
         data[2]  <= "A";
@@ -176,7 +173,7 @@ module translator_top (
         data[14] <= " ";
         data[15] <= " ";
       end
-      8'h40: begin  // STOP - DETENER
+      8'h40: begin
         data[0]  <= "D";
         data[1]  <= "E";
         data[2]  <= "T";
@@ -194,7 +191,7 @@ module translator_top (
         data[14] <= " ";
         data[15] <= " ";
       end
-      8'h80: begin  // HELLO - HOLA
+      8'h80: begin
         data[0]  <= "H";
         data[1]  <= "O";
         data[2]  <= "L";
@@ -212,7 +209,7 @@ module translator_top (
         data[14] <= " ";
         data[15] <= " ";
       end
-      default: begin  // MAKE A SELECTION - HAS UNA ELECCION
+      default: begin
         data[0]  <= "H";
         data[1]  <= "A";
         data[2]  <= "S";

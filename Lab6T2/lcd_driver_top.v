@@ -3,19 +3,18 @@ module LCD_driver_top(clk, JB, JA);
 input clk;             
 output [7:0] JB;
 output [7:0] JA;
-parameter clk_param = 16000000; // 16000000/100000000 = 0.16 s per character
+parameter clk_param = 16000000;
    
 reg [7:0] data [15:0];
 reg [7:0] data_in;
 integer counter = 0;
 reg [3:0] index = 0;
 reg wr_en = 0;
-reg done = 0; // flag: all 16 chars sent once, stop cycling
+reg done = 0;
 
 LCD_driver lcd1(.clk(clk), .wr_en(wr_en), .data_in(data_in),
     .data_out(JA), .en(JB[0]), .rs(JB[2]));
 
-// Steady text: "HELLO WORLD!    "
 initial
 begin
     data[0]  = "H";
@@ -47,7 +46,7 @@ begin
             data_in <= data[index];
             if (index == 15)
             begin
-                done <= 1; // all characters sent, stop
+                done <= 1;
                 index <= 0;
             end
             else
@@ -60,7 +59,7 @@ begin
         end
     end
     else
-        wr_en <= 0; // no more writes, text stays on screen
+        wr_en <= 0;
 end
 
 endmodule

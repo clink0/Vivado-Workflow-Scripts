@@ -117,7 +117,7 @@ class ProgressBar:
 
 
 # ─────────────────────────────────────────────────────────────
-# Verilog helpers  (unchanged logic)
+# Verilog helpers
 # ─────────────────────────────────────────────────────────────
 def find_verilog_files(source_dir):
     """Find all .v files, separating top modules from design modules"""
@@ -137,7 +137,15 @@ def find_verilog_files(source_dir):
     return design_files, top_file, source_path
 
 def detect_top_module(vfile):
-    """Extract module name from Verilog file - handles various formatting"""
+    """Extract the correct top module name from a Verilog file.
+
+    When the file has '_top' in its name (e.g. lcd_driver_top.v) it may
+    contain multiple module definitions -- the inner driver module is often
+    declared first.  We collect ALL module names in the file and prefer the
+    one whose name also contains '_top'.  If none contain '_top' we fall
+    back to the first module found (original behaviour).
+    """
+    all_modules = []
     with open(vfile, 'r') as f:
         for line in f:
             stripped = line.strip()
@@ -151,8 +159,18 @@ def detect_top_module(vfile):
                         break
                     module_name += ch
                 if module_name:
-                    return module_name
-    return None
+                    all_modules.append(module_name)
+
+    if not all_modules:
+        return None
+
+    # Prefer a module whose name contains '_top' (case-insensitive)
+    for name in all_modules:
+        if "_top" in name.lower():
+            return name
+
+    # Fall back to the first module found
+    return all_modules[0]
 
 
 # ─────────────────────────────────────────────────────────────

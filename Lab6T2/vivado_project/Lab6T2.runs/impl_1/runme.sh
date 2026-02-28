@@ -42,6 +42,6 @@ EAStep()
 
 # pre-commands:
 /bin/touch .write_bitstream.begin.rst
-EAStep vivado -log LCD_driver.vdi -applog -m64 -product Vivado -messageDb vivado.pb -mode batch -source LCD_driver.tcl -notrace
+EAStep vivado -log LCD_driver_top.vdi -applog -m64 -product Vivado -messageDb vivado.pb -mode batch -source LCD_driver_top.tcl -notrace
 
 

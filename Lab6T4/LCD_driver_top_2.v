@@ -4,26 +4,24 @@ module LCD_driver_top (
     JB,
     JA
 );
-
   input clk;
   input [15:0] sw;
   output [7:0] JB;
   output [7:0] JA;
-
-  parameter clk_param = 16000000;  //How long is it? 16000000 counts/100000000 counts/s = 0.16 s
-
+  parameter clk_param = 16000000;
   reg [7:0] data[15:0];
   reg [7:0] data_in;
-  //wire [7:0] data_in;
   integer counter = 0;
   reg [3:0] index = 0;
   reg wr_en = 0;
-  reg [7:0] A_decimal;
-  reg [7:0] B_decimal;
-  reg [7:0] Eqsign;
-  reg [7:0] Result;
-  wire [3:0] Calc_data;
 
+  reg [7:0] A_sign, A_mag;
+  reg [7:0] B_sign, B_mag;
+  reg [7:0] Eqsign;
+  reg [7:0] Res_sign, Res_mag;
+
+  wire [3:0] Calc_data;
+  wire OV;
 
   LCD_driver_2 lcd1 (
       .clk(clk),
@@ -36,9 +34,11 @@ module LCD_driver_top (
 
   adder adder1 (
       .clk(clk),
-      .B(sw[5:3]),
       .A(sw[2:0]),
-      .data(Calc_data)
+      .B(sw[5:3]),
+      .cm1(1'b0),
+      .data(Calc_data),
+      .OV(OV)
   );
 
   always @(posedge clk) begin
@@ -54,14 +54,63 @@ module LCD_driver_top (
   end
 
   always @(posedge clk) begin
-    data[0]  <= B_decimal;
-    data[1]  <= "+";
-    data[2]  <= A_decimal;
-    data[3]  <= Eqsign;
-    data[4]  <= Result;
-    data[5]  <= " ";
-    data[6]  <= " ";
-    data[7]  <= " ";
+
+    case (sw[2:0])
+      3'b000: begin A_sign <= " "; A_mag <= "0"; end
+      3'b001: begin A_sign <= " "; A_mag <= "1"; end
+      3'b010: begin A_sign <= " "; A_mag <= "2"; end
+      3'b011: begin A_sign <= " "; A_mag <= "3"; end
+      3'b100: begin A_sign <= "-"; A_mag <= "4"; end
+      3'b101: begin A_sign <= "-"; A_mag <= "3"; end
+      3'b110: begin A_sign <= "-"; A_mag <= "2"; end
+      3'b111: begin A_sign <= "-"; A_mag <= "1"; end
+    endcase
+
+    case (sw[5:3])
+      3'b000: begin B_sign <= " "; B_mag <= "0"; end
+      3'b001: begin B_sign <= " "; B_mag <= "1"; end
+      3'b010: begin B_sign <= " "; B_mag <= "2"; end
+      3'b011: begin B_sign <= " "; B_mag <= "3"; end
+      3'b100: begin B_sign <= "-"; B_mag <= "4"; end
+      3'b101: begin B_sign <= "-"; B_mag <= "3"; end
+      3'b110: begin B_sign <= "-"; B_mag <= "2"; end
+      3'b111: begin B_sign <= "-"; B_mag <= "1"; end
+    endcase
+
+    if (sw[15]) begin
+      Eqsign <= "=";
+      case (Calc_data)
+        4'b0000: begin Res_sign <= " "; Res_mag <= "0"; end
+        4'b0001: begin Res_sign <= " "; Res_mag <= "1"; end
+        4'b0010: begin Res_sign <= " "; Res_mag <= "2"; end
+        4'b0011: begin Res_sign <= " "; Res_mag <= "3"; end
+        4'b0100: begin Res_sign <= " "; Res_mag <= "4"; end
+        4'b0101: begin Res_sign <= " "; Res_mag <= "5"; end
+        4'b0110: begin Res_sign <= " "; Res_mag <= "6"; end
+        4'b0111: begin Res_sign <= " "; Res_mag <= "7"; end
+        4'b1000: begin Res_sign <= "-"; Res_mag <= "8"; end
+        4'b1001: begin Res_sign <= "-"; Res_mag <= "7"; end
+        4'b1010: begin Res_sign <= "-"; Res_mag <= "6"; end
+        4'b1011: begin Res_sign <= "-"; Res_mag <= "5"; end
+        4'b1100: begin Res_sign <= "-"; Res_mag <= "4"; end
+        4'b1101: begin Res_sign <= "-"; Res_mag <= "3"; end
+        4'b1110: begin Res_sign <= "-"; Res_mag <= "2"; end
+        4'b1111: begin Res_sign <= "-"; Res_mag <= "1"; end
+      endcase
+    end else begin
+      Eqsign   <= " ";
+      Res_sign <= " ";
+      Res_mag  <= " ";
+    end
+
+    data[0]  <= B_sign;
+    data[1]  <= B_mag;
+    data[2]  <= "+";
+    data[3]  <= A_sign;
+    data[4]  <= A_mag;
+    data[5]  <= Eqsign;
+    data[6]  <= Res_sign;
+    data[7]  <= Res_mag;
     data[8]  <= " ";
     data[9]  <= " ";
     data[10] <= " ";
@@ -70,35 +119,9 @@ module LCD_driver_top (
     data[13] <= " ";
     data[14] <= " ";
     data[15] <= " ";
-    case (sw[2:0])
-      3'b000: A_decimal <= "0";
-      3'b001: A_decimal <= "1";
-      3'b010: A_decimal <= "2";
-      3'b011: A_decimal <= "3";
-    endcase
-
-    case (sw[5:3])
-      3'b000: B_decimal <= "0";
-      3'b001: B_decimal <= "1";
-      3'b010: B_decimal <= "2";
-      3'b011: B_decimal <= "3";
-    endcase
-
-    if (sw[15]) begin
-      Eqsign <= "=";
-      case (Calc_data)
-        4'b0000: Result <= "0";
-        4'b0001: Result <= "1";
-        4'b0010: Result <= "2";
-        4'b0011: Result <= "3";
-        4'b0100: Result <= "4";
-        4'b0101: Result <= "5";
-        4'b0110: Result <= "6";
-        4'b0111: Result <= "7";
-      endcase
-    end else begin
-      Eqsign <= " ";
-      Result <= " ";
-    end
   end
+
+  assign JB[7:3] = 5'b0;
+  assign JB[1]   = 1'b0;
+
 endmodule

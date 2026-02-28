@@ -29,10 +29,10 @@ module LCD_driver (
   reg [3:0] clear = 0;
 
   initial begin
-    init[0] = 8'h30;  // 1 Line, 5x8 Dots
-    init[1] = 8'h01;  // Clear display
-    init[2] = 8'h06;  // Increment cursor (Shift cursor to right)
-    init[3] = 8'h0F;  // Display on cursor blinking
+    init[0] = 8'h30;
+    init[1] = 8'h01;
+    init[2] = 8'h06;
+    init[3] = 8'h0F;
     rs = 1'b1;
   end
 

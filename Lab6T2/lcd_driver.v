@@ -60,8 +60,6 @@ begin
                 cnt_data_in<=cnt_data_in+1;
                 if(cnt_data_in==cntmax_data_in)
                 begin
-                    // Task 2: stay in WAIT instead of going back to INIT
-                    // this keeps the text steady on screen
                     cnt_data_in<=0;
                     state<=WAIT;
                 end

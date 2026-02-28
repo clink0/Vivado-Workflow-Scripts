@@ -5,7 +5,6 @@ input wr_en;
 output reg [7:0] data_out;
 output reg en;
 output reg rs;
-
 reg [1:0] init_cnt;
 reg [7:0] init[3:0];
 localparam INIT=2'b00, WAIT=2'b01, WRITE=2'b10;
@@ -15,15 +14,13 @@ reg [3:0] cnt_data_in;
 parameter cntmax_setup=100000;
 parameter cntmax_data_in=15;
 localparam cntmax_init=3;
-
 initial
 begin
-	init[0]=8'h30;
-	init[1]=8'h01;
-	init[2]=8'h06;
-	init[3]=8'h0F;
+    init[0]=8'h30;
+    init[1]=8'h01;
+    init[2]=8'h06;
+    init[3]=8'h0F;
 end
-
 always@(negedge clk)
 begin
     rs<=1;
@@ -55,11 +52,11 @@ begin
         end
         WRITE:
         begin
-            data_out<=data_in;	
+            data_out<=data_in;
             if(cnt_setup>=cntmax_setup)
             begin
                 en<=0;
-                cnt_setup<=0;	
+                cnt_setup<=0;
                 cnt_data_in<=cnt_data_in+1;
                 if(cnt_data_in==cntmax_data_in)
                 begin
