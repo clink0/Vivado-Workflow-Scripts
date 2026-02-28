@@ -10,7 +10,7 @@ module UART_tx_top(clk, btnC, RsTx);
   wire uartSend;
   wire uartRdy;
 
-  debounce_UT debounce_UT(.clk(clk), .btn(btnC), .btn_clr(btnC_clr));
+  debounce debounce_UT(.clk(clk), .btn(btnC), .btn_clr(btnC_clr));
 
   UART_tx_ctrl #(19200) uart(.clk(clk), .send(uartSend), .data(uartData),
     .uart_tx(RsTx), .ready(uartRdy));
