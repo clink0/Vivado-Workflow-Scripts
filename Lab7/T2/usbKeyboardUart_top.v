@@ -66,14 +66,14 @@ begin
         received[15:8] <= data;
         state <= RLS;
       end
-    RLS:
-      if (received[15:8] != 8'hF0)
-        state <= EXTEND;
-      else if (ready_prev==0 && ready==1)
-      begin
-        received[7:0] <= data;
-        state <= CHECK;
-      end
+RLS:
+  if (received[15:8] != 8'hF0)
+    state <= EXTEND;
+  else if (ready_prev==0 && ready==1)
+  begin
+    received[7:0] <= data;
+    state <= CHECK;
+  end
     CHECK:
       begin
         // Toggle LEDs for keys 1-8 (same as Task 1)

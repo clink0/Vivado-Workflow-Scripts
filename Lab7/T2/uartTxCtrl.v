@@ -8,7 +8,7 @@ input [7:0] data;
 output reg uart_tx;
 output reg ready;
 
-parameter IDLE=2'b00, START=2'b01, SEND=2'b10, STOP=2'b11;
+parameter IDLE=2'b00, START=2'b01, SEND=2'b10, STOP_BIT=2'b11;
 parameter BAUD_DIV = 10416;
 
 reg [1:0] state = IDLE;
@@ -49,13 +49,13 @@ begin
         begin
           cnt <= 0;
           if (bit_index == 7)
-            state <= STOP;
+            state <= STOP_BIT;
           else
             bit_index <= bit_index + 1;
         end
         else cnt <= cnt + 1;
       end
-    STOP:
+    STOP_BIT:
       begin
         uart_tx <= 1;
         if (cnt == BAUD_DIV - 1)

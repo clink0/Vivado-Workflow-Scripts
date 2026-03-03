@@ -5,9 +5,9 @@ input ps2clk;
 output reg [7:0] data;
 output reg ready=0;
 
-parameter RDY=2'b00, RECEIVE=2'b01, PARITY=2'b10;
+parameter RDY=2'b00, RECEIVE=2'b01, PARITY=2'b10, STOP=2'b11;
 
-reg [2:0] state = RDY;
+reg [1:0] state = RDY;
 reg [7:0] received;
 reg prty;
 integer index=0;
