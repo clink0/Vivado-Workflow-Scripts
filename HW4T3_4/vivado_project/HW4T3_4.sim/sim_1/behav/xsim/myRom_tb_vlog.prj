@@ -1,0 +1,10 @@
+# compile verilog/system verilog design source files
+verilog xil_defaultlib  \
+"../../../../HW4T3_4.srcs/sources_1/ip/myRom/sim/myRom.v" \
+"../../../../../../HW4T3_5/myRom_tb.v" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort

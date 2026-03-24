@@ -1,0 +1,91 @@
+Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+--------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2018.3 (win64) Build 2405991 Thu Dec  6 23:38:27 MST 2018
+| Date         : Mon Mar  2 17:24:28 2026
+| Host         : BH610-DRZVK84 running 64-bit major release  (build 9200)
+| Command      : report_control_sets -verbose -file USB_keyboard_uart_app_control_sets_placed.rpt
+| Design       : USB_keyboard_uart_app
+| Device       : xc7a35t
+--------------------------------------------------------------------------------------------------
+
+Control Set Information
+
+Table of Contents
+-----------------
+1. Summary
+2. Histogram
+3. Flip-Flop Distribution
+4. Detailed Control Set Information
+
+1. Summary
+----------
+
++----------------------------------------------------------+-------+
+|                          Status                          | Count |
++----------------------------------------------------------+-------+
+| Number of unique control sets                            |    20 |
+| Unused register locations in slices containing registers |    99 |
++----------------------------------------------------------+-------+
+
+
+2. Histogram
+------------
+
++--------+--------------+
+| Fanout | Control Sets |
++--------+--------------+
+|      1 |           10 |
+|      2 |            2 |
+|      4 |            1 |
+|      6 |            1 |
+|      7 |            1 |
+|      8 |            2 |
+|     13 |            1 |
+|    16+ |            2 |
++--------+--------------+
+
+
+3. Flip-Flop Distribution
+-------------------------
+
++--------------+-----------------------+------------------------+-----------------+--------------+
+| Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
++--------------+-----------------------+------------------------+-----------------+--------------+
+| No           | No                    | No                     |              19 |            8 |
+| No           | No                    | Yes                    |               0 |            0 |
+| No           | Yes                   | No                     |               0 |            0 |
+| Yes          | No                    | No                     |              71 |           27 |
+| Yes          | No                    | Yes                    |               0 |            0 |
+| Yes          | Yes                   | No                     |              19 |            5 |
++--------------+-----------------------+------------------------+-----------------+--------------+
+
+
+4. Detailed Control Set Information
+-----------------------------------
+
++-------------------+---------------------+-------------------------+------------------+----------------+
+|    Clock Signal   |    Enable Signal    |     Set/Reset Signal    | Slice Load Count | Bel Load Count |
++-------------------+---------------------+-------------------------+------------------+----------------+
+| ~PS2Clk_IBUF_BUFG | kb1/received[2]     |                         |                1 |              1 |
+| ~PS2Clk_IBUF_BUFG | kb1/received[3]     |                         |                1 |              1 |
+| ~PS2Clk_IBUF_BUFG | kb1/received[0]     |                         |                1 |              1 |
+| ~PS2Clk_IBUF_BUFG | kb1/prty_i_1_n_0    |                         |                1 |              1 |
+| ~PS2Clk_IBUF_BUFG | kb1/received[1]     |                         |                1 |              1 |
+| ~PS2Clk_IBUF_BUFG | kb1/received[4]     |                         |                1 |              1 |
+| ~PS2Clk_IBUF_BUFG | kb1/received[5]     |                         |                1 |              1 |
+| ~PS2Clk_IBUF_BUFG | kb1/received[6]     |                         |                1 |              1 |
+| ~PS2Clk_IBUF_BUFG | kb1/ready_i_1_n_0   |                         |                1 |              1 |
+| ~PS2Clk_IBUF_BUFG | kb1/received[7]     |                         |                1 |              1 |
+| ~PS2Clk_IBUF_BUFG |                     |                         |                1 |              2 |
+| ~PS2Clk_IBUF_BUFG | kb1/data[4]_i_1_n_0 |                         |                1 |              2 |
+|  clk_IBUF_BUFG    | uart_tx/bit_index   |                         |                2 |              4 |
+| ~PS2Clk_IBUF_BUFG | kb1/data[4]_i_1_n_0 | kb1/data[7]_i_1_n_0     |                2 |              6 |
+|  clk_IBUF_BUFG    | uart_tx/shift_reg_0 |                         |                2 |              7 |
+|  clk_IBUF_BUFG    | kb1/E[0]            |                         |                3 |              8 |
+|  clk_IBUF_BUFG    | kb1/E[1]            |                         |                1 |              8 |
+|  clk_IBUF_BUFG    | uart_tx/cnt         | uart_tx/cnt[13]_i_1_n_0 |                3 |             13 |
+|  clk_IBUF_BUFG    |                     |                         |                7 |             17 |
+| ~PS2Clk_IBUF_BUFG | kb1/index           |                         |                8 |             32 |
++-------------------+---------------------+-------------------------+------------------+----------------+
+
+
