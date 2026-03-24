@@ -47,7 +47,7 @@ module main_top(
       .clk            (clk)
   );
 
-  prog #(
+  prog_call #(
       .C_FAMILY             ("7S"),
       .C_RAM_SIZE_KWORDS    (2),
       .C_JTAG_LOADER_ENABLE (1))
