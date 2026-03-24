@@ -1,8 +1,8 @@
 # HW6 T8 - Build script (jump version, default)
 # Run from repo root: .\HW6\T8\build.ps1
 
-$RepoRoot  = (Resolve-Path "$PSScriptRoot\..\..").Path
-$TaskDir   = (Resolve-Path $PSScriptRoot).Path
+$TaskDir  = $PSScriptRoot
+$RepoRoot = Split-Path (Split-Path $PSScriptRoot)
 $TaskRel   = "HW6\T8"
 $Kcpsm     = "$RepoRoot\KCPSM6_Release9_30Sept14"
 

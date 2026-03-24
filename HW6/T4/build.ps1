@@ -2,8 +2,8 @@
 # Run from repo root: .\HW6\T4\build.ps1
 # REQUIRES: list_ch16_02_sio_rom.psm from Pong Chu textbook Ch.16 resources
 
-$RepoRoot  = (Resolve-Path "$PSScriptRoot\..\..").Path
-$TaskDir   = (Resolve-Path $PSScriptRoot).Path
+$TaskDir  = $PSScriptRoot
+$RepoRoot = Split-Path (Split-Path $PSScriptRoot)
 $TaskRel   = "HW6\T4"
 $Kcpsm     = "$RepoRoot\KCPSM6_Release9_30Sept14"
 $Psm       = "list_ch16_02_sio_rom.psm"

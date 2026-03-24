@@ -1,8 +1,8 @@
 # HW6 T8 - Build script (call version)
 # Run from repo root: .\HW6\T8\build_call.ps1
 
-$RepoRoot  = (Resolve-Path "$PSScriptRoot\..\..").Path
-$TaskDir   = (Resolve-Path $PSScriptRoot).Path
+$TaskDir  = $PSScriptRoot
+$RepoRoot = Split-Path (Split-Path $PSScriptRoot)
 $TaskRel   = "HW6\T8"
 $Kcpsm     = "$RepoRoot\KCPSM6_Release9_30Sept14"
 $TopFile   = "$TaskDir\main_top.v"
