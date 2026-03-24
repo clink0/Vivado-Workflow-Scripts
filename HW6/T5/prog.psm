@@ -1,0 +1,7 @@
+; Section 5 - Read switches, add 0x13, output to LEDs
+; Compile: kcpsm6.exe prog.psm -> generates prog.v
+LOOP:   input   s0, 00          ; read switches from port 0
+        load    s1, s0          ; copy to s1
+        add     s1, 13          ; add 0x13
+        output  s1, 00          ; output result to LEDs
+        jump    LOOP            ; repeat forever

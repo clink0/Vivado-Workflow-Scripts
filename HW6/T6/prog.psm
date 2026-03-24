@@ -1,0 +1,9 @@
+; Section 6 - Lower 2 bits of LEDs always ON regardless of switches
+; mask = 0000_0011 forces bits 1:0 high via OR
+; Compile: kcpsm6.exe prog.psm -> generates prog.v
+        constant lowerMASK, 03  ; mask = 0000_0011
+LOOP:   input   s0, 00          ; read switches from port 0
+        load    s1, s0          ; copy to s1
+        or      s1, lowerMASK   ; set lower 2 bits to 1
+        output  s1, 00          ; output to LEDs
+        jump    LOOP            ; repeat forever
