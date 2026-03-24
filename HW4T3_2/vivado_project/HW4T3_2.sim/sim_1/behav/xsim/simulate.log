@@ -1,0 +1,11 @@
+Vivado Simulator 2018.3
+Time resolution is 1 ps
+address = 0, data = 0000, read_en = 0, ce = 0
+address = 0, data = dead, read_en = 1, ce = 1
+address = 0, data = 0000, read_en = 0, ce = 0
+address = 1, data = beef, read_en = 1, ce = 1
+address = 0, data = 0000, read_en = 0, ce = 0
+address = 2, data = 0a0a, read_en = 1, ce = 1
+address = 0, data = 0000, read_en = 0, ce = 0
+address = 3, data = 1234, read_en = 1, ce = 1
+address = 0, data = 0000, read_en = 0, ce = 0

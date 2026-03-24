@@ -1,0 +1,64 @@
+#-----------------------------------------------------------
+# Vivado v2018.3 (64-bit)
+# SW Build 2405991 on Thu Dec  6 23:38:27 MST 2018
+# IP Build 2404404 on Fri Dec  7 01:43:56 MST 2018
+# Start of session at: Tue Feb 17 18:12:44 2026
+# Process ID: 26216
+# Current directory: C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_1
+# Command line: vivado.exe -mode gui -source C:\Users\lebray\Vivado-Workflow-Scripts\HW4T3_1\run_sim_gui.tcl
+# Log file: C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_1/vivado.log
+# Journal file: C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_1\vivado.jou
+#-----------------------------------------------------------
+start_gui
+source {C:\Users\lebray\Vivado-Workflow-Scripts\HW4T3_1\run_sim_gui.tcl}
+# create_project HW4T3_1 {C:\Users\lebray\Vivado-Workflow-Scripts\HW4T3_1\vivado_project} -part xc7a35tcpg236-1 -force
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/Xilinx/Vivado/2018.3/data/ip'.
+# if {[catch {set_property board_part digilentinc.com:basys3:part0:1.2 [current_project]}]} {
+#     puts "Note: Board part not available, using part only"
+# }
+Note: Board part not available, using part only
+# set_property target_language Verilog [current_project]
+# add_files -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\HW4T3_1\rom.v}
+# add_files -fileset sim_1 -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\HW4T3_1\rom_tb.v}
+# add_files -fileset constrs_1 -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\Basys3_Master.xdc}
+# set_property top rom [current_fileset]
+# set_property top rom_tb [get_filesets sim_1]
+# update_compile_order -fileset sources_1
+# update_compile_order -fileset sim_1
+# launch_simulation -mode behavioral
+INFO: [Vivado 12-5682] Launching behavioral simulation in 'C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_1/vivado_project/HW4T3_1.sim/sim_1/behav/xsim'
+INFO: [SIM-utils-51] Simulation object is 'sim_1'
+INFO: [SIM-utils-54] Inspecting design source files for 'rom_tb' in fileset 'sim_1'...
+INFO: [USF-XSim-97] Finding global include files...
+INFO: [USF-XSim-98] Fetching design files from 'sim_1'...
+INFO: [USF-XSim-2] XSim::Compile design
+INFO: [USF-XSim-61] Executing 'COMPILE and ANALYZE' step in 'C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_1/vivado_project/HW4T3_1.sim/sim_1/behav/xsim'
+"xvlog --incr --relax -prj rom_tb_vlog.prj"
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_1/rom_tb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module rom_tb
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_1/vivado_project/HW4T3_1.sim/sim_1/behav/xsim/glbl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module glbl
+INFO: [USF-XSim-69] 'compile' step finished in '2' seconds
+INFO: [USF-XSim-3] XSim::Elaborate design
+INFO: [USF-XSim-61] Executing 'ELABORATE' step in 'C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_1/vivado_project/HW4T3_1.sim/sim_1/behav/xsim'
+Vivado Simulator 2018.3
+Copyright 1986-1999, 2001-2018 Xilinx, Inc. All Rights Reserved.
+Running: C:/Xilinx/Vivado/2018.3/bin/unwrapped/win64.o/xelab.exe -wto 3529a1f23e2e41ff8b4bacd23ff78df4 --incr --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot rom_tb_behav xil_defaultlib.rom_tb xil_defaultlib.glbl -log elaborate.log 
+Using 2 slave threads.
+Starting static elaboration
+ERROR: [VRFC 10-2063] Module <rom> not found while processing module instance <U> [C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_1/rom_tb.v:20]
+ERROR: [XSIM 43-3322] Static elaboration of top level Verilog design unit(s) in library work failed.
+INFO: [USF-XSim-69] 'elaborate' step finished in '1' seconds
+INFO: [USF-XSim-99] Step results log file:'C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_1/vivado_project/HW4T3_1.sim/sim_1/behav/xsim/elaborate.log'
+ERROR: [USF-XSim-62] 'elaborate' step failed with error(s). Please check the Tcl console output or 'C:/Users/lebray/Vivado-Workflow-Scripts/HW4T3_1/vivado_project/HW4T3_1.sim/sim_1/behav/xsim/elaborate.log' file for more information.
+ERROR: [Vivado 12-4473] Detected error while running simulation. Please correct the issue and retry this operation.
+ERROR: [Common 17-39] 'launch_simulation' failed due to earlier errors.
+
+    while executing
+"launch_simulation -mode behavioral"
+    (file "C:\Users\lebray\Vivado-Workflow-Scripts\HW4T3_1\run_sim_gui.tcl" line 18)
+update_compile_order -fileset sources_1
+exit
+INFO: [Common 17-206] Exiting Vivado at Tue Feb 17 18:13:04 2026...
