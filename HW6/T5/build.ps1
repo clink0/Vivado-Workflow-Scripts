@@ -1,7 +1,7 @@
 # HW6 T5 - Build script
 # Run from repo root: .\HW6\T5\build.ps1
 
-$RepoRoot  = (Resolve-Path "$PSScriptRoot\..\..")  .Path
+$RepoRoot  = (Resolve-Path "$PSScriptRoot\..\..").Path
 $TaskDir   = (Resolve-Path $PSScriptRoot).Path
 $TaskRel   = "HW6\T5"
 $Kcpsm     = "$RepoRoot\KCPSM6_Release9_30Sept14"
