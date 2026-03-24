@@ -1,10 +1,9 @@
 # HW6 T4 - Build script (Square Problem)
 # Run from repo root: .\HW6\T4\build.ps1
 # REQUIRES: list_ch16_02_sio_rom.psm from Pong Chu textbook Ch.16 resources
-#           Place it in HW6\T4\ before running.
 
-$RepoRoot  = (Resolve-Path "$PSScriptRoot\..\..")
-$TaskDir   = $PSScriptRoot
+$RepoRoot  = (Resolve-Path "$PSScriptRoot\..\..")  .Path
+$TaskDir   = (Resolve-Path $PSScriptRoot).Path
 $TaskRel   = "HW6\T4"
 $Kcpsm     = "$RepoRoot\KCPSM6_Release9_30Sept14"
 $Psm       = "list_ch16_02_sio_rom.psm"
@@ -26,4 +25,9 @@ Pop-Location
 
 Remove-Item "$TaskDir\ROM_form.v"
 
-python run_hardware.py $TaskRel
+if (-not (Test-Path "$TaskDir\list_ch16_02_sio_rom.v")) {
+    Write-Host "ERROR: list_ch16_02_sio_rom.v was not generated. Check that ROM_form.v was found by the assembler."
+    exit 1
+}
+
+python "$RepoRoot\run_hardware.py" $TaskRel
