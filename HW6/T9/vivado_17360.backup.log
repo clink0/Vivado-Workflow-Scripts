@@ -1,0 +1,27 @@
+#-----------------------------------------------------------
+# Vivado v2018.3 (64-bit)
+# SW Build 2405991 on Thu Dec  6 23:38:27 MST 2018
+# IP Build 2404404 on Fri Dec  7 01:43:56 MST 2018
+# Start of session at: Tue Mar 24 16:24:08 2026
+# Process ID: 17360
+# Current directory: C:/Users/lebray/Vivado-Workflow-Scripts/HW6/T9
+# Command line: vivado.exe -mode batch -source C:\Users\lebray\Vivado-Workflow-Scripts\HW6\T9\run_hardware.tcl
+# Log file: C:/Users/lebray/Vivado-Workflow-Scripts/HW6/T9/vivado.log
+# Journal file: C:/Users/lebray/Vivado-Workflow-Scripts/HW6/T9\vivado.jou
+#-----------------------------------------------------------
+source {C:\Users\lebray\Vivado-Workflow-Scripts\HW6\T9\run_hardware.tcl}
+# create_project T9 {C:\Users\lebray\Vivado-Workflow-Scripts\HW6\T9\vivado_project} -part xc7a35tcpg236-1 -force
+# if {[catch {set_property board_part digilentinc.com:basys3:part0:1.2 [current_project]}]} {
+#     puts "Note: Board part not available, using part only"
+# }
+Note: Board part not available, using part only
+# set_property target_language Verilog [current_project]
+# add_files -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\HW6\T9\kcpsm6.v}
+# add_files -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\HW6\T9\main_top.v}
+# add_files -fileset constrs_1 -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\Basys3_Master.xdc}
+# set_property top main_top [current_fileset]
+# update_compile_order -fileset sources_1
+INFO: [Common 17-41] Interrupt caught. Command should exit soon.
+INFO: [Common 17-344] 'update_compile_order' was cancelled
+INFO: [Common 17-344] 'source' was cancelled
+INFO: [Common 17-206] Exiting Vivado at Tue Mar 24 16:24:13 2026...

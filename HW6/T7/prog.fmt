@@ -1,0 +1,8 @@
+      ; Section 7 - Shift switch input right by 1 bit before outputting to LEDs
+      ; sr0: shift right, 0 shifted into MSB
+      ; Compile: kcpsm6.exe prog.psm -> generates prog.v
+LOOP: INPUT s0, 00  ; read switches from port 0
+      LOAD s1, s0   ; copy to s1
+      SR0 s1        ; shift right 1 bit (0 into MSB)
+      OUTPUT s1, 00 ; output to LEDs
+      JUMP LOOP     ; repeat forever
