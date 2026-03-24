@@ -1,13 +1,12 @@
-# HW6 T8 - Build script (call version)
-# Run from repo root: .\HW6\T8\build_call.ps1
+# HW6 T8_2 - Build script (call version)
+# Run from repo root: .\HW6\T8_2\build.ps1
 
 $TaskDir  = $PSScriptRoot
 $RepoRoot = Split-Path (Split-Path $PSScriptRoot)
-$TaskRel   = "HW6\T8"
-$Kcpsm     = "$RepoRoot\KCPSM6_Release9_30Sept14"
-$TopFile   = "$TaskDir\main_top.v"
+$TaskRel  = "HW6\T8_2"
+$Kcpsm    = "$RepoRoot\KCPSM6_Release9_30Sept14"
 
-Write-Host "=== HW6 T8: Jump/return/load (call version) ==="
+Write-Host "=== HW6 T8_2: Jump/call (call version) ==="
 
 Copy-Item "$Kcpsm\Verilog\ROM_form_JTAGLoader_Vivado_2June14.v" "$TaskDir\ROM_form.v"
 Copy-Item "$Kcpsm\Verilog\kcpsm6.v" "$TaskDir\kcpsm6.v"
@@ -23,8 +22,4 @@ if (-not (Test-Path "$TaskDir\prog_call.v")) {
     exit 1
 }
 
-(Get-Content $TopFile) -replace 'prog #\(', 'prog_call #(' | Set-Content $TopFile
-
 python "$RepoRoot\run_hardware.py" $TaskRel
-
-(Get-Content $TopFile) -replace 'prog_call #\(', 'prog #(' | Set-Content $TopFile
