@@ -1,0 +1,5 @@
+      ; Section 3 - Switches[7:0] directly control LEDs[7:0]
+      ; Compile: kcpsm6.exe prog.psm -> generates prog.v
+LOOP: INPUT s0, 00  ; read switches from port 0
+      OUTPUT s0, 00 ; write switches to LEDs on port 0
+      JUMP LOOP     ; repeat forever
