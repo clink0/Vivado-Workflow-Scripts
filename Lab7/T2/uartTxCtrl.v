@@ -1,5 +1,3 @@
-// UART Transmitter module
-// 100 MHz clk, 9600 baud -> clk divider = 100,000,000 / 9600 = 10416
 module uart_ctrl_tx(clk, send, data, uart_tx, ready);
 
 input clk;

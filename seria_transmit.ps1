@@ -1,4 +1,4 @@
-# Serial Transmitter for UART Testing (Tasks 3 and 4)
+# Serial Transmitter for UART Testing (Tasks 4 and 4)
 # Usage: Run this script in PowerShell
 # Adjust $portName as needed
 

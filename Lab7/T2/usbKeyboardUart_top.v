@@ -1,9 +1,3 @@
-// USB_keyboard_uart_app - Task 2
-// Reads PS/2 keyboard scan codes and sends ASCII to serial terminal via UART
-// System diagram: Keyboard -> PIC MCU -> PS2Clk/PS2Data
-//                 -> keyboard_ctrl.v (USB_keyboard) -> received[25:0]
-//                 -> scancode_to_ascii -> ascii[7:0]
-//                 -> uart_ctrl_tx -> RsTx (USB serial)
 module USB_keyboard_uart_app(clk, PS2Clk, PS2Data, RsTx, led);
 
 input clk;
@@ -21,13 +15,11 @@ wire [7:0] data;
 reg [7:0] ledreg=0;
 reg ready_prev;
 
-// UART control signals
 wire uart_ready;
 reg uart_send = 0;
 reg [7:0] uart_data;
 wire [7:0] ascii_out;
 
-// Submodule instantiations
 USB_keyboard kb1(
   .ps2data(PS2Data),
   .ps2clk(PS2Clk),
@@ -51,7 +43,7 @@ uart_ctrl_tx uart_tx(
 always @ (posedge clk)
 begin
   ready_prev <= ready;
-  uart_send <= 0; // default: not sending
+  uart_send <= 0;
 
   case (state)
     PRESS:
@@ -76,18 +68,16 @@ RLS:
   end
     CHECK:
       begin
-        // Toggle LEDs for keys 1-8 (same as Task 1)
         case (received[7:0])
-          8'h16: ledreg[0] <= ~ledreg[0]; // toggle if 1 is pressed
-          8'h1E: ledreg[1] <= ~ledreg[1]; // toggle if 2 is pressed
-          8'h26: ledreg[2] <= ~ledreg[2]; // toggle if 3 is pressed
-          8'h25: ledreg[3] <= ~ledreg[3]; // toggle if 4 is pressed
-          8'h2E: ledreg[4] <= ~ledreg[4]; // toggle if 5 is pressed
-          8'h36: ledreg[5] <= ~ledreg[5]; // toggle if 6 is pressed
-          8'h3D: ledreg[6] <= ~ledreg[6]; // toggle if 7 is pressed
-          8'h3E: ledreg[7] <= ~ledreg[7]; // toggle if 8 is pressed
+          8'h16: ledreg[0] <= ~ledreg[0];
+          8'h1E: ledreg[1] <= ~ledreg[1]; 
+          8'h26: ledreg[2] <= ~ledreg[2]; 
+          8'h25: ledreg[3] <= ~ledreg[3];
+          8'h2E: ledreg[4] <= ~ledreg[4];
+          8'h36: ledreg[5] <= ~ledreg[5];
+          8'h3D: ledreg[6] <= ~ledreg[6];
+          8'h3E: ledreg[7] <= ~ledreg[7]; 
         endcase
-        // Send ASCII over UART if UART is ready
         if (uart_ready)
         begin
           uart_data <= ascii_out;

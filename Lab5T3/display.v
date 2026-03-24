@@ -51,4 +51,3 @@ module display (
     end
   end
 endmodule
-

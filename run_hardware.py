@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#
+/usr/bin/env python3
 """
 Integrated Vivado Hardware Workflow (Clean Output)
 Automatically creates project from .v files and programs FPGA
