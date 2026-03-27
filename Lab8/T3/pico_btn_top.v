@@ -150,14 +150,29 @@ module pico_btn_top(
     // 200000 cycles @ 100MHz = 2ms per character
     // 16 chars x 2ms = 32ms refresh (~31 Hz)
     // =====================================================
+    // Startup delay: wait 10ms (1,000,000 cycles) for LCD init to complete
+    // before cycling begins, preventing the 2-char offset caused by chars
+    // sent during the LCD driver's init sequence being dropped.
+    reg [19:0] lcd_startup;
+    reg        lcd_ready;
+
     initial begin
-        lcd_idx  = 0;
-        lcd_cnt  = 0;
-        lcd_wr_en = 0;
+        lcd_idx     = 0;
+        lcd_cnt     = 0;
+        lcd_wr_en   = 0;
+        lcd_startup = 0;
+        lcd_ready   = 0;
     end
 
     always @(posedge clk) begin
-        if (lcd_cnt >= 200000) begin
+        if (!lcd_ready) begin
+            lcd_wr_en <= 0;
+            lcd_cnt   <= 0;
+            if (lcd_startup == 20'hFFFFF)
+                lcd_ready <= 1;
+            else
+                lcd_startup <= lcd_startup + 1;
+        end else if (lcd_cnt >= 200000) begin
             lcd_cnt     <= 0;
             lcd_wr_en   <= 1;
             lcd_data_in <= lcd_buf[lcd_idx];
