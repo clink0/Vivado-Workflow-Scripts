@@ -1,17 +1,12 @@
-; Section 8 - Same as prog.psm but using CALL instead of JUMP
-; With CALL nz, the 'return' properly returns after TESTING.
-; Result: if sw[0]=1 output 6 then 5 (both fire), else output 5 only.
-; Compile: kcpsm6.exe prog_call.psm -> generates prog_call.v
-; (update main_top.v to instantiate prog_call instead of prog)
 FOREVER:
-        input   s0, 00          ; read switches
-        load    s2, 05          ; s2 = 5
-        load    s3, 06          ; s3 = 6
-        load    s1, s0          ; copy switches to s1
-        test    s1, 01          ; test bit 0
-        call    nz, TESTING     ; if bit 0 = 1, call TESTING subroutine
-        output  s2, 00          ; always runs after call returns (or when bit 0 = 0)
+        input   s0, 00;
+        load    s2, 05;
+        load    s3, 06;
+        load    s1, s0;
+        test    s1, 01;
+        call    nz, TESTING; 
+        output  s2, 00;
         jump    FOREVER
 TESTING:
-        output  s3, 00          ; bit 0 = 1: output 6
-        return                  ; return to instruction after call (output s2)
+        output  s3, 00;
+        return;

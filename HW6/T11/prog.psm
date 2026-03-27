@@ -1,18 +1,14 @@
-; Section 11 - Count number of switches that are ON, display count on LEDs
-; Algorithm: test each bit of s0 one at a time, shift right 8 times
-; s0 = switch input, s1 = count, s2 = loop counter (8 iterations)
-; Compile: kcpsm6.exe prog.psm -> generates prog.v
 FOREVER:
-        input   s0, 00          ; read switches from port 0
-        load    s1, 00          ; clear bit count
-        load    s2, 08          ; loop counter = 8 bits
+        input   s0, 00;
+        load    s1, 00;
+        load    s2, 08;
 LOOP:
-        test    s0, 01          ; test bit 0 of s0; Z=1 if bit is 0
-        jump    z, SKIP         ; bit is 0, skip increment
-        add     s1, 01          ; bit is 1, increment count
+        test    s0, 01;
+        jump    z, SKIP;
+        add     s1, 01;
 SKIP:
-        sr0     s0              ; shift s0 right 1 bit to check next bit
-        sub     s2, 01          ; decrement loop counter
-        jump    nz, LOOP        ; if counter != 0, keep looping
-        output  s1, 00          ; output count (0-8) to LEDs in binary
-        jump    FOREVER         ; repeat to update with new switch state
+        sr0     s0;
+        sub     s2, 01;
+        jump    nz, LOOP;
+        output  s1, 00;
+        jump    FOREVER;

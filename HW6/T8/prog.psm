@@ -1,16 +1,12 @@
-; Section 8 - jump/return/load: if sw[0]=1 output 6, else output 5
-; Using JUMP nz - the 'return' in TESTING has no effect because
-; jump does not push to the call stack. LEDs show 6 or 5.
-; Compile: kcpsm6.exe prog.psm -> generates prog.v
 FOREVER:
-        input   s0, 00          ; read switches
-        load    s2, 05          ; s2 = 5
-        load    s3, 06          ; s3 = 6
-        load    s1, s0          ; copy switches to s1
-        test    s1, 01          ; test bit 0 (AND with 0x01)
-        jump    nz, TESTING     ; if bit 0 = 1, jump to TESTING
-        output  s2, 00          ; bit 0 = 0: output 5 to LEDs
+        input   s0, 00;
+        load    s2, 05;
+        load    s3, 06;
+        load    s1, s0;
+        test    s1, 01;
+        jump    nz, TESTING;
+        output  s2, 00;
         jump    FOREVER
 TESTING:
-        output  s3, 00          ; bit 0 = 1: output 6 to LEDs
-        return                  ; no effect with jump (stack was never pushed)
+        output  s3, 00;
+        return;

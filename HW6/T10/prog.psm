@@ -1,16 +1,13 @@
-; Section 10 - Same as T9 but using COMPARE instead of TEST
-; compare s2, 00: sets Z=1 if s2==0; sets C=1 if 0 > s2 (never here)
-; Compile: kcpsm6.exe prog.psm -> generates prog.v
-        load    s2, 08          ; s2 = counter (starts at 8)
-        load    s3, 00          ; s3 = LED value (starts at 0)
+        load    s2, 08;
+        load    s3, 00;
 FOREVER:
-        compare s2, 00          ; compare s2 with 0; Z=1 if equal
-        jump    nz, NOTZ        ; s2 != 0: go decrement
-        jump    z,  ISZ         ; s2 == 0: go output
+        compare s2, 00;
+        jump    nz, NOTZ;
+        jump    z,  ISZ;
 NOTZ:
-        sub     s2, 01          ; decrement counter
-        add     s3, 01          ; increment LED value
+        sub     s2, 01;
+        add     s3, 01;
         jump    FOREVER
 ISZ:
-        output  s3, 00          ; output LED count to port 0
+        output  s3, 00;
         jump    FOREVER
