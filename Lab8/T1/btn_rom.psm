@@ -1,0 +1,299 @@
+;=========================================================
+; Square circuit with 7-seg LED interface
+; Lab 8 T1 - Basys 3 / KCPSM6 version
+;=========================================================
+; Program operation:
+;  - read a and b from switch (via btnR)
+;  - btnL clears and re-initializes
+;  - calculate a*a + b*b
+;  - display data on 7-seg LED based on sw[2:0]:
+;      000: a
+;      001: b
+;      010: a^2
+;      011: b^2
+;      100: a^2+b^2
+;
+; 7-seg patterns are Basys 3 format: {dp, g, f, e, d, c, b, a} active-low
+
+;=========================================================
+; Data ram address alias
+;=========================================================
+constant a_lsb,    00
+constant b_lsb,    02
+constant aa_lsb,   04
+constant aa_msb,   05
+constant bb_lsb,   06
+constant bb_msb,   07
+constant aabb_lsb, 08
+constant aabb_msb, 09
+constant aabb_cout,0A
+constant led0,     10
+constant led1,     11
+constant led2,     12
+constant led3,     13
+
+;=========================================================
+; Register alias
+;=========================================================
+namereg s0, data       ; temporary data
+namereg s1, addr       ; temporary address
+namereg s2, i          ; loop index
+namereg sf, switch_a_b ; ram offset (0=a, 2=b)
+
+;=========================================================
+; Port alias
+;=========================================================
+constant rd_flag_port, 00  ; flags: {xxxxxxsc} c=btnL, s=btnR
+constant sw_port,      01  ; 8-bit switch input
+constant sseg0_port,   00  ; 7-seg digit 0 (rightmost)
+constant sseg1_port,   01  ; 7-seg digit 1
+constant sseg2_port,   02  ; 7-seg digit 2
+constant sseg3_port,   03  ; 7-seg digit 3 (leftmost)
+
+;=========================================================
+; Main program
+;=========================================================
+   call init
+forever:
+   call proc_btn
+   call square
+   call load_led_pttn
+   call disp_led
+   jump forever
+
+;=========================================================
+; routine: init
+;   clear data ram and switch_a_b register
+;=========================================================
+init:
+   load i, 40
+   load data, 00
+clr_mem_loop:
+   store data, (i)
+   sub i, 01
+   jump nz, clr_mem_loop
+   load switch_a_b, 00
+   return
+
+;=========================================================
+; routine: proc_btn
+;   check btnL (clear) and btnR (store switch value)
+;=========================================================
+proc_btn:
+   input s3, rd_flag_port
+   test s3, 01              ; check btnL flag (bit 0)
+   jump z, chk_btns
+   call init
+   jump proc_btn_done
+chk_btns:
+   test s3, 02              ; check btnR flag (bit 1)
+   jump z, proc_btn_done
+   input data, sw_port
+   load addr, a_lsb
+   add addr, switch_a_b
+   store data, (addr)
+   xor switch_a_b, 02       ; toggle between a (00) and b (02)
+proc_btn_done:
+   return
+
+;=========================================================
+; routine: load_led_pttn
+;   read sw[2:0], select value, build 4 hex digit patterns
+;=========================================================
+load_led_pttn:
+   input s6, sw_port
+   sl0 s6                   ; *2 for 2-byte address offset
+   compare s6, 08            ; clamp to max offset 8
+   jump c, sw_ok
+   load s6, 08
+sw_ok:
+   load addr, a_lsb
+   add addr, s6
+   fetch data, (s6)
+   call get_lower_nibble
+   call hex_to_led
+   store data, led0
+   fetch data, (addr)
+   call get_upper_nibble
+   call hex_to_led
+   store data, led1
+   add addr, 01
+   fetch data, (addr)
+   call get_lower_nibble
+   call hex_to_led
+   store data, led2
+   fetch data, (addr)
+   call get_upper_nibble
+   call hex_to_led
+   compare s6, 08            ; displaying a^2+b^2?
+   jump nz, led_done
+   add addr, 01
+   fetch s6, (addr)
+   test s6, 01               ; carry=1?
+   jump z, led_done
+   and data, 7F              ; assert dp (bit 7 = 0 = on)
+led_done:
+   store data, led3
+   return
+
+;=========================================================
+; routine: disp_led
+;   output 4 patterns to 7-seg ports
+;=========================================================
+disp_led:
+   fetch data, led0
+   output data, sseg0_port
+   fetch data, led1
+   output data, sseg1_port
+   fetch data, led2
+   output data, sseg2_port
+   fetch data, led3
+   output data, sseg3_port
+   return
+
+;=========================================================
+; routine: hex_to_led
+;   convert hex nibble (0-F) to Basys 3 7-seg pattern
+;   Basys 3 format: {dp, g, f, e, d, c, b, a} active-low
+;   dp=1 (off) for all digits
+;=========================================================
+hex_to_led:
+   compare data, 00
+   jump nz, comp_hex_1
+   load data, C0             ; 0: a,b,c,d,e,f on
+   jump hex_done
+comp_hex_1:
+   compare data, 01
+   jump nz, comp_hex_2
+   load data, F9             ; 1: b,c on
+   jump hex_done
+comp_hex_2:
+   compare data, 02
+   jump nz, comp_hex_3
+   load data, A4             ; 2: a,b,d,e,g on
+   jump hex_done
+comp_hex_3:
+   compare data, 03
+   jump nz, comp_hex_4
+   load data, B0             ; 3: a,b,c,d,g on
+   jump hex_done
+comp_hex_4:
+   compare data, 04
+   jump nz, comp_hex_5
+   load data, 99             ; 4: b,c,f,g on
+   jump hex_done
+comp_hex_5:
+   compare data, 05
+   jump nz, comp_hex_6
+   load data, 92             ; 5: a,c,d,f,g on
+   jump hex_done
+comp_hex_6:
+   compare data, 06
+   jump nz, comp_hex_7
+   load data, 82             ; 6: a,c,d,e,f,g on
+   jump hex_done
+comp_hex_7:
+   compare data, 07
+   jump nz, comp_hex_8
+   load data, F8             ; 7: a,b,c on
+   jump hex_done
+comp_hex_8:
+   compare data, 08
+   jump nz, comp_hex_9
+   load data, 80             ; 8: all on
+   jump hex_done
+comp_hex_9:
+   compare data, 09
+   jump nz, comp_hex_a
+   load data, 90             ; 9: a,b,c,d,f,g on
+   jump hex_done
+comp_hex_a:
+   compare data, 0A
+   jump nz, comp_hex_b
+   load data, 88             ; A: a,b,c,e,f,g on
+   jump hex_done
+comp_hex_b:
+   compare data, 0B
+   jump nz, comp_hex_c
+   load data, 83             ; b: c,d,e,f,g on
+   jump hex_done
+comp_hex_c:
+   compare data, 0C
+   jump nz, comp_hex_d
+   load data, C6             ; C: a,d,e,f on
+   jump hex_done
+comp_hex_d:
+   compare data, 0D
+   jump nz, comp_hex_e
+   load data, A1             ; d: b,c,d,e,g on
+   jump hex_done
+comp_hex_e:
+   compare data, 0E
+   jump nz, comp_hex_f
+   load data, 86             ; E: a,d,e,f,g on
+   jump hex_done
+comp_hex_f:
+   load data, 8E             ; F: a,e,f,g on
+hex_done:
+   return
+
+;=========================================================
+; routine: get_lower_nibble
+;=========================================================
+get_lower_nibble:
+   and data, 0F
+   return
+
+;=========================================================
+; routine: get_upper_nibble
+;=========================================================
+get_upper_nibble:
+   sr0 data
+   sr0 data
+   sr0 data
+   sr0 data
+   return
+
+;=========================================================
+; routine: square
+;   calculate a*a, b*b, a*a+b*b and store results in RAM
+;=========================================================
+square:
+   fetch s3, a_lsb
+   fetch s4, a_lsb
+   call mult_soft
+   store s6, aa_lsb
+   store s5, aa_msb
+   fetch s3, b_lsb
+   fetch s4, b_lsb
+   call mult_soft
+   store s6, bb_lsb
+   store s5, bb_msb
+   fetch data, aa_lsb
+   add data, s6
+   store data, aabb_lsb
+   fetch data, aa_msb
+   addcy data, s5
+   store data, aabb_msb
+   load data, 00
+   addcy data, 00
+   store data, aabb_cout
+   return
+
+;=========================================================
+; routine: mult_soft
+;   8-bit unsigned multiply: s3 * s4 -> {s5, s6}
+;=========================================================
+mult_soft:
+   load s5, 00
+   load i, 08
+mult_loop:
+   sr0 s4
+   jump nc, shift_prod
+   add s5, s3
+shift_prod:
+   sra s5
+   sra s6
+   sub i, 01
+   jump nz, mult_loop
+   return

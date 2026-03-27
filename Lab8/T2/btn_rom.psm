@@ -1,0 +1,296 @@
+;=========================================================
+; Square circuit with 7-seg and 16-bit LED output
+; Lab 8 T2 - extends T1 to show aabb result on led[15:0]
+;=========================================================
+; Additional output ports:
+;   0x04: led[7:0]  <- aabb_lsb (lower byte of a^2+b^2)
+;   0x05: led[15:8] <- aabb_msb (upper byte of a^2+b^2)
+; The dp on digit 3 still indicates carry-out (17th bit)
+
+;=========================================================
+; Data ram address alias
+;=========================================================
+constant a_lsb,    00
+constant b_lsb,    02
+constant aa_lsb,   04
+constant aa_msb,   05
+constant bb_lsb,   06
+constant bb_msb,   07
+constant aabb_lsb, 08
+constant aabb_msb, 09
+constant aabb_cout,0A
+constant led0,     10
+constant led1,     11
+constant led2,     12
+constant led3,     13
+
+;=========================================================
+; Register alias
+;=========================================================
+namereg s0, data
+namereg s1, addr
+namereg s2, i
+namereg sf, switch_a_b
+
+;=========================================================
+; Port alias
+;=========================================================
+constant rd_flag_port,  00
+constant sw_port,       01
+constant sseg0_port,    00
+constant sseg1_port,    01
+constant sseg2_port,    02
+constant sseg3_port,    03
+constant led_lsb_port,  04  ; led[7:0]
+constant led_msb_port,  05  ; led[15:8]
+
+;=========================================================
+; Main program
+;=========================================================
+   call init
+forever:
+   call proc_btn
+   call square
+   call load_led_pttn
+   call disp_led
+   call disp_result_leds
+   jump forever
+
+;=========================================================
+; routine: init
+;=========================================================
+init:
+   load i, 40
+   load data, 00
+clr_mem_loop:
+   store data, (i)
+   sub i, 01
+   jump nz, clr_mem_loop
+   load switch_a_b, 00
+   return
+
+;=========================================================
+; routine: proc_btn
+;=========================================================
+proc_btn:
+   input s3, rd_flag_port
+   test s3, 01
+   jump z, chk_btns
+   call init
+   jump proc_btn_done
+chk_btns:
+   test s3, 02
+   jump z, proc_btn_done
+   input data, sw_port
+   load addr, a_lsb
+   add addr, switch_a_b
+   store data, (addr)
+   xor switch_a_b, 02
+proc_btn_done:
+   return
+
+;=========================================================
+; routine: load_led_pttn
+;=========================================================
+load_led_pttn:
+   input s6, sw_port
+   sl0 s6
+   compare s6, 08
+   jump c, sw_ok
+   load s6, 08
+sw_ok:
+   load addr, a_lsb
+   add addr, s6
+   fetch data, (s6)
+   call get_lower_nibble
+   call hex_to_led
+   store data, led0
+   fetch data, (addr)
+   call get_upper_nibble
+   call hex_to_led
+   store data, led1
+   add addr, 01
+   fetch data, (addr)
+   call get_lower_nibble
+   call hex_to_led
+   store data, led2
+   fetch data, (addr)
+   call get_upper_nibble
+   call hex_to_led
+   compare s6, 08
+   jump nz, led_done
+   add addr, 01
+   fetch s6, (addr)
+   test s6, 01
+   jump z, led_done
+   and data, 7F
+led_done:
+   store data, led3
+   return
+
+;=========================================================
+; routine: disp_led
+;=========================================================
+disp_led:
+   fetch data, led0
+   output data, sseg0_port
+   fetch data, led1
+   output data, sseg1_port
+   fetch data, led2
+   output data, sseg2_port
+   fetch data, led3
+   output data, sseg3_port
+   return
+
+;=========================================================
+; routine: disp_result_leds
+;   output aabb_lsb to led[7:0], aabb_msb to led[15:8]
+;=========================================================
+disp_result_leds:
+   fetch data, aabb_lsb
+   output data, led_lsb_port
+   fetch data, aabb_msb
+   output data, led_msb_port
+   return
+
+;=========================================================
+; routine: hex_to_led (Basys 3 {dp,g,f,e,d,c,b,a} active-low)
+;=========================================================
+hex_to_led:
+   compare data, 00
+   jump nz, comp_hex_1
+   load data, C0
+   jump hex_done
+comp_hex_1:
+   compare data, 01
+   jump nz, comp_hex_2
+   load data, F9
+   jump hex_done
+comp_hex_2:
+   compare data, 02
+   jump nz, comp_hex_3
+   load data, A4
+   jump hex_done
+comp_hex_3:
+   compare data, 03
+   jump nz, comp_hex_4
+   load data, B0
+   jump hex_done
+comp_hex_4:
+   compare data, 04
+   jump nz, comp_hex_5
+   load data, 99
+   jump hex_done
+comp_hex_5:
+   compare data, 05
+   jump nz, comp_hex_6
+   load data, 92
+   jump hex_done
+comp_hex_6:
+   compare data, 06
+   jump nz, comp_hex_7
+   load data, 82
+   jump hex_done
+comp_hex_7:
+   compare data, 07
+   jump nz, comp_hex_8
+   load data, F8
+   jump hex_done
+comp_hex_8:
+   compare data, 08
+   jump nz, comp_hex_9
+   load data, 80
+   jump hex_done
+comp_hex_9:
+   compare data, 09
+   jump nz, comp_hex_a
+   load data, 90
+   jump hex_done
+comp_hex_a:
+   compare data, 0A
+   jump nz, comp_hex_b
+   load data, 88
+   jump hex_done
+comp_hex_b:
+   compare data, 0B
+   jump nz, comp_hex_c
+   load data, 83
+   jump hex_done
+comp_hex_c:
+   compare data, 0C
+   jump nz, comp_hex_d
+   load data, C6
+   jump hex_done
+comp_hex_d:
+   compare data, 0D
+   jump nz, comp_hex_e
+   load data, A1
+   jump hex_done
+comp_hex_e:
+   compare data, 0E
+   jump nz, comp_hex_f
+   load data, 86
+   jump hex_done
+comp_hex_f:
+   load data, 8E
+hex_done:
+   return
+
+;=========================================================
+; routine: get_lower_nibble
+;=========================================================
+get_lower_nibble:
+   and data, 0F
+   return
+
+;=========================================================
+; routine: get_upper_nibble
+;=========================================================
+get_upper_nibble:
+   sr0 data
+   sr0 data
+   sr0 data
+   sr0 data
+   return
+
+;=========================================================
+; routine: square
+;=========================================================
+square:
+   fetch s3, a_lsb
+   fetch s4, a_lsb
+   call mult_soft
+   store s6, aa_lsb
+   store s5, aa_msb
+   fetch s3, b_lsb
+   fetch s4, b_lsb
+   call mult_soft
+   store s6, bb_lsb
+   store s5, bb_msb
+   fetch data, aa_lsb
+   add data, s6
+   store data, aabb_lsb
+   fetch data, aa_msb
+   addcy data, s5
+   store data, aabb_msb
+   load data, 00
+   addcy data, 00
+   store data, aabb_cout
+   return
+
+;=========================================================
+; routine: mult_soft
+;=========================================================
+mult_soft:
+   load s5, 00
+   load i, 08
+mult_loop:
+   sr0 s4
+   jump nc, shift_prod
+   add s5, s3
+shift_prod:
+   sra s5
+   sra s6
+   sub i, 01
+   jump nz, mult_loop
+   return
