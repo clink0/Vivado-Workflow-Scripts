@@ -28,13 +28,19 @@ module als_top(
     assign JB[2]   = spi_sck;
     assign JB[7:3] = 5'b0;
 
-    // Latch light value and ready flag for PicoBlaze
-    reg [7:0] light_reg  = 0;
-    reg       ready_reg  = 0;
-
-    always @(posedge clk) begin
+    // Latch light value when SPI read completes
+    reg [7:0] light_reg = 0;
+    always @(posedge clk)
         if (spi_ready) light_reg <= light;
-        ready_reg <= spi_ready;
+
+    // Latch ready flag until PicoBlaze reads port 0x00 (clears it)
+    // spi_ready is a 1-cycle pulse — without latching, PicoBlaze misses it
+    reg ready_flag = 0;
+    always @(posedge clk) begin
+        if (spi_ready)
+            ready_flag <= 1;
+        else if (read_strobe && port_id == 8'h00)
+            ready_flag <= 0;
     end
 
     // KCPSM6 signals
@@ -88,7 +94,7 @@ module als_top(
     //   port 0x01: light_reg
     always @(*) begin
         case (port_id[0])
-            1'b0: in_port = {7'b0, ready_reg};
+            1'b0: in_port = {7'b0, ready_flag};
             1'b1: in_port = light_reg;
         endcase
     end
