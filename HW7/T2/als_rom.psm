@@ -1,0 +1,101 @@
+;=========================================================
+; HW7 T2 - Smart Light Controller
+; Reads 8-bit ambient light value from SPI ALS sensor.
+; Brighter room = fewer LEDs on.
+; Darker room   = more LEDs on (all 16 at minimum light).
+;
+; Port map:
+;   IN  0x00: {7'b0, spi_ready} - SPI data ready flag
+;   IN  0x01: light[7:0]        - 8-bit light value
+;   OUT 0x00: led[7:0]
+;   OUT 0x01: led[15:8]
+;=========================================================
+
+;=========================================================
+; Register alias
+;=========================================================
+namereg s0, led_lsb     ; lower byte of LED pattern
+namereg s1, led_msb     ; upper byte of LED pattern
+namereg s2, light_val   ; raw light reading
+namereg s3, n           ; shift count (light >> 4)
+namereg s4, tmp
+
+;=========================================================
+; Port alias
+;=========================================================
+constant ready_port,    00
+constant light_port,    01
+constant led_lsb_port,  00
+constant led_msb_port,  01
+
+;=========================================================
+; Main program
+;=========================================================
+   call init
+forever:
+   call wait_ready
+   call read_light
+   call compute_leds
+   call output_leds
+   jump forever
+
+;=========================================================
+; routine: init - set LEDs all on at startup
+;=========================================================
+init:
+   load led_lsb, FF
+   load led_msb, FF
+   output led_lsb, led_lsb_port
+   output led_msb, led_msb_port
+   return
+
+;=========================================================
+; routine: wait_ready - poll until SPI ready flag is set
+;=========================================================
+wait_ready:
+   input tmp, ready_port
+   test tmp, 01
+   jump z, wait_ready
+   return
+
+;=========================================================
+; routine: read_light - latch the 8-bit light value
+;=========================================================
+read_light:
+   input light_val, light_port
+   return
+
+;=========================================================
+; routine: compute_leds
+;   n = light_val >> 4  (0-15, how many LEDs to turn OFF)
+;   Start with led_msb:led_lsb = 0xFFFF (all 16 on)
+;   Shift right n times: each shift clears one LED from MSB side
+;=========================================================
+compute_leds:
+   load led_msb, FF
+   load led_lsb, FF
+   load n, light_val
+   ; n = light_val >> 4
+   sr0 n
+   sr0 n
+   sr0 n
+   sr0 n
+   ; now n = upper nibble of light_val (0-15)
+   compare n, 00
+   jump z, leds_done
+shift_loop:
+   ; shift {led_msb, led_lsb} right by 1, inserting 0 at MSB
+   sr0 led_msb
+   sra led_lsb
+   sub n, 01
+   jump nz, shift_loop
+leds_done:
+   return
+
+;=========================================================
+; routine: output_leds
+;=========================================================
+output_leds:
+   output led_lsb, led_lsb_port
+   output led_msb, led_msb_port
+   return
