@@ -1,0 +1,93 @@
+Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2018.3 (win64) Build 2405991 Thu Dec  6 23:38:27 MST 2018
+| Date         : Mon Mar 30 14:30:12 2026
+| Host         : BH610-DRZVK84 running 64-bit major release  (build 9200)
+| Command      : report_control_sets -verbose -file als_top_control_sets_placed.rpt
+| Design       : als_top
+| Device       : xc7a35t
+------------------------------------------------------------------------------------
+
+Control Set Information
+
+Table of Contents
+-----------------
+1. Summary
+2. Histogram
+3. Flip-Flop Distribution
+4. Detailed Control Set Information
+
+1. Summary
+----------
+
++----------------------------------------------------------+-------+
+|                          Status                          | Count |
++----------------------------------------------------------+-------+
+| Number of unique control sets                            |    22 |
+| Unused register locations in slices containing registers |    63 |
++----------------------------------------------------------+-------+
+
+
+2. Histogram
+------------
+
++--------+--------------+
+| Fanout | Control Sets |
++--------+--------------+
+|      1 |            4 |
+|      2 |            1 |
+|      4 |            2 |
+|      6 |            1 |
+|      8 |            6 |
+|     12 |            2 |
+|     13 |            1 |
+|    16+ |            5 |
++--------+--------------+
+
+
+3. Flip-Flop Distribution
+-------------------------
+
++--------------+-----------------------+------------------------+-----------------+--------------+
+| Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
++--------------+-----------------------+------------------------+-----------------+--------------+
+| No           | No                    | No                     |              66 |           22 |
+| No           | No                    | Yes                    |               0 |            0 |
+| No           | Yes                   | No                     |              41 |           14 |
+| Yes          | No                    | No                     |              67 |           25 |
+| Yes          | No                    | Yes                    |               0 |            0 |
+| Yes          | Yes                   | No                     |              27 |            9 |
++--------------+-----------------------+------------------------+-----------------+--------------+
+
+
+4. Detailed Control Set Information
+-----------------------------------
+
++--------------------------------------------------------------+----------------------------------------------------------------+-----------------------------------------------------------------------------------------------+------------------+----------------+
+|                         Clock Signal                         |                          Enable Signal                         |                                        Set/Reset Signal                                       | Slice Load Count | Bel Load Count |
++--------------------------------------------------------------+----------------------------------------------------------------+-----------------------------------------------------------------------------------------------+------------------+----------------+
+|  clk_IBUF_BUFG                                               | als_reader/FSM_onehot_state_reg_n_0_[0]                        | als_reader/cs0                                                                                |                1 |              1 |
+|  clk_IBUF_BUFG                                               | als_reader/sck_i_1_n_0                                         |                                                                                               |                1 |              1 |
+|  program_rom/instantiate_loader.jtag_loader_6_inst/CLK       |                                                                |                                                                                               |                1 |              1 |
+|  program_rom/instantiate_loader.jtag_loader_6_inst/shift_clk |                                                                |                                                                                               |                1 |              1 |
+|  clk_IBUF_BUFG                                               | processor/flag_enable                                          | processor/internal_reset                                                                      |                1 |              2 |
+|  clk_IBUF_BUFG                                               | als_reader/bit_cnt[3]_i_1_n_0                                  |                                                                                               |                2 |              4 |
+|  program_rom/instantiate_loader.jtag_loader_6_inst/CLK       |                                                                | program_rom/instantiate_loader.jtag_loader_6_inst/jtag_loader_gen.control_dout_int[7]_i_1_n_0 |                1 |              4 |
+|  clk_IBUF_BUFG                                               |                                                                | processor/internal_reset                                                                      |                3 |              6 |
+|  clk_IBUF_BUFG                                               |                                                                | program_rom/instruction[7]                                                                    |                4 |              8 |
+|  clk_IBUF_BUFG                                               | processor/E[0]                                                 |                                                                                               |                4 |              8 |
+|  clk_IBUF_BUFG                                               | processor/spm_enable                                           |                                                                                               |                2 |              8 |
+|  clk_IBUF_BUFG                                               | processor/write_strobe_flop_0[0]                               |                                                                                               |                5 |              8 |
+|  clk_IBUF_BUFG                                               | als_reader/cs0                                                 |                                                                                               |                3 |              8 |
+|  clk_IBUF_BUFG                                               | als_reader/E[0]                                                |                                                                                               |                2 |              8 |
+|  clk_IBUF_BUFG                                               | processor/t_state_0                                            | processor/internal_reset                                                                      |                3 |             12 |
+|  clk_IBUF_BUFG                                               | als_reader/shift_r[11]_i_2_n_0                                 | als_reader/shift_r[11]_i_1_n_0                                                                |                4 |             12 |
+|  program_rom/instantiate_loader.jtag_loader_6_inst/shift_clk | program_rom/instantiate_loader.jtag_loader_6_inst/shift        |                                                                                               |                3 |             13 |
+|  clk_IBUF_BUFG                                               | processor/register_enable                                      |                                                                                               |                2 |             16 |
+|  clk_IBUF_BUFG                                               | processor/t_state_0                                            |                                                                                               |                2 |             16 |
+|  program_rom/instantiate_loader.jtag_loader_6_inst/shift_clk | program_rom/instantiate_loader.jtag_loader_6_inst/jtag_din_int |                                                                                               |                5 |             17 |
+|  clk_IBUF_BUFG                                               |                                                                | als_reader/period[23]_i_1_n_0                                                                 |                6 |             23 |
+|  clk_IBUF_BUFG                                               |                                                                |                                                                                               |               20 |             64 |
++--------------------------------------------------------------+----------------------------------------------------------------+-----------------------------------------------------------------------------------------------+------------------+----------------+
+
+
