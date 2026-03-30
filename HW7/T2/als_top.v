@@ -6,9 +6,7 @@
 module als_top(
     input  wire        clk,
     input  wire        btnC,       // reset (wired to kcpsm6 via rdl)
-    input  wire        JB1,        // JB[1] = SDO (MISO from ALS)
-    output wire        JB0,        // JB[0] = CS  (active low)
-    output wire        JB2,        // JB[2] = SCK
+    inout  wire [7:0]  JB,         // JB[0]=CS out, JB[1]=SDO in, JB[2]=SCK out
     output wire [15:0] led
 );
 
@@ -19,15 +17,16 @@ module als_top(
 
     spi_als_reader als_reader (
         .clk   (clk),
-        .miso  (JB1),
+        .miso  (JB[1]),
         .sck   (spi_sck),
         .cs    (spi_cs),
         .light (light),
         .ready (spi_ready)
     );
 
-    assign JB0 = spi_cs;
-    assign JB2 = spi_sck;
+    assign JB[0]   = spi_cs;
+    assign JB[2]   = spi_sck;
+    assign JB[7:3] = 5'b0;
 
     // Latch light value and ready flag for PicoBlaze
     reg [7:0] light_reg  = 0;
