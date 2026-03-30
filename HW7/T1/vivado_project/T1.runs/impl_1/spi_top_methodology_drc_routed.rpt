@@ -1,7 +1,7 @@
 Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2018.3 (win64) Build 2405991 Thu Dec  6 23:38:27 MST 2018
-| Date         : Mon Mar 30 13:47:25 2026
+| Date         : Mon Mar 30 14:19:20 2026
 | Host         : BH610-DRZVK84 running 64-bit major release  (build 9200)
 | Command      : report_methodology -file spi_top_methodology_drc_routed.rpt -pb spi_top_methodology_drc_routed.pb -rpx spi_top_methodology_drc_routed.rpx
 | Design       : spi_top

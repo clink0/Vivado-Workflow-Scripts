@@ -1,7 +1,7 @@
 Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2018.3 (win64) Build 2405991 Thu Dec  6 23:38:27 MST 2018
-| Date             : Mon Mar 30 13:47:25 2026
+| Date             : Mon Mar 30 14:19:20 2026
 | Host             : BH610-DRZVK84 running 64-bit major release  (build 9200)
 | Command          : report_power -file spi_top_power_routed.rpt -pb spi_top_power_summary_routed.pb -rpx spi_top_power_routed.rpx
 | Design           : spi_top
@@ -53,13 +53,13 @@ Table of Contents
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
 | Clocks         |    <0.001 |        3 |       --- |             --- |
-| Slice Logic    |    <0.001 |      139 |       --- |             --- |
+| Slice Logic    |    <0.001 |      142 |       --- |             --- |
 |   LUT as Logic |    <0.001 |       56 |     20800 |            0.27 |
-|   Register     |    <0.001 |       61 |     41600 |            0.15 |
+|   Register     |    <0.001 |       62 |     41600 |            0.15 |
 |   F7/F8 Muxes  |    <0.001 |        1 |     32600 |           <0.01 |
 |   BUFG         |    <0.001 |        1 |        32 |            3.13 |
 |   Others       |     0.000 |        6 |       --- |             --- |
-| Signals        |    <0.001 |      102 |       --- |             --- |
+| Signals        |    <0.001 |      103 |       --- |             --- |
 | I/O            |    <0.001 |       26 |       106 |           24.53 |
 | Static Power   |     0.072 |          |           |                 |
 | Total          |     0.073 |          |           |                 |
@@ -72,7 +72,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) |
 +-----------+-------------+-----------+-------------+------------+
-| Vccint    |       1.000 |     0.011 |       0.001 |      0.010 |
+| Vccint    |       1.000 |     0.010 |       0.001 |      0.010 |
 | Vccaux    |       1.800 |     0.013 |       0.000 |      0.013 |
 | Vcco33    |       3.300 |     0.001 |       0.000 |      0.001 |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |
@@ -138,10 +138,8 @@ Table of Contents
 3.1 By Hierarchy
 ----------------
 
-+---------+-----------+
-| Name    | Power (W) |
-+---------+-----------+
-| spi_top |     0.001 |
-+---------+-----------+
++------+-----------+
+| Name | Power (W) |
++------+-----------+
 
 

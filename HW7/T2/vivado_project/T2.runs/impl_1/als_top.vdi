@@ -2,8 +2,8 @@
 # Vivado v2018.3 (64-bit)
 # SW Build 2405991 on Thu Dec  6 23:38:27 MST 2018
 # IP Build 2404404 on Fri Dec  7 01:43:56 MST 2018
-# Start of session at: Mon Mar 30 13:58:12 2026
-# Process ID: 18948
+# Start of session at: Mon Mar 30 14:21:54 2026
+# Process ID: 20444
 # Current directory: C:/Users/lebray/Vivado-Workflow-Scripts/HW7/T2/vivado_project/T2.runs/impl_1
 # Command line: vivado.exe -log als_top.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source als_top.tcl -notrace
 # Log file: C:/Users/lebray/Vivado-Workflow-Scripts/HW7/T2/vivado_project/T2.runs/impl_1/als_top.vdi
@@ -323,7 +323,7 @@ Resolution: If [get_<value>] was used to populate the object, check to make sure
 INFO: [Common 17-14] Message 'Common 17-55' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings. [C:/Users/lebray/Vivado-Workflow-Scripts/Basys3_Master.xdc:279]
 Finished Parsing XDC File [C:/Users/lebray/Vivado-Workflow-Scripts/Basys3_Master.xdc]
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 566.734 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 566.059 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 56 instances were transformed.
   LUT6_2 => LUT6_2 (LUT5, LUT6): 50 instances
@@ -339,26 +339,26 @@ Running DRC as a precondition to command opt_design
 
 Starting DRC Task
 INFO: [DRC 23-27] Running DRC with 2 threads
-ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[0] has multiple drivers: als_reader/shift_reg[0]__0/Q, and als_reader/shift_reg[0]/Q.
-ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[10] has multiple drivers: als_reader/shift_reg[10]/Q, and als_reader/shift_reg[10]__0/Q.
-ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[11] has multiple drivers: als_reader/shift_reg[11]/Q, and als_reader/shift_reg[11]__0/Q.
+ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[0] has multiple drivers: als_reader/shift_reg[0]/Q, and als_reader/shift_reg[0]__0/Q.
+ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[10] has multiple drivers: als_reader/shift_reg[10]__0/Q, and als_reader/shift_reg[10]/Q.
+ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[11] has multiple drivers: als_reader/shift_reg[11]__0/Q, and als_reader/shift_reg[11]/Q.
 ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[1] has multiple drivers: als_reader/shift_reg[1]/Q, and als_reader/shift_reg[1]__0/Q.
 ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[2] has multiple drivers: als_reader/shift_reg[2]__0/Q, and als_reader/shift_reg[2]/Q.
-ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[3] has multiple drivers: als_reader/shift_reg[3]__0/Q, and als_reader/shift_reg[3]/Q.
-ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[4] has multiple drivers: als_reader/shift_reg[4]/Q, and als_reader/shift_reg[4]__0/Q.
+ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[3] has multiple drivers: als_reader/shift_reg[3]/Q, and als_reader/shift_reg[3]__0/Q.
+ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[4] has multiple drivers: als_reader/shift_reg[4]__0/Q, and als_reader/shift_reg[4]/Q.
 ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[5] has multiple drivers: als_reader/shift_reg[5]/Q, and als_reader/shift_reg[5]__0/Q.
 ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[6] has multiple drivers: als_reader/shift_reg[6]/Q, and als_reader/shift_reg[6]__0/Q.
-ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[7] has multiple drivers: als_reader/shift_reg[7]__0/Q, and als_reader/shift_reg[7]/Q.
+ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[7] has multiple drivers: als_reader/shift_reg[7]/Q, and als_reader/shift_reg[7]__0/Q.
 ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[8] has multiple drivers: als_reader/shift_reg[8]/Q, and als_reader/shift_reg[8]__0/Q.
 ERROR: [DRC MDRV-1] Multiple Driver Nets: Net als_reader/shift[9] has multiple drivers: als_reader/shift_reg[9]/Q, and als_reader/shift_reg[9]__0/Q.
 INFO: [Project 1-461] DRC finished with 12 Errors
 INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
 ERROR: [Vivado_Tcl 4-78] Error(s) found during DRC. Opt_design not run.
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.272 . Memory (MB): peak = 580.676 ; gain = 13.941
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.259 . Memory (MB): peak = 578.715 ; gain = 12.656
 INFO: [Common 17-83] Releasing license: Implementation
 14 Infos, 100 Warnings, 100 Critical Warnings and 13 Errors encountered.
 opt_design failed
 ERROR: [Common 17-39] 'opt_design' failed due to earlier errors.
 
-INFO: [Common 17-206] Exiting Vivado at Mon Mar 30 13:58:18 2026...
+INFO: [Common 17-206] Exiting Vivado at Mon Mar 30 14:22:00 2026...
