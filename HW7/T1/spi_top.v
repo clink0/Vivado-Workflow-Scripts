@@ -18,11 +18,19 @@ module spi_top(
     wire [7:0] rx_data;
     wire follower_busy, follower_ready;
 
-    // One-shot send pulse from btnR (edge detect)
-    reg btnR_prev = 0;
-    wire send;
-    always @(posedge clk) btnR_prev <= btnR;
-    assign send = btnR & ~btnR_prev;
+    // Latch send high on btnR press, hold until leader goes busy
+    // (a 1-cycle pulse would be missed by the 2MHz negedge sck)
+    reg btnR_prev  = 0;
+    reg send_latch = 0;
+    wire send = send_latch;
+
+    always @(posedge clk) begin
+        btnR_prev <= btnR;
+        if (btnR & ~btnR_prev)
+            send_latch <= 1;
+        else if (leader_busy)
+            send_latch <= 0;
+    end
 
     SPI_leader_transmitter #(.data_length(8)) leader (
         .clk  (clk),
