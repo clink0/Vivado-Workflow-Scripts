@@ -1,7 +1,7 @@
 Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2018.3 (win64) Build 2405991 Thu Dec  6 23:38:27 MST 2018
-| Date         : Thu Mar 26 20:02:30 2026
+| Date         : Thu Mar 26 20:09:13 2026
 | Host         : BH610-DRZVK84 running 64-bit major release  (build 9200)
 | Command      : report_control_sets -verbose -file pico_btn_top_control_sets_placed.rpt
 | Design       : pico_btn_top
@@ -72,18 +72,18 @@ Table of Contents
 |  program_rom/instantiate_loader.jtag_loader_6_inst/CLK       |                                                                | program_rom/instantiate_loader.jtag_loader_6_inst/jtag_loader_gen.control_dout_int[7]_i_1_n_0 |                1 |              4 |
 |  clk_IBUF_BUFG                                               |                                                                | processor/internal_reset                                                                      |                3 |              6 |
 |  clk_IBUF_BUFG                                               |                                                                | program_rom/instruction[7]                                                                    |                3 |              8 |
-|  clk_IBUF_BUFG                                               | processor/spm_enable                                           |                                                                                               |                2 |              8 |
-|  clk_IBUF_BUFG                                               | processor/en_d[1]                                              |                                                                                               |                4 |              8 |
 |  clk_IBUF_BUFG                                               | processor/en_d[3]                                              |                                                                                               |                3 |              8 |
 |  clk_IBUF_BUFG                                               | processor/en_d[0]                                              |                                                                                               |                3 |              8 |
 |  clk_IBUF_BUFG                                               | processor/en_d[2]                                              |                                                                                               |                1 |              8 |
+|  clk_IBUF_BUFG                                               | processor/en_d[1]                                              |                                                                                               |                4 |              8 |
+|  clk_IBUF_BUFG                                               | processor/spm_enable                                           |                                                                                               |                2 |              8 |
 |  clk_IBUF_BUFG                                               | processor/t_state_0                                            | processor/internal_reset                                                                      |                3 |             12 |
 |  program_rom/instantiate_loader.jtag_loader_6_inst/shift_clk | program_rom/instantiate_loader.jtag_loader_6_inst/shift        |                                                                                               |                3 |             13 |
 |  clk_IBUF_BUFG                                               | processor/register_enable                                      |                                                                                               |                2 |             16 |
 |  clk_IBUF_BUFG                                               | processor/t_state_0                                            |                                                                                               |                2 |             16 |
 |  program_rom/instantiate_loader.jtag_loader_6_inst/shift_clk | program_rom/instantiate_loader.jtag_loader_6_inst/jtag_din_int |                                                                                               |                5 |             17 |
-|  clk_IBUF_BUFG                                               | btns_unit/q_next                                               | btnC_IBUF                                                                                     |                5 |             21 |
 |  clk_IBUF_BUFG                                               | btnc_unit/q_next_0                                             | btnC_IBUF                                                                                     |                6 |             21 |
+|  clk_IBUF_BUFG                                               | btns_unit/q_next                                               | btnC_IBUF                                                                                     |                5 |             21 |
 |  clk_IBUF_BUFG                                               |                                                                | btnC_IBUF                                                                                     |                7 |             22 |
 |  clk_IBUF_BUFG                                               |                                                                |                                                                                               |               16 |             50 |
 +--------------------------------------------------------------+----------------------------------------------------------------+-----------------------------------------------------------------------------------------------+------------------+----------------+

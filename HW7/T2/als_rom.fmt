@@ -1,0 +1,93 @@
+              ;=========================================================
+              ; HW7 T2 - Smart Light Controller
+              ; Reads 8-bit ambient light value from SPI ALS sensor.
+              ; Brighter room = fewer LEDs on.
+              ; Darker room   = more LEDs on (all 16 at minimum light).
+              ;
+              ; Port map:
+              ;   IN  0x00: {7'b0, spi_ready} - SPI data ready flag
+              ;   IN  0x01: light[7:0]        - 8-bit light value
+              ;   OUT 0x00: led[7:0]
+              ;   OUT 0x01: led[15:8]
+              ;=========================================================
+              ;=========================================================
+              ; Register alias
+              ;=========================================================
+              NAMEREG s0, led_lsb          ; lower byte of LED pattern
+              NAMEREG s1, led_msb          ; upper byte of LED pattern
+              NAMEREG s2, light_val        ; raw light reading
+              NAMEREG s3, n                ; shift count (light >> 4)
+              NAMEREG s4, tmp
+              ;=========================================================
+              ; Port alias
+              ;=========================================================
+              CONSTANT ready_port, 00
+              CONSTANT light_port, 01
+              CONSTANT led_lsb_port, 00
+              CONSTANT led_msb_port, 01
+              ;=========================================================
+              ; Main program
+              ;=========================================================
+              CALL init
+     forever: 
+              CALL wait_ready
+              CALL read_light
+              CALL compute_leds
+              CALL output_leds
+              JUMP forever
+              ;=========================================================
+              ; routine: init - set LEDs all on at startup
+              ;=========================================================
+        init: 
+              LOAD led_lsb, FF
+              LOAD led_msb, FF
+              OUTPUT led_lsb, led_lsb_port
+              OUTPUT led_msb, led_msb_port
+              RETURN 
+              ;=========================================================
+              ; routine: wait_ready - poll until SPI ready flag is set
+              ;=========================================================
+  wait_ready: 
+              INPUT tmp, ready_port
+              TEST tmp, 01
+              JUMP Z, wait_ready
+              RETURN 
+              ;=========================================================
+              ; routine: read_light - latch the 8-bit light value
+              ;=========================================================
+  read_light: 
+              INPUT light_val, light_port
+              RETURN 
+              ;=========================================================
+              ; routine: compute_leds
+              ;   n = light_val >> 4  (0-15, how many LEDs to turn OFF)
+              ;   Start with led_msb:led_lsb = 0xFFFF (all 16 on)
+              ;   Shift right n times: each shift clears one LED from MSB side
+              ;=========================================================
+compute_leds: 
+              LOAD led_msb, FF
+              LOAD led_lsb, FF
+              LOAD n, light_val
+              ; n = light_val >> 4
+              SR0 n
+              SR0 n
+              SR0 n
+              SR0 n
+              ; now n = upper nibble of light_val (0-15)
+              COMPARE n, 00
+              JUMP Z, leds_done
+  shift_loop: 
+              ; shift {led_msb, led_lsb} right by 1, inserting 0 at MSB
+              SR0 led_msb
+              SRA led_lsb
+              SUB n, 01
+              JUMP NZ, shift_loop
+   leds_done: 
+              RETURN 
+              ;=========================================================
+              ; routine: output_leds
+              ;=========================================================
+ output_leds: 
+              OUTPUT led_lsb, led_lsb_port
+              OUTPUT led_msb, led_msb_port
+              RETURN 

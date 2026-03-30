@@ -1,0 +1,453 @@
+                  ;=========================================================
+                  ; Square circuit with 7-seg, 16-bit LEDs, and LCD hex display
+                  ; Lab 8 T3 - extends T2 to also write hex result to LCD Pmod
+                  ;=========================================================
+                  ; LCD output ports:
+                  ;   0x06: LCD buffer index (0-15)
+                  ;   0x07: LCD buffer data  (ASCII char)
+                  ;
+                  ; LCD display format (16 chars):
+                  ;   "a=XX b=XX r=XXXX"
+                  ;    0123456789012345
+                  ;   [0]='a' [1]='=' [2-3]=hex(a) [4]=' '
+                  ;   [5]='b' [6]='=' [7-8]=hex(b) [9]=' '
+                  ;   [10]='r' [11]='=' [12-13]=hex(aabb_msb) [14-15]=hex(aabb_lsb)
+                  ;=========================================================
+                  ;=========================================================
+                  ; Data RAM address alias
+                  ;=========================================================
+                  CONSTANT a_lsb, 00
+                  CONSTANT b_lsb, 02
+                  CONSTANT aa_lsb, 04
+                  CONSTANT aa_msb, 05
+                  CONSTANT bb_lsb, 06
+                  CONSTANT bb_msb, 07
+                  CONSTANT aabb_lsb, 08
+                  CONSTANT aabb_msb, 09
+                  CONSTANT aabb_cout, 0A
+                  CONSTANT led0, 10
+                  CONSTANT led1, 11
+                  CONSTANT led2, 12
+                  CONSTANT led3, 13
+                  ;=========================================================
+                  ; Register alias
+                  ;=========================================================
+                  NAMEREG s0, data
+                  NAMEREG s1, addr
+                  NAMEREG s2, i
+                  NAMEREG sF, switch_a_b
+                  ;=========================================================
+                  ; Port alias
+                  ;=========================================================
+                  CONSTANT rd_flag_port, 00
+                  CONSTANT sw_port, 01
+                  CONSTANT sseg0_port, 00
+                  CONSTANT sseg1_port, 01
+                  CONSTANT sseg2_port, 02
+                  CONSTANT sseg3_port, 03
+                  CONSTANT led_lsb_port, 04 ; led[7:0]
+                  CONSTANT led_msb_port, 05 ; led[15:8]
+                  CONSTANT lcd_idx_port, 06 ; LCD buffer index
+                  CONSTANT lcd_dat_port, 07 ; LCD buffer data
+                  ;=========================================================
+                  ; Main program
+                  ;=========================================================
+                  CALL init
+                  CALL lcd_init
+         forever: 
+                  CALL proc_btn
+                  CALL square
+                  CALL load_led_pttn
+                  CALL disp_led
+                  CALL disp_result_leds
+                  CALL lcd_update
+                  JUMP forever
+                  ;=========================================================
+                  ; routine: init
+                  ;=========================================================
+            init: 
+                  LOAD i, 40
+                  LOAD data, 00
+    clr_mem_loop: 
+                  STORE data, (i)
+                  SUB i, 01
+                  JUMP NZ, clr_mem_loop
+                  LOAD switch_a_b, 00
+                  RETURN 
+                  ;=========================================================
+                  ; routine: proc_btn
+                  ;=========================================================
+        proc_btn: 
+                  INPUT s3, rd_flag_port
+                  TEST s3, 01
+                  JUMP Z, chk_btns
+                  CALL init
+                  JUMP proc_btn_done
+        chk_btns: 
+                  TEST s3, 02
+                  JUMP Z, proc_btn_done
+                  INPUT data, sw_port
+                  LOAD addr, a_lsb
+                  ADD addr, switch_a_b
+                  STORE data, (addr)
+                  XOR switch_a_b, 02
+   proc_btn_done: 
+                  RETURN 
+                  ;=========================================================
+                  ; routine: load_led_pttn
+                  ;=========================================================
+   load_led_pttn: 
+                  INPUT s6, sw_port
+                  SL0 s6
+                  COMPARE s6, 08
+                  JUMP C, sw_ok
+                  LOAD s6, 08
+           sw_ok: 
+                  LOAD addr, a_lsb
+                  ADD addr, s6
+                  FETCH data, (s6)
+                  CALL get_lower_nibble
+                  CALL hex_to_led
+                  STORE data, led0
+                  FETCH data, (addr)
+                  CALL get_upper_nibble
+                  CALL hex_to_led
+                  STORE data, led1
+                  ADD addr, 01
+                  FETCH data, (addr)
+                  CALL get_lower_nibble
+                  CALL hex_to_led
+                  STORE data, led2
+                  FETCH data, (addr)
+                  CALL get_upper_nibble
+                  CALL hex_to_led
+                  COMPARE s6, 08
+                  JUMP NZ, led_done
+                  ADD addr, 01
+                  FETCH s6, (addr)
+                  TEST s6, 01
+                  JUMP Z, led_done
+                  AND data, 7F
+        led_done: 
+                  STORE data, led3
+                  RETURN 
+                  ;=========================================================
+                  ; routine: disp_led
+                  ;=========================================================
+        disp_led: 
+                  FETCH data, led0
+                  OUTPUT data, sseg0_port
+                  FETCH data, led1
+                  OUTPUT data, sseg1_port
+                  FETCH data, led2
+                  OUTPUT data, sseg2_port
+                  FETCH data, led3
+                  OUTPUT data, sseg3_port
+                  RETURN 
+                  ;=========================================================
+                  ; routine: disp_result_leds
+                  ;=========================================================
+disp_result_leds: 
+                  FETCH data, aabb_lsb
+                  OUTPUT data, led_lsb_port
+                  FETCH data, aabb_msb
+                  OUTPUT data, led_msb_port
+                  RETURN 
+                  ;=========================================================
+                  ; routine: lcd_init
+                  ;   Writes static label characters to LCD buffer
+                  ;   "a=   b=   r=    "
+                  ;    0123456789012345
+                  ;=========================================================
+        lcd_init: 
+                  ; pos 0: 'a' (0x61)
+                  LOAD data, 00
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 61
+                  OUTPUT data, lcd_dat_port
+                  ; pos 1: '=' (0x3D)
+                  LOAD data, 01
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 3D
+                  OUTPUT data, lcd_dat_port
+                  ; pos 2: ' ' (placeholder, overwritten by lcd_update)
+                  LOAD data, 02
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 20
+                  OUTPUT data, lcd_dat_port
+                  ; pos 3: ' '
+                  LOAD data, 03
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 20
+                  OUTPUT data, lcd_dat_port
+                  ; pos 4: ' '
+                  LOAD data, 04
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 20
+                  OUTPUT data, lcd_dat_port
+                  ; pos 5: 'b' (0x62)
+                  LOAD data, 05
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 62
+                  OUTPUT data, lcd_dat_port
+                  ; pos 6: '='
+                  LOAD data, 06
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 3D
+                  OUTPUT data, lcd_dat_port
+                  ; pos 7: ' '
+                  LOAD data, 07
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 20
+                  OUTPUT data, lcd_dat_port
+                  ; pos 8: ' '
+                  LOAD data, 08
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 20
+                  OUTPUT data, lcd_dat_port
+                  ; pos 9: ' '
+                  LOAD data, 09
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 20
+                  OUTPUT data, lcd_dat_port
+                  ; pos 10 (0x0A): 'r' (0x72)
+                  LOAD data, 0A
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 72
+                  OUTPUT data, lcd_dat_port
+                  ; pos 11 (0x0B): '='
+                  LOAD data, 0B
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 3D
+                  OUTPUT data, lcd_dat_port
+                  ; pos 12-15: spaces
+                  LOAD data, 0C
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 20
+                  OUTPUT data, lcd_dat_port
+                  LOAD data, 0D
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 20
+                  OUTPUT data, lcd_dat_port
+                  LOAD data, 0E
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 20
+                  OUTPUT data, lcd_dat_port
+                  LOAD data, 0F
+                  OUTPUT data, lcd_idx_port
+                  LOAD data, 20
+                  OUTPUT data, lcd_dat_port
+                  RETURN 
+                  ;=========================================================
+                  ; routine: lcd_update
+                  ;   Updates LCD buffer with current a, b, aabb values
+                  ;   Layout: "a=XX b=XX r=XXXX"
+                  ;   [2-3] = hex(a), [7-8] = hex(b),
+                  ;   [12-13] = hex(aabb_msb), [14-15] = hex(aabb_lsb)
+                  ;=========================================================
+      lcd_update: 
+                  ; --- Write hex(a) to positions 2-3 ---
+                  FETCH data, a_lsb         ; get a value
+                  CALL get_upper_nibble
+                  CALL hex_to_ascii
+                  LOAD s3, 02
+                  OUTPUT s3, lcd_idx_port
+                  OUTPUT data, lcd_dat_port
+                  FETCH data, a_lsb
+                  CALL get_lower_nibble
+                  CALL hex_to_ascii
+                  LOAD s3, 03
+                  OUTPUT s3, lcd_idx_port
+                  OUTPUT data, lcd_dat_port
+                  ; --- Write hex(b) to positions 7-8 ---
+                  FETCH data, b_lsb
+                  CALL get_upper_nibble
+                  CALL hex_to_ascii
+                  LOAD s3, 07
+                  OUTPUT s3, lcd_idx_port
+                  OUTPUT data, lcd_dat_port
+                  FETCH data, b_lsb
+                  CALL get_lower_nibble
+                  CALL hex_to_ascii
+                  LOAD s3, 08
+                  OUTPUT s3, lcd_idx_port
+                  OUTPUT data, lcd_dat_port
+                  ; --- Write hex(aabb_msb) to positions 12-13 ---
+                  FETCH data, aabb_msb
+                  CALL get_upper_nibble
+                  CALL hex_to_ascii
+                  LOAD s3, 0C
+                  OUTPUT s3, lcd_idx_port
+                  OUTPUT data, lcd_dat_port
+                  FETCH data, aabb_msb
+                  CALL get_lower_nibble
+                  CALL hex_to_ascii
+                  LOAD s3, 0D
+                  OUTPUT s3, lcd_idx_port
+                  OUTPUT data, lcd_dat_port
+                  ; --- Write hex(aabb_lsb) to positions 14-15 ---
+                  FETCH data, aabb_lsb
+                  CALL get_upper_nibble
+                  CALL hex_to_ascii
+                  LOAD s3, 0E
+                  OUTPUT s3, lcd_idx_port
+                  OUTPUT data, lcd_dat_port
+                  FETCH data, aabb_lsb
+                  CALL get_lower_nibble
+                  CALL hex_to_ascii
+                  LOAD s3, 0F
+                  OUTPUT s3, lcd_idx_port
+                  OUTPUT data, lcd_dat_port
+                  RETURN 
+                  ;=========================================================
+                  ; routine: hex_to_ascii
+                  ;   Converts nibble in data (0x00-0x0F) to ASCII in data
+                  ;   '0'-'9' = 0x30-0x39, 'A'-'F' = 0x41-0x46
+                  ;=========================================================
+    hex_to_ascii: 
+                  COMPARE data, 0A
+                  JUMP C, is_digit
+                  ; A-F: add 0x37 (0x0A + 0x37 = 0x41 = 'A')
+                  ADD data, 37
+                  RETURN 
+        is_digit: 
+                  ; 0-9: add 0x30
+                  ADD data, 30
+                  RETURN 
+                  ;=========================================================
+                  ; routine: hex_to_led (Basys 3 {dp,g,f,e,d,c,b,a} active-low)
+                  ;=========================================================
+      hex_to_led: 
+                  COMPARE data, 00
+                  JUMP NZ, comp_hex_1
+                  LOAD data, C0
+                  JUMP hex_done
+      comp_hex_1: 
+                  COMPARE data, 01
+                  JUMP NZ, comp_hex_2
+                  LOAD data, F9
+                  JUMP hex_done
+      comp_hex_2: 
+                  COMPARE data, 02
+                  JUMP NZ, comp_hex_3
+                  LOAD data, A4
+                  JUMP hex_done
+      comp_hex_3: 
+                  COMPARE data, 03
+                  JUMP NZ, comp_hex_4
+                  LOAD data, B0
+                  JUMP hex_done
+      comp_hex_4: 
+                  COMPARE data, 04
+                  JUMP NZ, comp_hex_5
+                  LOAD data, 99
+                  JUMP hex_done
+      comp_hex_5: 
+                  COMPARE data, 05
+                  JUMP NZ, comp_hex_6
+                  LOAD data, 92
+                  JUMP hex_done
+      comp_hex_6: 
+                  COMPARE data, 06
+                  JUMP NZ, comp_hex_7
+                  LOAD data, 82
+                  JUMP hex_done
+      comp_hex_7: 
+                  COMPARE data, 07
+                  JUMP NZ, comp_hex_8
+                  LOAD data, F8
+                  JUMP hex_done
+      comp_hex_8: 
+                  COMPARE data, 08
+                  JUMP NZ, comp_hex_9
+                  LOAD data, 80
+                  JUMP hex_done
+      comp_hex_9: 
+                  COMPARE data, 09
+                  JUMP NZ, comp_hex_a
+                  LOAD data, 90
+                  JUMP hex_done
+      comp_hex_a: 
+                  COMPARE data, 0A
+                  JUMP NZ, comp_hex_b
+                  LOAD data, 88
+                  JUMP hex_done
+      comp_hex_b: 
+                  COMPARE data, 0B
+                  JUMP NZ, comp_hex_c
+                  LOAD data, 83
+                  JUMP hex_done
+      comp_hex_c: 
+                  COMPARE data, 0C
+                  JUMP NZ, comp_hex_d
+                  LOAD data, C6
+                  JUMP hex_done
+      comp_hex_d: 
+                  COMPARE data, 0D
+                  JUMP NZ, comp_hex_e
+                  LOAD data, A1
+                  JUMP hex_done
+      comp_hex_e: 
+                  COMPARE data, 0E
+                  JUMP NZ, comp_hex_f
+                  LOAD data, 86
+                  JUMP hex_done
+      comp_hex_f: 
+                  LOAD data, 8E
+        hex_done: 
+                  RETURN 
+                  ;=========================================================
+                  ; routine: get_lower_nibble
+                  ;=========================================================
+get_lower_nibble: 
+                  AND data, 0F
+                  RETURN 
+                  ;=========================================================
+                  ; routine: get_upper_nibble
+                  ;=========================================================
+get_upper_nibble: 
+                  SR0 data
+                  SR0 data
+                  SR0 data
+                  SR0 data
+                  RETURN 
+                  ;=========================================================
+                  ; routine: square
+                  ;=========================================================
+          square: 
+                  FETCH s3, a_lsb
+                  FETCH s4, a_lsb
+                  CALL mult_soft
+                  STORE s6, aa_lsb
+                  STORE s5, aa_msb
+                  FETCH s3, b_lsb
+                  FETCH s4, b_lsb
+                  CALL mult_soft
+                  STORE s6, bb_lsb
+                  STORE s5, bb_msb
+                  FETCH data, aa_lsb
+                  ADD data, s6
+                  STORE data, aabb_lsb
+                  FETCH data, aa_msb
+                  ADDCY data, s5
+                  STORE data, aabb_msb
+                  LOAD data, 00
+                  ADDCY data, 00
+                  STORE data, aabb_cout
+                  RETURN 
+                  ;=========================================================
+                  ; routine: mult_soft
+                  ;=========================================================
+       mult_soft: 
+                  LOAD s5, 00
+                  LOAD i, 08
+       mult_loop: 
+                  SR0 s4
+                  JUMP NC, shift_prod
+                  ADD s5, s3
+      shift_prod: 
+                  SRA s5
+                  SRA s6
+                  SUB i, 01
+                  JUMP NZ, mult_loop
+                  RETURN 
