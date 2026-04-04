@@ -46,7 +46,6 @@ set_property PACKAGE_PIN A16 [get_ports ss]
 set_property PACKAGE_PIN B15 [get_ports mosi]
     set_property IOSTANDARD LVCMOS33 [get_ports mosi]
 
-# JXADC — XADC auxiliary channel 6 (analog input, no IOSTANDARD)
-# XA1_P = vauxp6, XA1_N = vauxn6
-set_property PACKAGE_PIN J3 [get_ports vauxp6]
-set_property PACKAGE_PIN K3 [get_ports vauxn6]
+# JXADC — vauxp6/vauxn6 are true analog XADC inputs routed through the XADC
+# hardmacro, not through an I/O buffer. Do not constrain them here; the XADC
+# primitive maps channel 6 to the correct physical pins (J3/K3) automatically.
