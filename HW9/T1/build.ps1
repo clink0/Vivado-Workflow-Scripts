@@ -21,8 +21,8 @@ $addFiles
 
 create_ip -name xadc_wiz -vendor xilinx.com -library ip -version 3.3 -module_name xadc_wiz_0
 set_property -dict [list \
-    CONFIG.INTERFACE_SELECTION            {ENABLE_DRP} \
-    CONFIG.SEQUENCER_MODE                 {Continuous} \
+    CONFIG.INTERFACE_SELECTION            {Enable_DRP} \
+    CONFIG.SINGLE_CHANNEL_SELECTION       {VAUXP6_VAUXN6} \
     CONFIG.DCLK_FREQUENCY                 {100} \
     CONFIG.ADC_CONVERSION_RATE            {1000} \
     CONFIG.CHANNEL_ENABLE_VAUXP6_VAUXN6   {true} \
