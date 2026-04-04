@@ -23,7 +23,7 @@ Finished Parsing XDC File [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado
 Parsing XDC File [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/constraints.xdc]
 Finished Parsing XDC File [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/constraints.xdc]
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 602.402 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 603.992 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
@@ -39,53 +39,53 @@ INFO: [DRC 23-27] Running DRC with 2 threads
 INFO: [Project 1-461] DRC finished with 0 Errors
 INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.253 . Memory (MB): peak = 616.297 ; gain = 13.895
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.247 . Memory (MB): peak = 615.781 ; gain = 11.789
 
 Starting Cache Timing Information Task
 INFO: [Timing 38-35] Done setting XDC timing constraints.
-Ending Cache Timing Information Task | Checksum: 242ba7800
+Ending Cache Timing Information Task | Checksum: 1c5279e58
 
-Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 1163.617 ; gain = 547.320
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 1165.309 ; gain = 549.527
 
 Starting Logic Optimization Task
 
 Phase 1 Retarget
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
 INFO: [Opt 31-49] Retargeted 0 cell(s).
-Phase 1 Retarget | Checksum: 242ba7800
+Phase 1 Retarget | Checksum: 1c5279e58
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.007 . Memory (MB): peak = 1259.098 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.007 . Memory (MB): peak = 1261.004 ; gain = 0.000
 INFO: [Opt 31-389] Phase Retarget created 0 cells and removed 0 cells
 
 Phase 2 Constant propagation
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Phase 2 Constant propagation | Checksum: 242ba7800
+Phase 2 Constant propagation | Checksum: 1c5279e58
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.007 . Memory (MB): peak = 1259.098 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.008 . Memory (MB): peak = 1261.004 ; gain = 0.000
 INFO: [Opt 31-389] Phase Constant propagation created 0 cells and removed 0 cells
 
 Phase 3 Sweep
-Phase 3 Sweep | Checksum: 260dc35e5
+Phase 3 Sweep | Checksum: 1e3495c3d
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.011 . Memory (MB): peak = 1259.098 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.011 . Memory (MB): peak = 1261.004 ; gain = 0.000
 INFO: [Opt 31-389] Phase Sweep created 8 cells and removed 0 cells
 
 Phase 4 BUFG optimization
-Phase 4 BUFG optimization | Checksum: 260dc35e5
+Phase 4 BUFG optimization | Checksum: 1e3495c3d
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.012 . Memory (MB): peak = 1259.098 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.013 . Memory (MB): peak = 1261.004 ; gain = 0.000
 INFO: [Opt 31-662] Phase BUFG optimization created 0 cells of which 0 are BUFGs and removed 0 cells.
 
 Phase 5 Shift Register Optimization
-Phase 5 Shift Register Optimization | Checksum: 1d2399210
+Phase 5 Shift Register Optimization | Checksum: 154a6b868
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.021 . Memory (MB): peak = 1259.098 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.022 . Memory (MB): peak = 1261.004 ; gain = 0.000
 INFO: [Opt 31-389] Phase Shift Register Optimization created 0 cells and removed 0 cells
 
 Phase 6 Post Processing Netlist
-Phase 6 Post Processing Netlist | Checksum: 1d2399210
+Phase 6 Post Processing Netlist | Checksum: 154a6b868
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.022 . Memory (MB): peak = 1259.098 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.023 . Memory (MB): peak = 1261.004 ; gain = 0.000
 INFO: [Opt 31-389] Phase Post Processing Netlist created 0 cells and removed 0 cells
 Opt_design Change Summary
 =========================
@@ -106,39 +106,39 @@ Opt_design Change Summary
 
 Starting Connectivity Check Task
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1259.098 ; gain = 0.000
-Ending Logic Optimization Task | Checksum: 1d2399210
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Ending Logic Optimization Task | Checksum: 154a6b868
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.023 . Memory (MB): peak = 1259.098 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.024 . Memory (MB): peak = 1261.004 ; gain = 0.000
 
 Starting Power Optimization Task
 INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
-Ending Power Optimization Task | Checksum: 1d2399210
+Ending Power Optimization Task | Checksum: 154a6b868
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.006 . Memory (MB): peak = 1259.098 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.008 . Memory (MB): peak = 1261.004 ; gain = 0.000
 
 Starting Final Cleanup Task
-Ending Final Cleanup Task | Checksum: 1d2399210
+Ending Final Cleanup Task | Checksum: 154a6b868
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1259.098 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
 
 Starting Netlist Obfuscation Task
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1259.098 ; gain = 0.000
-Ending Netlist Obfuscation Task | Checksum: 1d2399210
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Ending Netlist Obfuscation Task | Checksum: 154a6b868
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1259.098 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 1261.004 ; gain = 0.000
 INFO: [Common 17-83] Releasing license: Implementation
 24 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
 opt_design completed successfully
-opt_design: Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1259.098 ; gain = 656.695
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1259.098 ; gain = 0.000
+opt_design: Time (s): cpu = 00:00:05 ; elapsed = 00:01:20 . Memory (MB): peak = 1261.004 ; gain = 657.012
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
 INFO: [Timing 38-480] Writing timing data to binary archive.
 Writing placer database...
 Writing XDEF routing.
 Writing XDEF routing logical nets.
 Writing XDEF routing special nets.
-Write XDEF Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.015 . Memory (MB): peak = 1259.098 ; gain = 0.000
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1259.098 ; gain = 0.000
+Write XDEF Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.016 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
 INFO: [Common 17-1381] The checkpoint 'C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado_project/T2.runs/impl_1/XADCdemo_opt.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_drc -file XADCdemo_drc_opted.rpt -pb XADCdemo_drc_opted.pb -rpx XADCdemo_drc_opted.rpx
 Command: report_drc -file XADCdemo_drc_opted.rpt -pb XADCdemo_drc_opted.pb -rpx XADCdemo_drc_opted.rpx
@@ -154,14 +154,97 @@ INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
 INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
 Running DRC as a precondition to command place_design
 INFO: [DRC 23-27] Running DRC with 2 threads
-ERROR: [DRC BIVC-1] Bank IO standard Vcc: Conflicting Vcc voltages in bank 35. For example, the following two ports in this bank have conflicting VCCOs:  
-vauxn6 (LVCMOS18, requiring VCCO=1.800) and led[12] (LVCMOS33, requiring VCCO=3.300)
-INFO: [Vivado_Tcl 4-198] DRC finished with 1 Errors
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
 INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
-ERROR: [Vivado_Tcl 4-23] Error(s) found during DRC. Placer not run.
-INFO: [Common 17-83] Releasing license: Implementation
-38 Infos, 0 Warnings, 0 Critical Warnings and 2 Errors encountered.
-place_design failed
-ERROR: [Common 17-39] 'place_design' failed due to earlier errors.
 
-INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 20:25:52 2026...
+Starting Placer Task
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 2 CPUs
+
+Phase 1 Placer Initialization
+
+Phase 1.1 Placer Initialization Netlist Sorting
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Phase 1.1 Placer Initialization Netlist Sorting | Checksum: 11905b058
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.005 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
+
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device
+ERROR: [Place 30-372] Bank 35 has terminals with incompatible standards:
+Incompatible Pair of IO Standards: (OUT of IO Standard LVCMOS33) & (IN of IO Standard LVCMOS18) have incompatible Vccs
+ The following  terminals correspond to these IO Standards:
+SioStd: LVCMOS33   VCCO = 3.3 Termination: 0  TermDir:  Out  Bank: 35 Drv: 12 Placed :
+	Term: led[12]
+	Term: led[13]
+	Term: led[14]
+	Term: led[15]
+SioStd: LVCMOS18   VCCO = 1.8 Termination: 0  TermDir:  In   Bank: 35 Placed :
+	Term: vauxn6
+	Term: vauxp6
+
+
+ERROR: [Place 30-374] IO placer failed to find a solution
+Below is the partial placement that can be analyzed to see if any constraint modifications will make the IO placement problem easier to solve.
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                                                                     IO Placement : Bank Stats                                                                           |
++----+-------+-------+------------------------------------------------------------------------+------------------------------------------+--------+--------+--------+-----+
+| Id | Pins  | Terms |                               Standards                                |                IDelayCtrls               |  VREF  |  VCCO  |   VR   | DCI |
++----+-------+-------+------------------------------------------------------------------------+------------------------------------------+--------+--------+--------+-----+
+|  0 |     0 |     0 |                                                                        |                                          |        |        |        |     |
+| 14 |    50 |     9 | LVCMOS33(9)                                                            |                                          |        |  +3.30 |    YES |     |
+| 16 |    12 |     3 | LVCMOS33(3)                                                            |                                          |        |  +3.30 |    YES |     |
+| 34 |    24 |     4 | LVCMOS33(4)                                                            |                                          |        |  +3.30 |    YES |     |
+| 35 |    20 |     6 | LVCMOS33(4)  LVCMOS18(2)                                               |                                          |        |  +1.80 |    YES |     |
++----+-------+-------+------------------------------------------------------------------------+------------------------------------------+--------+--------+--------+-----+
+|    |   106 |    22 |                                                                        |                                          |        |        |        |     |
++----+-------+-------+------------------------------------------------------------------------+------------------------------------------+--------+--------+--------+-----+
+
+IO Placement:
++--------+----------------------+-----------------+----------------------+----------------------+----------------------+
+| BankId |             Terminal | Standard        | Site                 | Pin                  | Attributes           |
++--------+----------------------+-----------------+----------------------+----------------------+----------------------+
+| 14     | led[0]               | LVCMOS33        | IOB_X0Y3             | U16                  |                      |
+|        | led[1]               | LVCMOS33        | IOB_X0Y43            | E19                  |                      |
+|        | led[2]               | LVCMOS33        | IOB_X0Y20            | U19                  |                      |
+|        | led[3]               | LVCMOS33        | IOB_X0Y19            | V19                  |                      |
+|        | led[4]               | LVCMOS33        | IOB_X0Y18            | W18                  |                      |
+|        | led[5]               | LVCMOS33        | IOB_X0Y4             | U15                  |                      |
+|        | led[6]               | LVCMOS33        | IOB_X0Y0             | U14                  |                      |
+|        | led[7]               | LVCMOS33        | IOB_X0Y1             | V14                  |                      |
+|        | led[8]               | LVCMOS33        | IOB_X0Y2             | V13                  |                      |
++--------+----------------------+-----------------+----------------------+----------------------+----------------------+
+| 16     | mosi                 | LVCMOS33        | IOB_X0Y127           | B15                  |                      |
+|        | sck                  | LVCMOS33        | IOB_X0Y138           | A14                  |                      |
+|        | ss                   | LVCMOS33        | IOB_X0Y126           | A16                  |                      |
++--------+----------------------+-----------------+----------------------+----------------------+----------------------+
+| 34     | CLK100MHZ            | LVCMOS33        | IOB_X1Y26            | W5                   |                      |
+|        | led[10]              | LVCMOS33        | IOB_X1Y37            | W3                   | *                    |
+|        | led[11]              | LVCMOS33        | IOB_X1Y32            | U3                   |                      |
+|        | led[9]               | LVCMOS33        | IOB_X1Y38            | V3                   |                      |
++--------+----------------------+-----------------+----------------------+----------------------+----------------------+
+| 35     | led[12]              | LVCMOS33        | IOB_X1Y75            | P3                   |                      |
+|        | led[13]              | LVCMOS33        | IOB_X1Y76            | N3                   |                      |
+|        | led[14]              | LVCMOS33        | IOB_X1Y61            | P1                   | *                    |
+|        | led[15]              | LVCMOS33        | IOB_X1Y87            | L1                   | *                    |
+|        | vauxn6               | LVCMOS18        | IOB_X1Y85            | K3                   |                      |
+|        | vauxp6               | LVCMOS18        | IOB_X1Y86            | J3                   |                      |
++--------+----------------------+-----------------+----------------------+----------------------+----------------------+
+
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device | Checksum: 18e3095ff
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.237 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Phase 1 Placer Initialization | Checksum: 18e3095ff
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.238 . Memory (MB): peak = 1261.004 ; gain = 0.000
+ERROR: [Place 30-99] Placer failed with error: 'IO Clock Placer failed'
+Please review all ERROR, CRITICAL WARNING, and WARNING messages during placement to understand the cause for failure.
+Ending Placer Task | Checksum: 1109dbc57
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.239 . Memory (MB): peak = 1261.004 ; gain = 0.000
+INFO: [Common 17-83] Releasing license: Implementation
+40 Infos, 0 Warnings, 0 Critical Warnings and 4 Errors encountered.
+place_design failed
+ERROR: [Common 17-69] Command failed: Placer could not place all instances
+INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 20:37:05 2026...

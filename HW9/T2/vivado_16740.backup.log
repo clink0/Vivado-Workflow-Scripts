@@ -2,8 +2,8 @@
 # Vivado v2018.3 (64-bit)
 # SW Build 2405991 on Thu Dec  6 23:38:27 MST 2018
 # IP Build 2404404 on Fri Dec  7 01:43:56 MST 2018
-# Start of session at: Fri Apr  3 20:34:47 2026
-# Process ID: 21836
+# Start of session at: Fri Apr  3 20:32:12 2026
+# Process ID: 16740
 # Current directory: C:/Users/lebray/Vivado-Workflow-Scripts
 # Command line: vivado.exe -mode batch -source C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T2\build.tcl -log C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T2\vivado.log -journal C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T2\vivado.jou
 # Log file: C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado.log
@@ -41,12 +41,12 @@ INFO: [IP_Flow 19-1686] Generating 'Change Log' target for IP 'xadc_wiz_0'...
 # add_files -fileset constrs_1 -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T2\constraints.xdc}
 # reset_run synth_1
 # launch_runs synth_1
-[Fri Apr  3 20:34:55 2026] Launched xadc_wiz_0_synth_1...
+[Fri Apr  3 20:32:20 2026] Launched xadc_wiz_0_synth_1...
 Run output will be captured here: C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado_project/T2.runs/xadc_wiz_0_synth_1/runme.log
-[Fri Apr  3 20:34:55 2026] Launched synth_1...
+[Fri Apr  3 20:32:20 2026] Launched synth_1...
 Run output will be captured here: C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado_project/T2.runs/synth_1/runme.log
 # wait_on_run synth_1
-[Fri Apr  3 20:34:55 2026] Waiting for synth_1 to finish...
+[Fri Apr  3 20:32:20 2026] Waiting for synth_1 to finish...
 
 *** Running vivado
     with args -log XADCdemo.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source XADCdemo.tcl
@@ -63,13 +63,13 @@ Starting synth_design
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35t'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t'
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 26996 
+INFO: Helper process launched with PID 12820 
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.990 . Memory (MB): peak = 384.652 ; gain = 98.887
+Starting RTL Elaboration : Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 385.020 ; gain = 99.742
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-6157] synthesizing module 'XADCdemo' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/XADCdemo.v:1]
-INFO: [Synth 8-6157] synthesizing module 'xadc_wiz_0' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado_project/T2.runs/synth_1/.Xil/Vivado-13704-BH610-DRZVK84/realtime/xadc_wiz_0_stub.v:5]
-INFO: [Synth 8-6155] done synthesizing module 'xadc_wiz_0' (1#1) [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado_project/T2.runs/synth_1/.Xil/Vivado-13704-BH610-DRZVK84/realtime/xadc_wiz_0_stub.v:5]
+INFO: [Synth 8-6157] synthesizing module 'xadc_wiz_0' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado_project/T2.runs/synth_1/.Xil/Vivado-17584-BH610-DRZVK84/realtime/xadc_wiz_0_stub.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'xadc_wiz_0' (1#1) [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado_project/T2.runs/synth_1/.Xil/Vivado-17584-BH610-DRZVK84/realtime/xadc_wiz_0_stub.v:5]
 WARNING: [Synth 8-350] instance 'XLXI_7' of module 'xadc_wiz_0' requires 21 connections, but only 15 given [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/XADCdemo.v:21]
 INFO: [Synth 8-6157] synthesizing module 'SPI_leader_transmitter' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/SPI_leader_transmitter.v:1]
 	Parameter data_length bound to: 8 - type: integer 
@@ -80,7 +80,7 @@ INFO: [Synth 8-6157] synthesizing module 'SPI_leader_transmitter' [C:/Users/lebr
 INFO: [Synth 8-6155] done synthesizing module 'SPI_leader_transmitter' (2#1) [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/SPI_leader_transmitter.v:1]
 INFO: [Synth 8-6155] done synthesizing module 'XADCdemo' (3#1) [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/XADCdemo.v:1]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 440.145 ; gain = 154.379
+Finished RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 439.629 ; gain = 154.352
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -93,10 +93,10 @@ Report Check Netlist:
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 440.145 ; gain = 154.379
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 439.629 ; gain = 154.352
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 440.145 ; gain = 154.379
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 439.629 ; gain = 154.352
 ---------------------------------------------------------------------------------
 INFO: [Device 21-403] Loading part xc7a35tcpg236-1
 INFO: [Project 1-570] Preparing netlist for logic optimization
@@ -109,31 +109,31 @@ Parsing XDC File [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/constraints.xdc
 Finished Parsing XDC File [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/constraints.xdc]
 INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/constraints.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/XADCdemo_propImpl.xdc].
 Resolution: To avoid this warning, move constraints listed in [.Xil/XADCdemo_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 753.426 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 752.426 ; gain = 0.000
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 753.484 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 752.488 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 753.484 ; gain = 0.000
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 753.484 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 752.488 ; gain = 0.000
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 752.488 ; gain = 0.000
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 753.484 ; gain = 467.719
+Finished Constraint Validation : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 752.488 ; gain = 467.211
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7a35tcpg236-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 753.484 ; gain = 467.719
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 752.488 ; gain = 467.211
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 Applied set_property DONT_TOUCH = true for XLXI_7. (constraint file  auto generated constraint, line ).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 753.484 ; gain = 467.719
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 752.488 ; gain = 467.211
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'SPI_leader_transmitter'
 INFO: [Synth 8-5546] ROM "sck" won't be mapped to RAM because it is too sparse
@@ -153,7 +153,7 @@ INFO: [Synth 8-4471] merging register 'data_latch_reg[7:0]' into 'led_reg[7:0]' 
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'one-hot' in module 'SPI_leader_transmitter'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 753.484 ; gain = 467.719
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 752.488 ; gain = 467.211
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -232,7 +232,7 @@ WARNING: [Synth 8-3917] design XADCdemo has port led[10] driven by constant 0
 WARNING: [Synth 8-3917] design XADCdemo has port led[9] driven by constant 0
 WARNING: [Synth 8-3917] design XADCdemo has port led[8] driven by constant 0
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 753.484 ; gain = 467.719
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 752.488 ; gain = 467.211
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -244,13 +244,13 @@ Report RTL Partitions:
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:09 ; elapsed = 00:00:09 . Memory (MB): peak = 762.930 ; gain = 477.164
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:09 ; elapsed = 00:00:09 . Memory (MB): peak = 761.453 ; gain = 476.176
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:09 ; elapsed = 00:00:09 . Memory (MB): peak = 782.441 ; gain = 496.676
+Finished Timing Optimization : Time (s): cpu = 00:00:09 ; elapsed = 00:00:09 . Memory (MB): peak = 781.281 ; gain = 496.004
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -262,7 +262,7 @@ Report RTL Partitions:
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:09 ; elapsed = 00:00:09 . Memory (MB): peak = 783.246 ; gain = 497.480
+Finished Technology Mapping : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 782.066 ; gain = 496.789
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -287,7 +287,7 @@ Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 CRITICAL WARNING: [Synth 8-4442] BlackBox module XLXI_7 has unconnected pin reset_in
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 783.246 ; gain = 497.480
+Finished IO Insertion : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 782.066 ; gain = 496.789
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -300,7 +300,7 @@ Report Check Netlist:
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 783.246 ; gain = 497.480
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 782.066 ; gain = 496.789
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -312,25 +312,25 @@ Report RTL Partitions:
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 783.246 ; gain = 497.480
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 782.066 ; gain = 496.789
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 783.246 ; gain = 497.480
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 782.066 ; gain = 496.789
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 783.246 ; gain = 497.480
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 782.066 ; gain = 496.789
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 783.246 ; gain = 497.480
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 782.066 ; gain = 496.789
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -369,40 +369,40 @@ Report Instance Areas:
 |2     |  nolabel_line38 |SPI_leader_transmitter |    65|
 +------+-----------------+-----------------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 783.246 ; gain = 497.480
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 782.066 ; gain = 496.789
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 1 critical warnings and 8 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 783.246 ; gain = 184.141
-Synthesis Optimization Complete : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 783.246 ; gain = 497.480
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 782.066 ; gain = 183.930
+Synthesis Optimization Complete : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 782.066 ; gain = 496.789
 INFO: [Project 1-571] Translating synthesized netlist
 INFO: [Netlist 29-17] Analyzing 5 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 783.246 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 782.066 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
 INFO: [Common 17-83] Releasing license: Synthesis
 29 Infos, 9 Warnings, 1 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 783.246 ; gain = 508.965
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 783.246 ; gain = 0.000
+synth_design: Time (s): cpu = 00:00:09 ; elapsed = 00:00:11 . Memory (MB): peak = 782.066 ; gain = 508.285
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 782.066 ; gain = 0.000
 WARNING: [Constraints 18-5210] No constraints selected for write.
 Resolution: This message can indicate that there are no constraints for the design, or it can indicate that the used_in flags are set such that the constraints are ignored. This later case is used when running synth_design to not write synthesis constraints to the resulting checkpoint. Instead, project constraints are read when the synthesized design is opened.
 INFO: [Common 17-1381] The checkpoint 'C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado_project/T2.runs/synth_1/XADCdemo.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file XADCdemo_utilization_synth.rpt -pb XADCdemo_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 20:35:27 2026...
-[Fri Apr  3 20:35:30 2026] synth_1 finished
-wait_on_run: Time (s): cpu = 00:00:00 ; elapsed = 00:00:35 . Memory (MB): peak = 485.820 ; gain = 0.125
+INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 20:32:52 2026...
+[Fri Apr  3 20:32:55 2026] synth_1 finished
+wait_on_run: Time (s): cpu = 00:00:00 ; elapsed = 00:00:35 . Memory (MB): peak = 485.605 ; gain = 0.000
 # set s [get_property STATUS [get_runs synth_1]]
 # if {[string first "Complete" $s] < 0} { puts "ERROR: Synthesis failed: $s"; exit 1 }
 # reset_run impl_1
 # launch_runs impl_1
-[Fri Apr  3 20:35:30 2026] Launched impl_1...
+[Fri Apr  3 20:32:55 2026] Launched impl_1...
 Run output will be captured here: C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado_project/T2.runs/impl_1/runme.log
 # wait_on_run impl_1
-[Fri Apr  3 20:35:30 2026] Waiting for impl_1 to finish...
+[Fri Apr  3 20:32:55 2026] Waiting for impl_1 to finish...
 
 *** Running vivado
     with args -log XADCdemo.vdi -applog -m64 -product Vivado -messageDb vivado.pb -mode batch -source XADCdemo.tcl -notrace
@@ -428,7 +428,7 @@ Finished Parsing XDC File [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado
 Parsing XDC File [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/constraints.xdc]
 Finished Parsing XDC File [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/constraints.xdc]
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 603.992 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 602.762 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
@@ -444,53 +444,53 @@ INFO: [DRC 23-27] Running DRC with 2 threads
 INFO: [Project 1-461] DRC finished with 0 Errors
 INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.247 . Memory (MB): peak = 615.781 ; gain = 11.789
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.249 . Memory (MB): peak = 616.562 ; gain = 13.801
 
 Starting Cache Timing Information Task
 INFO: [Timing 38-35] Done setting XDC timing constraints.
-Ending Cache Timing Information Task | Checksum: 1c5279e58
+Ending Cache Timing Information Task | Checksum: 242ba7800
 
-Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 1165.309 ; gain = 549.527
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:28 . Memory (MB): peak = 1164.473 ; gain = 547.910
 
 Starting Logic Optimization Task
 
 Phase 1 Retarget
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
 INFO: [Opt 31-49] Retargeted 0 cell(s).
-Phase 1 Retarget | Checksum: 1c5279e58
+Phase 1 Retarget | Checksum: 242ba7800
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.007 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.007 . Memory (MB): peak = 1260.055 ; gain = 0.000
 INFO: [Opt 31-389] Phase Retarget created 0 cells and removed 0 cells
 
 Phase 2 Constant propagation
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Phase 2 Constant propagation | Checksum: 1c5279e58
+Phase 2 Constant propagation | Checksum: 242ba7800
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.008 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.008 . Memory (MB): peak = 1260.055 ; gain = 0.000
 INFO: [Opt 31-389] Phase Constant propagation created 0 cells and removed 0 cells
 
 Phase 3 Sweep
-Phase 3 Sweep | Checksum: 1e3495c3d
+Phase 3 Sweep | Checksum: 260dc35e5
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.011 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.011 . Memory (MB): peak = 1260.055 ; gain = 0.000
 INFO: [Opt 31-389] Phase Sweep created 8 cells and removed 0 cells
 
 Phase 4 BUFG optimization
-Phase 4 BUFG optimization | Checksum: 1e3495c3d
+Phase 4 BUFG optimization | Checksum: 260dc35e5
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.013 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.013 . Memory (MB): peak = 1260.055 ; gain = 0.000
 INFO: [Opt 31-662] Phase BUFG optimization created 0 cells of which 0 are BUFGs and removed 0 cells.
 
 Phase 5 Shift Register Optimization
-Phase 5 Shift Register Optimization | Checksum: 154a6b868
+Phase 5 Shift Register Optimization | Checksum: 1d2399210
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.022 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.021 . Memory (MB): peak = 1260.055 ; gain = 0.000
 INFO: [Opt 31-389] Phase Shift Register Optimization created 0 cells and removed 0 cells
 
 Phase 6 Post Processing Netlist
-Phase 6 Post Processing Netlist | Checksum: 154a6b868
+Phase 6 Post Processing Netlist | Checksum: 1d2399210
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.023 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.022 . Memory (MB): peak = 1260.055 ; gain = 0.000
 INFO: [Opt 31-389] Phase Post Processing Netlist created 0 cells and removed 0 cells
 Opt_design Change Summary
 =========================
@@ -511,39 +511,39 @@ Opt_design Change Summary
 
 Starting Connectivity Check Task
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
-Ending Logic Optimization Task | Checksum: 154a6b868
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1260.055 ; gain = 0.000
+Ending Logic Optimization Task | Checksum: 1d2399210
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.024 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.023 . Memory (MB): peak = 1260.055 ; gain = 0.000
 
 Starting Power Optimization Task
 INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
-Ending Power Optimization Task | Checksum: 154a6b868
+Ending Power Optimization Task | Checksum: 1d2399210
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.008 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.007 . Memory (MB): peak = 1260.055 ; gain = 0.000
 
 Starting Final Cleanup Task
-Ending Final Cleanup Task | Checksum: 154a6b868
+Ending Final Cleanup Task | Checksum: 1d2399210
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1260.055 ; gain = 0.000
 
 Starting Netlist Obfuscation Task
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
-Ending Netlist Obfuscation Task | Checksum: 154a6b868
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1260.055 ; gain = 0.000
+Ending Netlist Obfuscation Task | Checksum: 1d2399210
 
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1260.055 ; gain = 0.000
 INFO: [Common 17-83] Releasing license: Implementation
 24 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
 opt_design completed successfully
-opt_design: Time (s): cpu = 00:00:05 ; elapsed = 00:01:20 . Memory (MB): peak = 1261.004 ; gain = 657.012
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
+opt_design: Time (s): cpu = 00:00:05 ; elapsed = 00:00:44 . Memory (MB): peak = 1260.055 ; gain = 657.293
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1260.055 ; gain = 0.000
 INFO: [Timing 38-480] Writing timing data to binary archive.
 Writing placer database...
 Writing XDEF routing.
 Writing XDEF routing logical nets.
 Writing XDEF routing special nets.
-Write XDEF Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.016 . Memory (MB): peak = 1261.004 ; gain = 0.000
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
+Write XDEF Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.016 . Memory (MB): peak = 1260.055 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1260.055 ; gain = 0.000
 INFO: [Common 17-1381] The checkpoint 'C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T2/vivado_project/T2.runs/impl_1/XADCdemo_opt.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_drc -file XADCdemo_drc_opted.rpt -pb XADCdemo_drc_opted.pb -rpx XADCdemo_drc_opted.rpx
 Command: report_drc -file XADCdemo_drc_opted.rpt -pb XADCdemo_drc_opted.pb -rpx XADCdemo_drc_opted.rpx
@@ -559,103 +559,20 @@ INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
 INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
 Running DRC as a precondition to command place_design
 INFO: [DRC 23-27] Running DRC with 2 threads
-INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+ERROR: [DRC BIVC-1] Bank IO standard Vcc: Conflicting Vcc voltages in bank 35. For example, the following two ports in this bank have conflicting VCCOs:  
+vauxn6 (LVCMOS18, requiring VCCO=1.800) and led[12] (LVCMOS33, requiring VCCO=3.300)
+INFO: [Vivado_Tcl 4-198] DRC finished with 1 Errors
 INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
-
-Starting Placer Task
-INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 2 CPUs
-
-Phase 1 Placer Initialization
-
-Phase 1.1 Placer Initialization Netlist Sorting
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
-Phase 1.1 Placer Initialization Netlist Sorting | Checksum: 11905b058
-
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.005 . Memory (MB): peak = 1261.004 ; gain = 0.000
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1261.004 ; gain = 0.000
-
-Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device
-ERROR: [Place 30-372] Bank 35 has terminals with incompatible standards:
-Incompatible Pair of IO Standards: (OUT of IO Standard LVCMOS33) & (IN of IO Standard LVCMOS18) have incompatible Vccs
- The following  terminals correspond to these IO Standards:
-SioStd: LVCMOS33   VCCO = 3.3 Termination: 0  TermDir:  Out  Bank: 35 Drv: 12 Placed :
-	Term: led[12]
-	Term: led[13]
-	Term: led[14]
-	Term: led[15]
-SioStd: LVCMOS18   VCCO = 1.8 Termination: 0  TermDir:  In   Bank: 35 Placed :
-	Term: vauxn6
-	Term: vauxp6
-
-
-ERROR: [Place 30-374] IO placer failed to find a solution
-Below is the partial placement that can be analyzed to see if any constraint modifications will make the IO placement problem easier to solve.
-
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                                                                     IO Placement : Bank Stats                                                                           |
-+----+-------+-------+------------------------------------------------------------------------+------------------------------------------+--------+--------+--------+-----+
-| Id | Pins  | Terms |                               Standards                                |                IDelayCtrls               |  VREF  |  VCCO  |   VR   | DCI |
-+----+-------+-------+------------------------------------------------------------------------+------------------------------------------+--------+--------+--------+-----+
-|  0 |     0 |     0 |                                                                        |                                          |        |        |        |     |
-| 14 |    50 |     9 | LVCMOS33(9)                                                            |                                          |        |  +3.30 |    YES |     |
-| 16 |    12 |     3 | LVCMOS33(3)                                                            |                                          |        |  +3.30 |    YES |     |
-| 34 |    24 |     4 | LVCMOS33(4)                                                            |                                          |        |  +3.30 |    YES |     |
-| 35 |    20 |     6 | LVCMOS33(4)  LVCMOS18(2)                                               |                                          |        |  +1.80 |    YES |     |
-+----+-------+-------+------------------------------------------------------------------------+------------------------------------------+--------+--------+--------+-----+
-|    |   106 |    22 |                                                                        |                                          |        |        |        |     |
-+----+-------+-------+------------------------------------------------------------------------+------------------------------------------+--------+--------+--------+-----+
-
-IO Placement:
-+--------+----------------------+-----------------+----------------------+----------------------+----------------------+
-| BankId |             Terminal | Standard        | Site                 | Pin                  | Attributes           |
-+--------+----------------------+-----------------+----------------------+----------------------+----------------------+
-| 14     | led[0]               | LVCMOS33        | IOB_X0Y3             | U16                  |                      |
-|        | led[1]               | LVCMOS33        | IOB_X0Y43            | E19                  |                      |
-|        | led[2]               | LVCMOS33        | IOB_X0Y20            | U19                  |                      |
-|        | led[3]               | LVCMOS33        | IOB_X0Y19            | V19                  |                      |
-|        | led[4]               | LVCMOS33        | IOB_X0Y18            | W18                  |                      |
-|        | led[5]               | LVCMOS33        | IOB_X0Y4             | U15                  |                      |
-|        | led[6]               | LVCMOS33        | IOB_X0Y0             | U14                  |                      |
-|        | led[7]               | LVCMOS33        | IOB_X0Y1             | V14                  |                      |
-|        | led[8]               | LVCMOS33        | IOB_X0Y2             | V13                  |                      |
-+--------+----------------------+-----------------+----------------------+----------------------+----------------------+
-| 16     | mosi                 | LVCMOS33        | IOB_X0Y127           | B15                  |                      |
-|        | sck                  | LVCMOS33        | IOB_X0Y138           | A14                  |                      |
-|        | ss                   | LVCMOS33        | IOB_X0Y126           | A16                  |                      |
-+--------+----------------------+-----------------+----------------------+----------------------+----------------------+
-| 34     | CLK100MHZ            | LVCMOS33        | IOB_X1Y26            | W5                   |                      |
-|        | led[10]              | LVCMOS33        | IOB_X1Y37            | W3                   | *                    |
-|        | led[11]              | LVCMOS33        | IOB_X1Y32            | U3                   |                      |
-|        | led[9]               | LVCMOS33        | IOB_X1Y38            | V3                   |                      |
-+--------+----------------------+-----------------+----------------------+----------------------+----------------------+
-| 35     | led[12]              | LVCMOS33        | IOB_X1Y75            | P3                   |                      |
-|        | led[13]              | LVCMOS33        | IOB_X1Y76            | N3                   |                      |
-|        | led[14]              | LVCMOS33        | IOB_X1Y61            | P1                   | *                    |
-|        | led[15]              | LVCMOS33        | IOB_X1Y87            | L1                   | *                    |
-|        | vauxn6               | LVCMOS18        | IOB_X1Y85            | K3                   |                      |
-|        | vauxp6               | LVCMOS18        | IOB_X1Y86            | J3                   |                      |
-+--------+----------------------+-----------------+----------------------+----------------------+----------------------+
-
-INFO: [Timing 38-35] Done setting XDC timing constraints.
-Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device | Checksum: 18e3095ff
-
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.237 . Memory (MB): peak = 1261.004 ; gain = 0.000
-Phase 1 Placer Initialization | Checksum: 18e3095ff
-
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.238 . Memory (MB): peak = 1261.004 ; gain = 0.000
-ERROR: [Place 30-99] Placer failed with error: 'IO Clock Placer failed'
-Please review all ERROR, CRITICAL WARNING, and WARNING messages during placement to understand the cause for failure.
-Ending Placer Task | Checksum: 1109dbc57
-
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.239 . Memory (MB): peak = 1261.004 ; gain = 0.000
+ERROR: [Vivado_Tcl 4-23] Error(s) found during DRC. Placer not run.
 INFO: [Common 17-83] Releasing license: Implementation
-40 Infos, 0 Warnings, 0 Critical Warnings and 4 Errors encountered.
+38 Infos, 0 Warnings, 0 Critical Warnings and 2 Errors encountered.
 place_design failed
-ERROR: [Common 17-69] Command failed: Placer could not place all instances
-INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 20:37:05 2026...
-[Fri Apr  3 20:37:06 2026] impl_1 finished
-wait_on_run: Time (s): cpu = 00:00:00 ; elapsed = 00:01:35 . Memory (MB): peak = 485.832 ; gain = 0.000
+ERROR: [Common 17-39] 'place_design' failed due to earlier errors.
+
+INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 20:33:53 2026...
+[Fri Apr  3 20:33:56 2026] impl_1 finished
+wait_on_run: Time (s): cpu = 00:00:00 ; elapsed = 00:01:00 . Memory (MB): peak = 485.605 ; gain = 0.000
 # set s [get_property STATUS [get_runs impl_1]]
 # if {[string first "Complete" $s] < 0} { puts "ERROR: Implementation failed: $s"; exit 1 }
 ERROR: Implementation failed: place_design ERROR
-INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 20:37:06 2026...
+INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 20:33:56 2026...
