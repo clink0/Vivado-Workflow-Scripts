@@ -1,0 +1,99 @@
+#-----------------------------------------------------------
+# Vivado v2018.3 (64-bit)
+# SW Build 2405991 on Thu Dec  6 23:38:27 MST 2018
+# IP Build 2404404 on Fri Dec  7 01:43:56 MST 2018
+# Start of session at: Fri Apr  3 19:50:51 2026
+# Process ID: 17696
+# Current directory: C:/Users/lebray/Vivado-Workflow-Scripts
+# Command line: vivado.exe -mode batch -source C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\build.tcl -log C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\vivado.log -journal C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\vivado.jou
+# Log file: C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado.log
+# Journal file: C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\vivado.jou
+#-----------------------------------------------------------
+source {C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\build.tcl}
+# create_project T1 {C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\vivado_project} -part xc7a35tcpg236-1 -force
+# if {[catch {set_property board_part digilentinc.com:basys3:part0:1.2 [current_project]}]} {
+#     puts "Note: board part not available"
+# }
+Note: board part not available
+# set_property target_language Verilog [current_project]
+# add_files -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\XADCdemo.v}
+# add_files -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\SPI_leader_transmitter.v}
+# create_ip -name xadc_wiz -vendor xilinx.com -library ip -version 3.3 -module_name xadc_wiz_0
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/Xilinx/Vivado/2018.3/data/ip'.
+INFO: [Device 21-403] Loading part xc7a35tcpg236-1
+# set_property -dict [list \
+#     CONFIG.INTERFACE_SELECTION            {ENABLE_DRP} \
+#     CONFIG.SEQUENCER_MODE                 {Continuous} \
+#     CONFIG.DCLK_FREQUENCY                 {100} \
+#     CONFIG.ADC_CONVERSION_RATE            {1000} \
+#     CONFIG.CHANNEL_ENABLE_VAUXP6_VAUXN6   {true} \
+# ] [get_ips xadc_wiz_0]
+WARNING: [IP_Flow 19-3374] An attempt to modify the value of disabled parameter 'SEQUENCER_MODE' from 'Off' to 'Continuous' has been ignored for IP 'xadc_wiz_0'
+# generate_target {all} [get_ips xadc_wiz_0]
+INFO: [IP_Flow 19-1686] Generating 'Instantiation Template' target for IP 'xadc_wiz_0'...
+INFO: [IP_Flow 19-1686] Generating 'Synthesis' target for IP 'xadc_wiz_0'...
+INFO: [IP_Flow 19-1686] Generating 'Simulation' target for IP 'xadc_wiz_0'...
+INFO: [IP_Flow 19-1686] Generating 'Miscellaneous' target for IP 'xadc_wiz_0'...
+INFO: [IP_Flow 19-1686] Generating 'Change Log' target for IP 'xadc_wiz_0'...
+# set_property top XADCdemo [current_fileset]
+# update_compile_order -fileset sources_1
+# add_files -fileset constrs_1 -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\constraints.xdc}
+# reset_run synth_1
+# launch_runs synth_1
+[Fri Apr  3 19:50:59 2026] Launched xadc_wiz_0_synth_1...
+Run output will be captured here: C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.runs/xadc_wiz_0_synth_1/runme.log
+[Fri Apr  3 19:50:59 2026] Launched synth_1...
+Run output will be captured here: C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.runs/synth_1/runme.log
+# wait_on_run synth_1
+[Fri Apr  3 19:50:59 2026] Waiting for synth_1 to finish...
+
+*** Running vivado
+    with args -log XADCdemo.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source XADCdemo.tcl
+
+
+****** Vivado v2018.3 (64-bit)
+  **** SW Build 2405991 on Thu Dec  6 23:38:27 MST 2018
+  **** IP Build 2404404 on Fri Dec  7 01:43:56 MST 2018
+    ** Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+
+source XADCdemo.tcl -notrace
+Command: synth_design -top XADCdemo -part xc7a35tcpg236-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 7028 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.955 . Memory (MB): peak = 384.770 ; gain = 99.230
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'XADCdemo' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/XADCdemo.v:1]
+INFO: [Synth 8-6157] synthesizing module 'xadc_wiz_0' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.runs/synth_1/.Xil/Vivado-22404-BH610-DRZVK84/realtime/xadc_wiz_0_stub.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'xadc_wiz_0' (1#1) [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.runs/synth_1/.Xil/Vivado-22404-BH610-DRZVK84/realtime/xadc_wiz_0_stub.v:5]
+ERROR: [Synth 8-448] named port connection 'vauxp6' does not exist for instance 'XLXI_7' of module 'xadc_wiz_0' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/XADCdemo.v:28]
+ERROR: [Synth 8-448] named port connection 'vauxn6' does not exist for instance 'XLXI_7' of module 'xadc_wiz_0' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/XADCdemo.v:29]
+WARNING: [Synth 8-350] instance 'XLXI_7' of module 'xadc_wiz_0' requires 19 connections, but only 13 given [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/XADCdemo.v:21]
+INFO: [Synth 8-6157] synthesizing module 'SPI_leader_transmitter' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/SPI_leader_transmitter.v:1]
+	Parameter data_length bound to: 8 - type: integer 
+	Parameter RDY bound to: 2'b00 
+	Parameter START bound to: 2'b01 
+	Parameter TRANSMIT bound to: 2'b10 
+	Parameter STOP bound to: 2'b11 
+ERROR: [Synth 8-6156] failed synthesizing module 'SPI_leader_transmitter' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/SPI_leader_transmitter.v:1]
+ERROR: [Synth 8-6156] failed synthesizing module 'XADCdemo' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/XADCdemo.v:1]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 440.137 ; gain = 154.598
+---------------------------------------------------------------------------------
+RTL Elaboration failed
+INFO: [Common 17-83] Releasing license: Synthesis
+6 Infos, 1 Warnings, 0 Critical Warnings and 5 Errors encountered.
+synth_design failed
+ERROR: [Common 17-69] Command failed: Synthesis failed - please see the console or run log file for details
+INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 19:51:21 2026...
+[Fri Apr  3 19:51:24 2026] synth_1 finished
+wait_on_run: Time (s): cpu = 00:00:00 ; elapsed = 00:00:25 . Memory (MB): peak = 486.816 ; gain = 0.000
+# set s [get_property STATUS [get_runs synth_1]]
+# if {[string first "Complete" $s] < 0} { puts "ERROR: Synthesis failed: $s"; exit 1 }
+ERROR: Synthesis failed: synth_design ERROR
+INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 19:51:24 2026...
