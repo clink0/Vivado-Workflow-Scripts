@@ -21,14 +21,13 @@ $addFiles
 
 create_ip -name xadc_wiz -vendor xilinx.com -library ip -version 3.3 -module_name xadc_wiz_0
 set_property -dict [list \
-    CONFIG.INTERFACE_SELECTION            {Enable_DRP} \
+    CONFIG.INTERFACE_SELECTION            {ENABLE_DRP} \
     CONFIG.SEQUENCER_MODE                 {Continuous} \
     CONFIG.DCLK_FREQUENCY                 {100} \
     CONFIG.ADC_CONVERSION_RATE            {1000} \
     CONFIG.CHANNEL_ENABLE_VAUXP6_VAUXN6   {true} \
 ] [get_ips xadc_wiz_0]
 generate_target {all} [get_ips xadc_wiz_0]
-synth_ip [get_ips xadc_wiz_0]
 
 set_property top XADCdemo [current_fileset]
 update_compile_order -fileset sources_1
