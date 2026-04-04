@@ -2,8 +2,8 @@
 # Vivado v2018.3 (64-bit)
 # SW Build 2405991 on Thu Dec  6 23:38:27 MST 2018
 # IP Build 2404404 on Fri Dec  7 01:43:56 MST 2018
-# Start of session at: Fri Apr  3 19:40:23 2026
-# Process ID: 21532
+# Start of session at: Fri Apr  3 19:50:51 2026
+# Process ID: 17696
 # Current directory: C:/Users/lebray/Vivado-Workflow-Scripts
 # Command line: vivado.exe -mode batch -source C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\build.tcl -log C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\vivado.log -journal C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\vivado.jou
 # Log file: C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado.log
@@ -24,7 +24,7 @@ INFO: [IP_Flow 19-1704] No user IP repositories specified
 INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/Xilinx/Vivado/2018.3/data/ip'.
 INFO: [Device 21-403] Loading part xc7a35tcpg236-1
 # set_property -dict [list \
-#     CONFIG.INTERFACE_SELECTION            {Enable_DRP} \
+#     CONFIG.INTERFACE_SELECTION            {ENABLE_DRP} \
 #     CONFIG.SEQUENCER_MODE                 {Continuous} \
 #     CONFIG.DCLK_FREQUENCY                 {100} \
 #     CONFIG.ADC_CONVERSION_RATE            {1000} \
@@ -37,313 +37,17 @@ INFO: [IP_Flow 19-1686] Generating 'Synthesis' target for IP 'xadc_wiz_0'...
 INFO: [IP_Flow 19-1686] Generating 'Simulation' target for IP 'xadc_wiz_0'...
 INFO: [IP_Flow 19-1686] Generating 'Miscellaneous' target for IP 'xadc_wiz_0'...
 INFO: [IP_Flow 19-1686] Generating 'Change Log' target for IP 'xadc_wiz_0'...
-# synth_ip [get_ips xadc_wiz_0]
-CRITICAL WARNING: [Vivado 12-5447] synth_ip is not supported in project mode, please use non-project mode.
-INFO: [IP_Flow 19-234] Refreshing IP repositories
-INFO: [IP_Flow 19-1704] No user IP repositories specified
-INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/Xilinx/Vivado/2018.3/data/ip'.
-Command: synth_design -top xadc_wiz_0 -part xc7a35tcpg236-1 -mode out_of_context
-Starting synth_design
-Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35t'
-INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t'
-INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 26460 
----------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 612.133 ; gain = 102.891
----------------------------------------------------------------------------------
-INFO: [Synth 8-6157] synthesizing module 'xadc_wiz_0' [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0.v:53]
-INFO: [Synth 8-6157] synthesizing module 'XADC' [C:/Xilinx/Vivado/2018.3/scripts/rt/data/unisim_comp.v:53521]
-	Parameter INIT_40 bound to: 16'b0000000000000000 
-	Parameter INIT_41 bound to: 16'b0011000110100000 
-	Parameter INIT_42 bound to: 16'b0000010000000000 
-	Parameter INIT_43 bound to: 16'b0000000000000000 
-	Parameter INIT_44 bound to: 16'b0000000000000000 
-	Parameter INIT_45 bound to: 16'b0000000000000000 
-	Parameter INIT_46 bound to: 16'b0000000000000000 
-	Parameter INIT_47 bound to: 16'b0000000000000000 
-	Parameter INIT_48 bound to: 16'b0000000100000000 
-	Parameter INIT_49 bound to: 16'b0000000000000000 
-	Parameter INIT_4A bound to: 16'b0000000000000000 
-	Parameter INIT_4B bound to: 16'b0000000000000000 
-	Parameter INIT_4C bound to: 16'b0000000000000000 
-	Parameter INIT_4D bound to: 16'b0000000000000000 
-	Parameter INIT_4E bound to: 16'b0000000000000000 
-	Parameter INIT_4F bound to: 16'b0000000000000000 
-	Parameter INIT_50 bound to: 16'b1011010111101101 
-	Parameter INIT_51 bound to: 16'b0101011111100100 
-	Parameter INIT_52 bound to: 16'b1010000101000111 
-	Parameter INIT_53 bound to: 16'b1100101000110011 
-	Parameter INIT_54 bound to: 16'b1010100100111010 
-	Parameter INIT_55 bound to: 16'b0101001011000110 
-	Parameter INIT_56 bound to: 16'b1001010101010101 
-	Parameter INIT_57 bound to: 16'b1010111001001110 
-	Parameter INIT_58 bound to: 16'b0101100110011001 
-	Parameter INIT_59 bound to: 16'b0000000000000000 
-	Parameter INIT_5A bound to: 16'b0000000000000000 
-	Parameter INIT_5B bound to: 16'b0000000000000000 
-	Parameter INIT_5C bound to: 16'b0101000100010001 
-	Parameter INIT_5D bound to: 16'b0000000000000000 
-	Parameter INIT_5E bound to: 16'b0000000000000000 
-	Parameter INIT_5F bound to: 16'b0000000000000000 
-	Parameter IS_CONVSTCLK_INVERTED bound to: 1'b0 
-	Parameter IS_DCLK_INVERTED bound to: 1'b0 
-	Parameter SIM_DEVICE bound to: 7SERIES - type: string 
-	Parameter SIM_MONITOR_FILE bound to: design.txt - type: string 
-INFO: [Synth 8-6155] done synthesizing module 'XADC' (1#1) [C:/Xilinx/Vivado/2018.3/scripts/rt/data/unisim_comp.v:53521]
-INFO: [Synth 8-6155] done synthesizing module 'xadc_wiz_0' (2#1) [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0.v:53]
----------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 668.102 ; gain = 158.859
----------------------------------------------------------------------------------
-
-Report Check Netlist: 
-+------+------------------+-------+---------+-------+------------------+
-|      |Item              |Errors |Warnings |Status |Description       |
-+------+------------------+-------+---------+-------+------------------+
-|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
-+------+------------------+-------+---------+-------+------------------+
----------------------------------------------------------------------------------
-Start Handling Custom Attributes
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 668.102 ; gain = 158.859
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 668.102 ; gain = 158.859
----------------------------------------------------------------------------------
-INFO: [Netlist 29-17] Analyzing 1 Unisim elements for replacement
-INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
-INFO: [Project 1-570] Preparing netlist for logic optimization
-
-Processing XDC Constraints
-Initializing timing engine
-Parsing XDC File [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0_ooc.xdc] for cell 'inst'
-Finished Parsing XDC File [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0_ooc.xdc] for cell 'inst'
-Parsing XDC File [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0.xdc] for cell 'inst'
-Finished Parsing XDC File [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0.xdc] for cell 'inst'
-Completed Processing XDC Constraints
-
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 719.430 ; gain = 0.000
-INFO: [Project 1-111] Unisim Transformation Summary:
-No Unisim elements were transformed.
-
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 719.430 ; gain = 0.000
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 719.430 ; gain = 0.000
----------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 719.430 ; gain = 210.188
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Loading Part and Timing Information
----------------------------------------------------------------------------------
-Loading part: xc7a35tcpg236-1
----------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 719.430 ; gain = 210.188
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Applying 'set_property' XDC Constraints
----------------------------------------------------------------------------------
-Applied set_property DONT_TOUCH = true for inst. (constraint file  auto generated constraint, line ).
----------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 719.430 ; gain = 210.188
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 719.430 ; gain = 210.188
----------------------------------------------------------------------------------
-
-Report RTL Partitions: 
-+-+--------------+------------+----------+
-| |RTL Partition |Replication |Instances |
-+-+--------------+------------+----------+
-+-+--------------+------------+----------+
----------------------------------------------------------------------------------
-Start RTL Component Statistics 
----------------------------------------------------------------------------------
-Detailed RTL Component Info : 
----------------------------------------------------------------------------------
-Finished RTL Component Statistics 
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start RTL Hierarchical Component Statistics 
----------------------------------------------------------------------------------
-Hierarchical RTL Component report 
----------------------------------------------------------------------------------
-Finished RTL Hierarchical Component Statistics
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Part Resource Summary
----------------------------------------------------------------------------------
-Part Resources:
-DSPs: 90 (col length:60)
-BRAMs: 100 (col length: RAMB18 60 RAMB36 30)
----------------------------------------------------------------------------------
-Finished Part Resource Summary
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Cross Boundary and Area Optimization
----------------------------------------------------------------------------------
-Warning: Parallel synthesis criteria is not met 
----------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 719.430 ; gain = 210.188
----------------------------------------------------------------------------------
-
-Report RTL Partitions: 
-+-+--------------+------------+----------+
-| |RTL Partition |Replication |Instances |
-+-+--------------+------------+----------+
-+-+--------------+------------+----------+
----------------------------------------------------------------------------------
-Start Applying XDC Timing Constraints
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 780.754 ; gain = 271.512
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Timing Optimization
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 780.754 ; gain = 271.512
----------------------------------------------------------------------------------
-
-Report RTL Partitions: 
-+-+--------------+------------+----------+
-| |RTL Partition |Replication |Instances |
-+-+--------------+------------+----------+
-+-+--------------+------------+----------+
----------------------------------------------------------------------------------
-Start Technology Mapping
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 790.305 ; gain = 281.062
----------------------------------------------------------------------------------
-
-Report RTL Partitions: 
-+-+--------------+------------+----------+
-| |RTL Partition |Replication |Instances |
-+-+--------------+------------+----------+
-+-+--------------+------------+----------+
----------------------------------------------------------------------------------
-Start IO Insertion
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Flattening Before IO Insertion
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Flattening Before IO Insertion
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Final Netlist Cleanup
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Final Netlist Cleanup
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 790.305 ; gain = 281.062
----------------------------------------------------------------------------------
-
-Report Check Netlist: 
-+------+------------------+-------+---------+-------+------------------+
-|      |Item              |Errors |Warnings |Status |Description       |
-+------+------------------+-------+---------+-------+------------------+
-|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
-+------+------------------+-------+---------+-------+------------------+
----------------------------------------------------------------------------------
-Start Renaming Generated Instances
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 790.305 ; gain = 281.062
----------------------------------------------------------------------------------
-
-Report RTL Partitions: 
-+-+--------------+------------+----------+
-| |RTL Partition |Replication |Instances |
-+-+--------------+------------+----------+
-+-+--------------+------------+----------+
----------------------------------------------------------------------------------
-Start Rebuilding User Hierarchy
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 790.305 ; gain = 281.062
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Renaming Generated Ports
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 790.305 ; gain = 281.062
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Handling Custom Attributes
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 790.305 ; gain = 281.062
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Renaming Generated Nets
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 790.305 ; gain = 281.062
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Writing Synthesis Report
----------------------------------------------------------------------------------
-
-Report BlackBoxes: 
-+-+--------------+----------+
-| |BlackBox name |Instances |
-+-+--------------+----------+
-+-+--------------+----------+
-
-Report Cell Usage: 
-+------+-----+------+
-|      |Cell |Count |
-+------+-----+------+
-|1     |XADC |     1|
-+------+-----+------+
-
-Report Instance Areas: 
-+------+---------+-------+------+
-|      |Instance |Module |Cells |
-+------+---------+-------+------+
-|1     |top      |       |     1|
-+------+---------+-------+------+
----------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 790.305 ; gain = 281.062
----------------------------------------------------------------------------------
-Synthesis finished with 0 errors, 0 critical warnings and 0 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:04 ; elapsed = 00:00:07 . Memory (MB): peak = 790.305 ; gain = 229.734
-Synthesis Optimization Complete : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 790.305 ; gain = 281.062
-INFO: [Project 1-571] Translating synthesized netlist
-INFO: [Netlist 29-17] Analyzing 1 Unisim elements for replacement
-INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
-INFO: [Project 1-570] Preparing netlist for logic optimization
-Parsing XDC File [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0_ooc.xdc] for cell 'inst'
-Finished Parsing XDC File [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0_ooc.xdc] for cell 'inst'
-Parsing XDC File [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0.xdc] for cell 'inst'
-Finished Parsing XDC File [c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0.xdc] for cell 'inst'
-INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 810.242 ; gain = 0.000
-INFO: [Project 1-111] Unisim Transformation Summary:
-No Unisim elements were transformed.
-
-INFO: [Common 17-83] Releasing license: Synthesis
-19 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
-synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 810.242 ; gain = 313.270
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 810.242 ; gain = 0.000
-INFO: [Timing 38-35] Done setting XDC timing constraints.
-INFO: [Timing 38-480] Writing timing data to binary archive.
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1144.953 ; gain = 0.000
-INFO: [Common 17-1381] The checkpoint 'c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0.dcp' has been generated.
-INFO: [Vivado 12-3441] generate_netlist_ip - operation complete
-synth_ip: Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 1148.844 ; gain = 673.875
 # set_property top XADCdemo [current_fileset]
 # update_compile_order -fileset sources_1
 # add_files -fileset constrs_1 -norecurse {C:\Users\lebray\Vivado-Workflow-Scripts\HW9\T1\constraints.xdc}
 # reset_run synth_1
 # launch_runs synth_1
-INFO: [Vivado 12-4149] The synthesis checkpoint for IP 'c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0.xci' is already up-to-date
-[Fri Apr  3 19:40:44 2026] Launched synth_1...
+[Fri Apr  3 19:50:59 2026] Launched xadc_wiz_0_synth_1...
+Run output will be captured here: C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.runs/xadc_wiz_0_synth_1/runme.log
+[Fri Apr  3 19:50:59 2026] Launched synth_1...
 Run output will be captured here: C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.runs/synth_1/runme.log
 # wait_on_run synth_1
-[Fri Apr  3 19:40:44 2026] Waiting for synth_1 to finish...
+[Fri Apr  3 19:50:59 2026] Waiting for synth_1 to finish...
 
 *** Running vivado
     with args -log XADCdemo.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source XADCdemo.tcl
@@ -360,13 +64,13 @@ Starting synth_design
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35t'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t'
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 25288 
+INFO: Helper process launched with PID 7028 
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.994 . Memory (MB): peak = 385.375 ; gain = 99.590
+Starting RTL Elaboration : Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.955 . Memory (MB): peak = 384.770 ; gain = 99.230
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-6157] synthesizing module 'XADCdemo' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/XADCdemo.v:1]
-INFO: [Synth 8-6157] synthesizing module 'xadc_wiz_0' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.runs/synth_1/.Xil/Vivado-14412-BH610-DRZVK84/realtime/xadc_wiz_0_stub.v:5]
-INFO: [Synth 8-6155] done synthesizing module 'xadc_wiz_0' (1#1) [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.runs/synth_1/.Xil/Vivado-14412-BH610-DRZVK84/realtime/xadc_wiz_0_stub.v:5]
+INFO: [Synth 8-6157] synthesizing module 'xadc_wiz_0' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.runs/synth_1/.Xil/Vivado-22404-BH610-DRZVK84/realtime/xadc_wiz_0_stub.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'xadc_wiz_0' (1#1) [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.runs/synth_1/.Xil/Vivado-22404-BH610-DRZVK84/realtime/xadc_wiz_0_stub.v:5]
 ERROR: [Synth 8-448] named port connection 'vauxp6' does not exist for instance 'XLXI_7' of module 'xadc_wiz_0' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/XADCdemo.v:28]
 ERROR: [Synth 8-448] named port connection 'vauxn6' does not exist for instance 'XLXI_7' of module 'xadc_wiz_0' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/XADCdemo.v:29]
 WARNING: [Synth 8-350] instance 'XLXI_7' of module 'xadc_wiz_0' requires 19 connections, but only 13 given [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/XADCdemo.v:21]
@@ -379,17 +83,17 @@ INFO: [Synth 8-6157] synthesizing module 'SPI_leader_transmitter' [C:/Users/lebr
 ERROR: [Synth 8-6156] failed synthesizing module 'SPI_leader_transmitter' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/SPI_leader_transmitter.v:1]
 ERROR: [Synth 8-6156] failed synthesizing module 'XADCdemo' [C:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/XADCdemo.v:1]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 440.492 ; gain = 154.707
+Finished RTL Elaboration : Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 440.137 ; gain = 154.598
 ---------------------------------------------------------------------------------
 RTL Elaboration failed
 INFO: [Common 17-83] Releasing license: Synthesis
 6 Infos, 1 Warnings, 0 Critical Warnings and 5 Errors encountered.
 synth_design failed
 ERROR: [Common 17-69] Command failed: Synthesis failed - please see the console or run log file for details
-INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 19:40:50 2026...
-[Fri Apr  3 19:40:54 2026] synth_1 finished
-wait_on_run: Time (s): cpu = 00:00:00 ; elapsed = 00:00:10 . Memory (MB): peak = 1148.844 ; gain = 0.000
+INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 19:51:21 2026...
+[Fri Apr  3 19:51:24 2026] synth_1 finished
+wait_on_run: Time (s): cpu = 00:00:00 ; elapsed = 00:00:25 . Memory (MB): peak = 486.816 ; gain = 0.000
 # set s [get_property STATUS [get_runs synth_1]]
 # if {[string first "Complete" $s] < 0} { puts "ERROR: Synthesis failed: $s"; exit 1 }
 ERROR: Synthesis failed: synth_design ERROR
-INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 19:40:54 2026...
+INFO: [Common 17-206] Exiting Vivado at Fri Apr  3 19:51:24 2026...

@@ -3,8 +3,8 @@
 // Tool Version: Vivado v.2018.3 (win64) Build 2405991 Thu Dec  6 23:38:27 MST 2018
 // Date        : Fri Apr  3 19:51:14 2026
 // Host        : BH610-DRZVK84 running 64-bit major release  (build 9200)
-// Command     : write_verilog -force -mode funcsim
-//               c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0_sim_netlist.v
+// Command     : write_verilog -force -mode funcsim -rename_top decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix -prefix
+//               decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix_ xadc_wiz_0_sim_netlist.v
 // Design      : xadc_wiz_0
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -13,7 +13,7 @@
 `timescale 1 ps / 1 ps
 
 (* NotValidForBitStream *)
-module xadc_wiz_0
+module decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix
    (daddr_in,
     dclk_in,
     den_in,

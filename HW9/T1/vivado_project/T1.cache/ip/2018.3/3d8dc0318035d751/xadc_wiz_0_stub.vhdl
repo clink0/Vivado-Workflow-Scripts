@@ -3,8 +3,8 @@
 -- Tool Version: Vivado v.2018.3 (win64) Build 2405991 Thu Dec  6 23:38:27 MST 2018
 -- Date        : Fri Apr  3 19:51:14 2026
 -- Host        : BH610-DRZVK84 running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode synth_stub
---               c:/Users/lebray/Vivado-Workflow-Scripts/HW9/T1/vivado_project/T1.srcs/sources_1/ip/xadc_wiz_0/xadc_wiz_0_stub.vhdl
+-- Command     : write_vhdl -force -mode synth_stub -rename_top decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix -prefix
+--               decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix_ xadc_wiz_0_stub.vhdl
 -- Design      : xadc_wiz_0
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a35tcpg236-1
@@ -12,7 +12,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity xadc_wiz_0 is
+entity decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix is
   Port ( 
     daddr_in : in STD_LOGIC_VECTOR ( 6 downto 0 );
     dclk_in : in STD_LOGIC;
@@ -35,9 +35,9 @@ entity xadc_wiz_0 is
     vn_in : in STD_LOGIC
   );
 
-end xadc_wiz_0;
+end decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix;
 
-architecture stub of xadc_wiz_0 is
+architecture stub of decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix is
 attribute syn_black_box : boolean;
 attribute black_box_pad_pin : string;
 attribute syn_black_box of stub : architecture is true;
