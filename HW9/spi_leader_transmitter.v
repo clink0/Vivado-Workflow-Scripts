@@ -12,7 +12,8 @@ reg[1:0] state=RDY;
 reg[16:0] clkdiv=0;
 reg[7:0] index=0;
 always @(posedge clk)
-if (clkdiv == 17'd100000)
+//sck
+if (clkdiv == 17'd100000)// I slowed this down to 500 Hz
 begin
 	clkdiv<=0;
 	sck<=~sck;

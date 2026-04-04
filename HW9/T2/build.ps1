@@ -1,17 +1,11 @@
-# HW9 T2 - Build script
-# XADC IP (created via create_ip) + SPI leader transmitter
-# Run from repo root: .\HW9\T2\build.ps1
-
 $TaskDir  = $PSScriptRoot
 $Vivado   = "C:\Xilinx\Vivado\2018.3\bin\vivado.bat"
 
-Write-Host "=== HW9 T2: XADC + SPI to Arduino ==="
-
 $vFiles = @(
-    "$TaskDir\hw9_top.v",
+    "$TaskDir\XADCdemo.v",
     "$TaskDir\SPI_leader_transmitter.v"
 )
-$xdcFile = "$TaskDir\hw9.xdc"
+$xdcFile = "$TaskDir\constraints.xdc"
 $projDir = "$TaskDir\vivado_project"
 
 $addFiles = ($vFiles | ForEach-Object { "add_files -norecurse {$_}" }) -join "`n"
@@ -25,7 +19,6 @@ set_property target_language Verilog [current_project]
 
 $addFiles
 
-# Create XADC IP - only channel 6 (vauxp6/vauxn6) enabled
 create_ip -name xadc_wiz -vendor xilinx.com -library ip -version 3.3 -module_name xadc_wiz_0
 set_property -dict [list \
     CONFIG.INTERFACE_SELECTION            {Enable_DRP} \
@@ -37,26 +30,23 @@ set_property -dict [list \
 generate_target {all} [get_ips xadc_wiz_0]
 synth_ip [get_ips xadc_wiz_0]
 
-set_property top hw9_top [current_fileset]
+set_property top XADCdemo [current_fileset]
 update_compile_order -fileset sources_1
 
 add_files -fileset constrs_1 -norecurse {$xdcFile}
 
-# Synthesis
 reset_run synth_1
 launch_runs synth_1
 wait_on_run synth_1
 set s [get_property STATUS [get_runs synth_1]]
 if {[string first "Complete" `$s] < 0} { puts "ERROR: Synthesis failed: `$s"; exit 1 }
 
-# Implementation
 reset_run impl_1
 launch_runs impl_1
 wait_on_run impl_1
 set s [get_property STATUS [get_runs impl_1]]
 if {[string first "Complete" `$s] < 0} { puts "ERROR: Implementation failed: `$s"; exit 1 }
 
-# Bitstream
 launch_runs impl_1 -to_step write_bitstream
 wait_on_run impl_1
 set s [get_property STATUS [get_runs impl_1]]
@@ -69,21 +59,10 @@ close_project
 $tclFile = "$TaskDir\build.tcl"
 $tcl | Out-File -FilePath $tclFile -Encoding ASCII
 
-Write-Host "Running Vivado..."
 & $Vivado -mode batch -source $tclFile -log "$TaskDir\vivado.log" -journal "$TaskDir\vivado.jou"
 
-if (Test-Path "$projDir\T2.runs\impl_1\hw9_top.bit") {
-    Write-Host "Bitstream ready: $projDir\T2.runs\impl_1\hw9_top.bit"
-    Write-Host "Open Vivado Hardware Manager and program the device."
-    Write-Host ""
-    Write-Host "Hardware setup:"
-    Write-Host "  Easy Pulse Sensor AO -> JXADC pin 1 (vauxp6)"
-    Write-Host "  Sensor GND           -> JXADC pin 5 (vauxn6 / GND)"
-    Write-Host "  JB1 (SCK)            -> Arduino Pin 2"
-    Write-Host "  JB2 (SS)             -> Arduino Pin 12"
-    Write-Host "  JB3 (MOSI)           -> Arduino Pin 13"
-    Write-Host "  Basys3 GND           -> Arduino GND"
-    Write-Host "  Open Arduino Serial Plotter at 115200 baud"
+if (Test-Path "$projDir\T2.runs\impl_1\XADCdemo.bit") {
+    Write-Host "Bitstream ready: $projDir\T2.runs\impl_1\XADCdemo.bit"
 } else {
     Write-Host "ERROR: Bitstream not found. Check vivado.log."
 }
