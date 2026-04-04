@@ -1,32 +1,23 @@
-# HW8 T1 - Build script
-# Uses the provided xadc_wiz_0 IP (.xci) from the official demo
-# Run from repo root: .\HW8\T1\build.ps1
+# HW9 T2 - Build script
+# XADC IP (created via create_ip) + SPI leader transmitter
+# Run from repo root: .\HW9\T2\build.ps1
 
 $TaskDir  = $PSScriptRoot
 $Vivado   = "C:\Xilinx\Vivado\2018.3\bin\vivado.bat"
 
-Write-Host "=== HW8 T1: XADC Demo (provided IP) ==="
+Write-Host "=== HW9 T2: XADC + SPI to Arduino ==="
 
-# Build file list
 $vFiles = @(
-    "$TaskDir\XADCdemo.v",
-    "$TaskDir\bin2dec.v",
-    "$TaskDir\DigitToSeg.v",
-    "$TaskDir\mux4_4bus.v",
-    "$TaskDir\sevensegdecoder.v",
-    "$TaskDir\counter3bit.v",
-    "$TaskDir\segClkDevider.v",
-    "$TaskDir\decoder3_8.v"
+    "$TaskDir\hw9_top.v",
+    "$TaskDir\SPI_leader_transmitter.v"
 )
-$xciFile = "$TaskDir\xadc_wiz_0.xci"
-$xdcFile = "$TaskDir\xadc.xdc"
+$xdcFile = "$TaskDir\hw9.xdc"
 $projDir = "$TaskDir\vivado_project"
 
-# Generate TCL script
 $addFiles = ($vFiles | ForEach-Object { "add_files -norecurse {$_}" }) -join "`n"
 
 $tcl = @"
-create_project T1 {$projDir} -part xc7a35tcpg236-1 -force
+create_project T2 {$projDir} -part xc7a35tcpg236-1 -force
 if {[catch {set_property board_part digilentinc.com:basys3:part0:1.2 [current_project]}]} {
     puts "Note: board part not available"
 }
@@ -34,14 +25,19 @@ set_property target_language Verilog [current_project]
 
 $addFiles
 
-# Add and synthesize the provided xadc_wiz_0 IP
-add_files -norecurse {$xciFile}
-# Upgrade IP if it was generated with a different Vivado version (e.g. 2018.2 vs 2018.3)
-upgrade_ip [get_ips xadc_wiz_0]
+# Create XADC IP - only channel 6 (vauxp6/vauxn6) enabled
+create_ip -name xadc_wiz -vendor xilinx.com -library ip -version 3.3 -module_name xadc_wiz_0
+set_property -dict [list \
+    CONFIG.INTERFACE_SELECTION            {Enable_DRP} \
+    CONFIG.SEQUENCER_MODE                 {Continuous} \
+    CONFIG.DCLK_FREQUENCY                 {100} \
+    CONFIG.ADC_CONVERSION_RATE            {1000} \
+    CONFIG.CHANNEL_ENABLE_VAUXP6_VAUXN6   {true} \
+] [get_ips xadc_wiz_0]
 generate_target {all} [get_ips xadc_wiz_0]
 synth_ip [get_ips xadc_wiz_0]
 
-set_property top XADCdemo [current_fileset]
+set_property top hw9_top [current_fileset]
 update_compile_order -fileset sources_1
 
 add_files -fileset constrs_1 -norecurse {$xdcFile}
@@ -76,9 +72,18 @@ $tcl | Out-File -FilePath $tclFile -Encoding ASCII
 Write-Host "Running Vivado..."
 & $Vivado -mode batch -source $tclFile -log "$TaskDir\vivado.log" -journal "$TaskDir\vivado.jou"
 
-if (Test-Path "$projDir\T1.runs\impl_1\XADCdemo.bit") {
-    Write-Host "Bitstream ready: $projDir\T1.runs\impl_1\XADCdemo.bit"
+if (Test-Path "$projDir\T2.runs\impl_1\hw9_top.bit") {
+    Write-Host "Bitstream ready: $projDir\T2.runs\impl_1\hw9_top.bit"
     Write-Host "Open Vivado Hardware Manager and program the device."
+    Write-Host ""
+    Write-Host "Hardware setup:"
+    Write-Host "  Easy Pulse Sensor AO -> JXADC pin 1 (vauxp6)"
+    Write-Host "  Sensor GND           -> JXADC pin 5 (vauxn6 / GND)"
+    Write-Host "  JB1 (SCK)            -> Arduino Pin 2"
+    Write-Host "  JB2 (SS)             -> Arduino Pin 12"
+    Write-Host "  JB3 (MOSI)           -> Arduino Pin 13"
+    Write-Host "  Basys3 GND           -> Arduino GND"
+    Write-Host "  Open Arduino Serial Plotter at 115200 baud"
 } else {
     Write-Host "ERROR: Bitstream not found. Check vivado.log."
 }
