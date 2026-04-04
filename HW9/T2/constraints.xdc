@@ -46,6 +46,11 @@ set_property PACKAGE_PIN A16 [get_ports ss]
 set_property PACKAGE_PIN B15 [get_ports mosi]
     set_property IOSTANDARD LVCMOS33 [get_ports mosi]
 
-# JXADC — vauxp6/vauxn6 are true analog XADC inputs routed through the XADC
-# hardmacro, not through an I/O buffer. Do not constrain them here; the XADC
-# primitive maps channel 6 to the correct physical pins (J3/K3) automatically.
+# JXADC — XADC auxiliary channel 6
+# XA1_P = vauxp6 (J3), XA1_N = vauxn6 (K3), both in bank 35.
+# LVCMOS33 must match the rest of bank 35 (LED pins); no I/O buffer is
+# inserted for analog inputs — this only resolves Vivado's bank voltage check.
+set_property PACKAGE_PIN J3 [get_ports vauxp6]
+    set_property IOSTANDARD LVCMOS33 [get_ports vauxp6]
+set_property PACKAGE_PIN K3 [get_ports vauxn6]
+    set_property IOSTANDARD LVCMOS33 [get_ports vauxn6]
