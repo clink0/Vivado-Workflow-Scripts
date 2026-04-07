@@ -17,9 +17,8 @@ Push-Location $TaskDir
 & "$Kcpsm\kcpsm6.exe" prog.psm
 Pop-Location
 
-Remove-Item "$TaskDir\ROM_form.v"
-
-# kcpsm6.exe can return before it finishes writing prog.v — poll until it appears
+# kcpsm6.exe spawns a subprocess and returns early — keep ROM_form.v alive
+# until prog.v actually appears, then clean up.
 $timeout = 30
 $elapsed = 0
 Write-Host "Waiting for prog.v..."
@@ -27,6 +26,8 @@ while (-not (Test-Path "$TaskDir\prog.v") -and $elapsed -lt $timeout) {
     Start-Sleep -Seconds 1
     $elapsed++
 }
+
+Remove-Item "$TaskDir\ROM_form.v" -ErrorAction SilentlyContinue
 
 if (-not (Test-Path "$TaskDir\prog.v")) {
     Write-Host "ERROR: prog.v was not generated after $timeout seconds. Check kcpsm6.exe output."
