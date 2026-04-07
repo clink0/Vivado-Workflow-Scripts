@@ -190,29 +190,38 @@ def run_vivado_batch(tcl_file, vivado_path, cwd):
     process.wait()
     return process.returncode == 0, output
 
-def open_vivado_gui(project_dir, vivado_path):
-    """Launch Vivado GUI with the project already open, then open Hardware Manager.
-    This is fire-and-forget -- we don't wait for the user to close it."""
-    project_file = list(project_dir.glob("*.viv"))
-    if not project_file:
-        return False
+def program_device_batch(bit_file, project_dir, vivado_path):
+    """Program the FPGA in batch mode using the hardware manager TCL API.
+    Returns (success, error_message)."""
 
-    # Tcl that opens the project and launches the hardware manager
-    tcl = (
-        f'open_project {{{project_file[0]}}}\n'
-        'open_hw_manager\n'
-        'connect_hw_target\n'
-    )
-    tcl_file = project_dir / "open_hw.tcl"
+    tcl = f"""
+open_hw_manager
+connect_hw_server -allow_non_jtag
+open_hw_target
+current_hw_device [lindex [get_hw_devices] 0]
+refresh_hw_device -update_hw_probes false [current_hw_device]
+set_property PROGRAM.FILE {{{bit_file}}} [current_hw_device]
+program_hw_devices [current_hw_device]
+close_hw_target
+disconnect_hw_server
+close_hw_manager
+"""
+    tcl_file = project_dir / "program_device.tcl"
     with open(tcl_file, 'w') as f:
         f.write(tcl)
 
-    # Launch GUI -- don't wait, user interacts from here
-    subprocess.Popen(
-        [vivado_path, "-mode", "gui", "-source", str(tcl_file)],
-        cwd=str(project_dir)
-    )
-    return True
+    cmd = [vivado_path, "-mode", "batch", "-source", str(tcl_file),
+           "-log", str(project_dir / "program_device.log"),
+           "-journal", str(project_dir / "program_device.jou")]
+    result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(project_dir))
+
+    if result.returncode != 0:
+        # Pull the first meaningful error line
+        for line in result.stdout.splitlines():
+            if "ERROR" in line and "hw_target" in line.lower():
+                return False, "Board not found — is the Basys 3 connected and powered on?"
+        return False, "Programming failed — check program_device.log for details"
+    return True, ""
 
 
 # ─────────────────────────────────────────────────────────────
@@ -359,19 +368,21 @@ close_project
         print(f"  Bitstream   {bit_file}")
     print()
 
-    # ── open Vivado GUI for programming ──────────────────────
+    # ── program device ───────────────────────────────────────
     if program_device:
-        with Spinner("Opening Vivado Hardware Manager"):
-            opened = open_vivado_gui(project_dir, vivado_path)
-        if opened:
-            print()
-            print("  Vivado is opening. When it's ready:")
-            print("    1. Wait for Hardware Manager to connect")
-            print("    2. Right-click the device -> Program Device")
-            print("    3. Bitstream file is already set")
+        with ProgressBar("Programming device") as pb:
+            ok, err = program_device_batch(bit_file, project_dir, vivado_path)
+            if not ok:
+                pb.fail()
+        if ok:
+            print("  Device programmed successfully!")
         else:
-            print("  Could not auto-open Vivado. Open it manually and")
-            print(f"  program {bit_file.name} via Hardware Manager.")
+            print(f"\n  {err}")
+            print(f"\n  To program manually:")
+            print(f"    1. Open Vivado Hardware Manager")
+            print(f"    2. Auto Connect")
+            print(f"    3. Program Device with:")
+            print(f"       {bit_file}")
     print()
     divider()
     return True
