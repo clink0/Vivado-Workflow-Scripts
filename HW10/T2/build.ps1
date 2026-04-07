@@ -19,8 +19,17 @@ Pop-Location
 
 Remove-Item "$TaskDir\ROM_form.v"
 
+# kcpsm6.exe can return before it finishes writing prog.v — poll until it appears
+$timeout = 30
+$elapsed = 0
+Write-Host "Waiting for prog.v..."
+while (-not (Test-Path "$TaskDir\prog.v") -and $elapsed -lt $timeout) {
+    Start-Sleep -Seconds 1
+    $elapsed++
+}
+
 if (-not (Test-Path "$TaskDir\prog.v")) {
-    Write-Host "ERROR: prog.v was not generated. Check that kcpsm6.exe ran correctly."
+    Write-Host "ERROR: prog.v was not generated after $timeout seconds. Check kcpsm6.exe output."
     exit 1
 }
 
