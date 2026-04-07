@@ -1,0 +1,44 @@
+; HW10 T3 - External pulse on JA[0] triggers ISR, counts rising edges on 7-segment (0-F)
+; Same assembly as T2 - all edge detection logic is in the Verilog wrapper
+; -------------------------------------------------------
+CONSTANT led_port,    00    ; Output port 00 -> led[7:0]
+CONSTANT seg_port,    01    ; Output port 01 -> 7-segment decoder input
+CONSTANT led_state,   10    ; Scratchpad: current LED state
+CONSTANT press_count, 11    ; Scratchpad: rising edge counter
+
+ADDRESS 000
+start:
+    LOAD    s0, 00
+    STORE   s0, led_state
+    STORE   s0, press_count
+    OUTPUT  s0, led_port
+    OUTPUT  s0, seg_port
+    ENABLE  INTERRUPT
+
+main_loop:
+    JUMP    main_loop
+
+; -------------------------------------------------------
+; Interrupt Service Routine (ISR)
+; -------------------------------------------------------
+isr_routine:
+    ; 1. Toggle LED[0]
+    FETCH   s0, led_state
+    XOR     s0, 01
+    STORE   s0, led_state
+    OUTPUT  s0, led_port
+
+    ; 2. Increment edge counter (wraps 0-F)
+    FETCH   s1, press_count
+    ADD     s1, 01
+    AND     s1, 0F
+    STORE   s1, press_count
+    OUTPUT  s1, seg_port
+
+    RETURNI ENABLE
+
+; -------------------------------------------------------
+; Interrupt Vector
+; -------------------------------------------------------
+ADDRESS 3FF
+    JUMP    isr_routine

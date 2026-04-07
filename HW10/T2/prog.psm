@@ -1,0 +1,43 @@
+; HW10 T2 - Button press: toggle LED[0] and count presses on 7-segment (0-F)
+; -------------------------------------------------------
+CONSTANT led_port,    00    ; Output port 00 -> led[7:0]
+CONSTANT seg_port,    01    ; Output port 01 -> 7-segment decoder input
+CONSTANT led_state,   10    ; Scratchpad: current LED state
+CONSTANT press_count, 11    ; Scratchpad: button press counter
+
+ADDRESS 000
+start:
+    LOAD    s0, 00
+    STORE   s0, led_state   ; LED starts OFF
+    STORE   s0, press_count ; Counter starts at 0
+    OUTPUT  s0, led_port    ; Initialize LED output
+    OUTPUT  s0, seg_port    ; Display '0' on 7-segment
+    ENABLE  INTERRUPT
+
+main_loop:
+    JUMP    main_loop       ; Wait for interrupts
+
+; -------------------------------------------------------
+; Interrupt Service Routine (ISR)
+; -------------------------------------------------------
+isr_routine:
+    ; 1. Toggle LED[0]
+    FETCH   s0, led_state
+    XOR     s0, 01
+    STORE   s0, led_state
+    OUTPUT  s0, led_port
+
+    ; 2. Increment press counter (wraps 0-F)
+    FETCH   s1, press_count
+    ADD     s1, 01          ; Increment
+    AND     s1, 0F          ; Mask to 4 bits (reset to 0 after F)
+    STORE   s1, press_count
+    OUTPUT  s1, seg_port    ; Send to 7-segment decoder
+
+    RETURNI ENABLE
+
+; -------------------------------------------------------
+; Interrupt Vector
+; -------------------------------------------------------
+ADDRESS 3FF
+    JUMP    isr_routine

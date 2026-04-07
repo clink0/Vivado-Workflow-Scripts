@@ -1,0 +1,30 @@
+; HW10 T1 - Button press triggers ISR, toggles LED[0]
+; -------------------------------------------------------
+CONSTANT led_port,   00     ; Output port 00 -> led[7:0]
+CONSTANT scratch_loc, 10    ; Scratchpad address for LED state
+
+ADDRESS 000
+start:
+    LOAD    s0, 00          ; Initialize LED state to 0
+    STORE   s0, scratch_loc ; Save to scratchpad
+    OUTPUT  s0, led_port    ; Update physical LEDs
+    ENABLE  INTERRUPT       ; Global interrupt enable
+
+main_loop:
+    JUMP    main_loop       ; Wait here for button presses
+
+; -------------------------------------------------------
+; Interrupt Service Routine (ISR)
+; -------------------------------------------------------
+isr_routine:
+    FETCH   s0, scratch_loc ; Get current LED state
+    XOR     s0, 01          ; Toggle bit 0 (LED[0])
+    OUTPUT  s0, led_port    ; Write to LEDs
+    STORE   s0, scratch_loc ; Save new state
+    RETURNI ENABLE          ; Return and re-enable interrupts
+
+; -------------------------------------------------------
+; Interrupt Vector
+; -------------------------------------------------------
+ADDRESS 3FF
+    JUMP    isr_routine     ; Hardware jumps here on interrupt
