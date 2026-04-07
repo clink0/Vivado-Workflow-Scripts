@@ -241,11 +241,11 @@ def create_and_program(source_dir, program_device=True, board="basys3", vivado_p
     project_name = source_path.name
     project_dir  = source_path / "vivado_project"
 
-    # Constraint file -- script dir first, then source dir
+    # Constraint file -- task directory first, repo root as fallback
     script_dir = Path(__file__).parent.resolve()
-    constraint_files = list(script_dir.glob("*.xdc"))
+    constraint_files = list(source_path.glob("*.xdc"))
     if not constraint_files:
-        constraint_files = list(source_path.glob("*.xdc"))
+        constraint_files = list(script_dir.glob("*.xdc"))
 
     if not constraint_files:
         print("\n  WARNING: No constraint file (.xdc) found!")
