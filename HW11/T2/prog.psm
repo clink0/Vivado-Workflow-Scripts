@@ -1,0 +1,21 @@
+; HW11 T2 — Read XADC, display on LEDs
+; Port map:
+;   INPUT  0x00 : XADC high byte (8 MSBs of 12-bit ADC result)
+;   OUTPUT 0x00 : led[7:0]
+
+CONSTANT xadc_port, 00
+CONSTANT led_port,  00
+
+ADDRESS 000
+start:
+    LOAD s0, 00
+    OUTPUT s0, led_port         ; clear LEDs on start
+
+main_loop:
+    INPUT  s0, xadc_port        ; read XADC value (8-bit)
+    OUTPUT s0, led_port         ; display on LEDs as binary
+    JUMP   main_loop
+
+; Interrupt vector (unused)
+ADDRESS 3FF
+    JUMP start

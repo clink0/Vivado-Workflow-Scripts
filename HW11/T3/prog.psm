@@ -1,0 +1,158 @@
+; HW11 T3 — Heart Rate Measurement via XADC threshold crossing
+; Detects rising edges of pulse waveform, measures period in ms,
+; computes BPM = 6000 / period_10ms, outputs digits to OLED.
+;
+; Port map:
+;   INPUT  0x00 : XADC high byte (8 MSBs)
+;   INPUT  0x01 : ms-timer low  byte
+;   INPUT  0x02 : ms-timer high byte
+;   INPUT  0x03 : peak-detected flag (bit 0, cleared by reading)
+;   OUTPUT 0x00 : led[7:0]  (raw XADC for debugging)
+;   OUTPUT 0x01 : BPM tens  digit ASCII
+;   OUTPUT 0x02 : BPM units digit ASCII
+;   OUTPUT 0x03 : threshold (optional tuning)
+
+CONSTANT xadc_port,   00
+CONSTANT timer_lo,    01
+CONSTANT timer_hi,    02
+CONSTANT peak_port,   03
+CONSTANT led_port,    00
+CONSTANT bpm_tens_p,  01
+CONSTANT bpm_units_p, 02
+
+; Scratchpad memory locations
+CONSTANT prev_lo,     00   ; previous peak timestamp low
+CONSTANT prev_hi,     01   ; previous peak timestamp high
+CONSTANT bpm_val,     02   ; last computed BPM
+
+; ─────────────────────────────────────────────────────────────────
+ADDRESS 000
+start:
+    ; Initialize display to '--'
+    LOAD s0, 2D          ; ASCII '-'
+    OUTPUT s0, bpm_tens_p
+    OUTPUT s0, bpm_units_p
+
+    ; Clear scratchpad
+    LOAD s0, 00
+    STORE s0, prev_lo
+    STORE s0, prev_hi
+    STORE s0, bpm_val
+
+main_loop:
+    ; ── Output raw XADC on LEDs ──────────────────────────────────
+    INPUT  s0, xadc_port
+    OUTPUT s0, led_port
+
+    ; ── Check for peak crossing ───────────────────────────────────
+    INPUT s1, peak_port
+    TEST  s1, 01
+    JUMP  Z, main_loop      ; no new peak → keep polling
+
+    ; ── New peak detected — read current timestamp ────────────────
+    INPUT sA, timer_lo
+    INPUT sB, timer_hi
+
+    ; Read previous timestamp from scratchpad
+    FETCH sC, prev_lo
+    FETCH sD, prev_hi
+
+    ; period = (sB:sA) - (sD:sC)  [16-bit subtraction]
+    SUB   sA, sC
+    SUBCY sB, sD
+    ; sB:sA = period in ms (wraps correctly on overflow)
+
+    ; Store new timestamp
+    INPUT sC, timer_lo
+    INPUT sD, timer_hi
+    STORE sC, prev_lo
+    STORE sD, prev_hi
+
+    ; ── Compute BPM = 6000 / period_ms ───────────────────────────
+    ; Convert period to 10ms units: period_10ms ≈ sA / 10
+    ; (Use only sA — if sB>0, period > 255ms, BPM < ~24, clamp to 0)
+    ; Divide sA by 10 using shift-and-subtract
+    COMPARE sB, 00
+    JUMP NZ, very_slow      ; period > 255ms, BPM unmeasurable
+
+    ; period_10ms = sA / 10  (integer divide)
+    LOAD  sE, 00            ; quotient
+    LOAD  sF, sA            ; remainder = period_ms
+div10_loop:
+    COMPARE sF, 0A          ; sF >= 10?
+    JUMP C, div10_done      ; no → done
+    ADD   sE, 01            ; quotient++
+    SUB   sF, 0A            ; remainder -= 10
+    JUMP  div10_loop
+div10_done:
+    ; sE = period_10ms
+
+    COMPARE sE, 00
+    JUMP Z, very_slow       ; period < 10ms = impossible pulse rate
+
+    ; BPM = 6000 / period_10ms  (16/8 iterative subtract)
+    ; 6000 in hex = 0x1770 → sH:sG = 0x17:0x70
+    LOAD sG, 70
+    LOAD sH, 17
+    LOAD sI, 00             ; BPM counter
+
+bpm_loop:
+    ; Check sH:sG >= sE
+    COMPARE sH, 00
+    JUMP NZ, bpm_sub        ; high byte nonzero → always >= (<=255 divisor)
+    COMPARE sG, sE          ; low byte compare
+    JUMP C,  bpm_done       ; sG < sE → done
+bpm_sub:
+    ADD   sI, 01            ; BPM++
+    SUB   sG, sE
+    SUBCY sH, 00
+    JUMP  bpm_loop
+bpm_done:
+    ; sI = BPM (capped at 255)
+    STORE sI, bpm_val
+
+    ; Clamp to 200
+    COMPARE sI, C8          ; 200 = 0xC8
+    JUMP C, no_clamp
+    LOAD sI, C8
+no_clamp:
+
+    ; ── Convert BPM to ASCII digits ───────────────────────────────
+    ; Hundreds (ignore — only display tens & units for 0-99, or tens=1 for 100-199)
+    LOAD sJ, 30             ; tens digit = '0'
+    LOAD sK, sI             ; work copy
+
+    ; Subtract 100 for hundreds
+    COMPARE sK, 64          ; 100 = 0x64
+    JUMP C, under100
+    SUB   sK, 64
+    LOAD  sJ, 31            ; tens starts from '1'
+    JUMP  tens_loop
+under100:
+    LOAD  sJ, 30            ; tens = '0' initially
+
+tens_loop:
+    COMPARE sK, 0A
+    JUMP C, tens_done
+    ADD   sJ, 01
+    SUB   sK, 0A
+    JUMP  tens_loop
+tens_done:
+    ; sK = units digit value, sJ = tens ASCII
+    ADD   sK, 30            ; convert to ASCII
+
+    OUTPUT sJ, bpm_tens_p
+    OUTPUT sK, bpm_units_p
+
+    JUMP main_loop
+
+very_slow:
+    ; Signal too slow or unmeasurable — show '--'
+    LOAD s0, 2D
+    OUTPUT s0, bpm_tens_p
+    OUTPUT s0, bpm_units_p
+    JUMP main_loop
+
+; ─────────────────────────────────────────────────────────────────
+ADDRESS 3FF
+    JUMP start
