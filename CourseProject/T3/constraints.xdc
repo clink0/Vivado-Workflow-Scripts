@@ -1,8 +1,7 @@
 # CourseProject T3 — Heart Rate Monitor
-# XADC: JXADC (XA1_P=J3, XA1_N=K3)
+# XADC: JXADC (XA1_P=J3, XA1_N=K3) — pulse sensor analog input
 # OLED: Pmod JB
-# Arduino pulse: JC1 (K17)
-# UART: on-board USB-UART bridge (A18)
+# UART: on-board USB-UART bridge (A18) — raw waveform to PC
 
 # Clock
 set_property PACKAGE_PIN W5  [get_ports CLK100MHZ]
@@ -37,10 +36,6 @@ set_property PACKAGE_PIN J3 [get_ports vauxp6]
 set_property IOSTANDARD LVCMOS33 [get_ports vauxp6]
 set_property PACKAGE_PIN K3 [get_ports vauxn6]
 set_property IOSTANDARD LVCMOS33 [get_ports vauxn6]
-
-# JC1 (K17) — Arduino digital heartbeat pulse input
-set_property PACKAGE_PIN K17 [get_ports jc1]
-set_property IOSTANDARD LVCMOS33 [get_ports jc1]
 
 # Pmod JB — OLED (SSD1306 4-wire SPI)
 # JB1 (A14) = CS

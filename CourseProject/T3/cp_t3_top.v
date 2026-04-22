@@ -2,7 +2,7 @@
 // Course Project Task 3 — Pulse Sensor Heart Rate Monitor
 // XADC reads raw analog signal from JXADC (VAUXP6/VAUXN6).
 // Arduino (on JC1) sends a digital pulse on each detected heartbeat.
-// Picoblaze measures BPM from JC1 pulse timing, displays on Pmod OLED (JB).
+// Picoblaze measures BPM from XADC peak detection, displays on Pmod OLED (JB).
 // Raw XADC samples streamed over UART (115200 baud) for PC waveform plot.
 //
 // Picoblaze port map:
@@ -27,8 +27,6 @@ module cp_t3_top(
     input  wire        vauxn6,
     input  wire        vp_in,
     input  wire        vn_in,
-    // JC1 (K17) — Arduino digital heartbeat pulse
-    input  wire        jc1,
     // On-board LEDs
     output wire [15:0] led,
     // Pmod JB — OLED (SSD1306 4-wire SPI)
@@ -88,21 +86,42 @@ module cp_t3_top(
     end
 
     // ══════════════════════════════════════════════════════════════════════
-    // Heartbeat edge detector — Arduino digital pulse on JC1
-    // Rising edge sets peak_flag; Picoblaze clears it by reading port 0x03.
+    // Hardware peak detector — IIR baseline + threshold comparator
+    // baseline tracks DC average with tau ≈ 256 XADC samples (~256 ms).
+    // A rising edge of xadc_hi above baseline sets peak_flag.
+    // 300-sample refractory window (~300 ms) prevents double-triggering.
+    // Picoblaze clears peak_flag by reading port 0x03.
     // ══════════════════════════════════════════════════════════════════════
     wire pico_read_peak;
-    reg  jc1_d;
-    reg  peak_flag;
+    reg  [15:0] baseline_acc;
+    wire [7:0]  baseline = baseline_acc[15:8];
+    wire        above    = (xadc_hi > baseline);
+    reg         above_d;
+    reg  [8:0]  refrac_cnt;
+    reg         peak_flag;
 
     always @(posedge CLK100MHZ) begin
-        if (rst) begin jc1_d <= 0; peak_flag <= 0; end
-        else begin
-            jc1_d <= jc1;
-            if (jc1 && !jc1_d)       // rising edge from Arduino
-                peak_flag <= 1;
-            else if (pico_read_peak)  // Picoblaze reads port 0x03
-                peak_flag <= 0;
+        if (rst) begin
+            baseline_acc <= 16'h8000;
+            above_d      <= 1'b0;
+            refrac_cnt   <= 9'h000;
+            peak_flag    <= 1'b0;
+        end else begin
+            if (pico_read_peak)
+                peak_flag <= 1'b0;
+            if (xadc_drdy) begin
+                // IIR: baseline = (255*baseline + xadc_hi) / 256
+                baseline_acc <= baseline_acc
+                                - {8'h0, baseline_acc[15:8]}
+                                + {8'h0, xadc_hi};
+                above_d <= above;
+                if (refrac_cnt != 9'h000)
+                    refrac_cnt <= refrac_cnt - 1;
+                if (above && !above_d && refrac_cnt == 9'h000) begin
+                    peak_flag  <= 1'b1;
+                    refrac_cnt <= 9'd300;
+                end
+            end
         end
     end
 
