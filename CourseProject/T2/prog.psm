@@ -1,22 +1,79 @@
-; CourseProject T2 — Read XADC, display binary on LEDs
-; Picoblaze polls the XADC result continuously and mirrors it to led[7:0].
+; CourseProject T2 — Read XADC, display bar-graph on LEDs
+; Thermometer display: each LED = ~0.125 V (threshold every 32 counts).
+; Dead zone 0-31 shows 0 LEDs, eliminating ADC offset flicker at 0 V.
 ;
 ; Port map:
 ;   INPUT  0x00 : XADC high byte (8 MSBs of 12-bit ADC result)
 ;   OUTPUT 0x00 : led[7:0]
+;
+; LED pattern vs. XADC value:
+;   0x00 – 0x1F : 00000000 (0 V dead zone)
+;   0x20 – 0x3F : 00000001 (~0.13 V)
+;   0x40 – 0x5F : 00000011 (~0.25 V)
+;   0x60 – 0x7F : 00000111 (~0.38 V)
+;   0x80 – 0x9F : 00001111 (~0.50 V)
+;   0xA0 – 0xBF : 00011111 (~0.63 V)
+;   0xC0 – 0xDF : 00111111 (~0.75 V)
+;   0xE0 – 0xFF : 11111111 (~0.88 V – 1.0 V)
 
 CONSTANT xadc_port, 00
 CONSTANT led_port,  00
 
 ADDRESS 000
 start:
-    LOAD s0, 00
-    OUTPUT s0, led_port         ; clear LEDs on start
+    LOAD    s1, 00
+    OUTPUT  s1, led_port        ; clear LEDs on start
 
 main_loop:
-    INPUT  s0, xadc_port        ; read XADC value (8-bit)
-    OUTPUT s0, led_port         ; display on LEDs as binary
-    JUMP   main_loop
+    INPUT   s0, xadc_port       ; read XADC value (8 MSBs)
+
+    COMPARE s0, E0              ; C=1 if s0 < 0xE0
+    JUMP    C, check_6
+    LOAD    s1, FF              ; >= 0xE0 -> 8 LEDs
+    JUMP    output
+
+check_6:
+    COMPARE s0, C0              ; C=1 if s0 < 0xC0
+    JUMP    C, check_5
+    LOAD    s1, 3F              ; 6 LEDs
+    JUMP    output
+
+check_5:
+    COMPARE s0, A0              ; C=1 if s0 < 0xA0
+    JUMP    C, check_4
+    LOAD    s1, 1F              ; 5 LEDs
+    JUMP    output
+
+check_4:
+    COMPARE s0, 80              ; C=1 if s0 < 0x80
+    JUMP    C, check_3
+    LOAD    s1, 0F              ; 4 LEDs
+    JUMP    output
+
+check_3:
+    COMPARE s0, 60              ; C=1 if s0 < 0x60
+    JUMP    C, check_2
+    LOAD    s1, 07              ; 3 LEDs
+    JUMP    output
+
+check_2:
+    COMPARE s0, 40              ; C=1 if s0 < 0x40
+    JUMP    C, check_1
+    LOAD    s1, 03              ; 2 LEDs
+    JUMP    output
+
+check_1:
+    COMPARE s0, 20              ; C=1 if s0 < 0x20
+    JUMP    C, check_0
+    LOAD    s1, 01              ; 1 LED
+    JUMP    output
+
+check_0:
+    LOAD    s1, 00              ; 0 LEDs (dead zone)
+
+output:
+    OUTPUT  s1, led_port
+    JUMP    main_loop
 
 ; Interrupt vector (unused)
 ADDRESS 3FF
