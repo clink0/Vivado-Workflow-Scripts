@@ -230,12 +230,18 @@ module cp_t3_top(
         .CS(CS), .SDIN(SDIN), .SCLK(SCLK), .DC(DC), .DONE(spi_done)
     );
 
+    wire res_init, vbat_init, vdd_init;
+
     OledInit init_mod(
         .CLK(CLK100MHZ), .RST(rst), .EN(oled_state == S_INIT),
         .DONE_SPI(spi_done),
         .SND(init_snd), .DATA(init_data), .DC(init_dc),
-        .RES(RES), .VBAT(VBAT), .VDD(VDD), .FIN(init_fin)
+        .RES(res_init), .VBAT(vbat_init), .VDD(vdd_init), .FIN(init_fin)
     );
+
+    assign RES  = (oled_state == S_INIT) ? res_init  : 1'b1;
+    assign VBAT = (oled_state == S_INIT) ? vbat_init : 1'b0;
+    assign VDD  = (oled_state == S_INIT) ? vdd_init  : 1'b0;
 
     wire [10:0] charlib_addr;
     wire [7:0]  charlib_dout;

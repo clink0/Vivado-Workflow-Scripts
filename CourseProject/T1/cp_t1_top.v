@@ -59,6 +59,11 @@ module cp_t1_top(
     );
 
     // ── OledInit ──────────────────────────────────────────────────────────
+    // Use intermediate wires so the top module can hold VBAT/VDD low
+    // (power ON) after init completes. Without this, OledInit resets
+    // VBAT=1 and VDD=1 (power OFF) the moment EN drops, killing the display.
+    wire res_init, vbat_init, vdd_init;
+
     OledInit init_mod(
         .CLK      (CLK100MHZ),
         .RST      (rst),
@@ -67,11 +72,17 @@ module cp_t1_top(
         .SND      (init_snd),
         .DATA     (init_data),
         .DC       (init_dc),
-        .RES      (RES),
-        .VBAT     (VBAT),
-        .VDD      (VDD),
+        .RES      (res_init),
+        .VBAT     (vbat_init),
+        .VDD      (vdd_init),
         .FIN      (init_fin)
     );
+
+    // During S_INIT: let OledInit control the power rails.
+    // During S_DISPLAY: hold power on (0 = FET on), RES deasserted.
+    assign RES  = (state == S_INIT) ? res_init  : 1'b1;
+    assign VBAT = (state == S_INIT) ? vbat_init : 1'b0;
+    assign VDD  = (state == S_INIT) ? vdd_init  : 1'b0;
 
     // ── charLib font ROM ──────────────────────────────────────────────────
     wire [10:0] charlib_addr;
