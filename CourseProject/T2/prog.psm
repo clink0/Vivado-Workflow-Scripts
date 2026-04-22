@@ -1,78 +1,139 @@
-; CourseProject T2 — Read XADC, display bar-graph on LEDs
-; Thermometer display: each LED = ~0.125 V (threshold every 32 counts).
-; Dead zone 0-31 shows 0 LEDs, eliminating ADC offset flicker at 0 V.
+; CourseProject T2 — Read XADC, display bar-graph on all 16 LEDs
+; Thermometer display: each LED = ~0.0625 V (threshold every 16 counts).
+; Dead zone 0-15 shows 0 LEDs, eliminating ADC offset flicker at 0 V.
 ;
 ; Port map:
 ;   INPUT  0x00 : XADC high byte (8 MSBs of 12-bit ADC result)
-;   OUTPUT 0x00 : led[7:0]
+;   OUTPUT 0x00 : led[7:0]  (low  byte)
+;   OUTPUT 0x01 : led[15:8] (high byte)
 ;
-; LED pattern vs. XADC value:
-;   0x00 – 0x1F : 00000000 (0 V dead zone)
-;   0x20 – 0x3F : 00000001 (~0.13 V)
-;   0x40 – 0x5F : 00000011 (~0.25 V)
-;   0x60 – 0x7F : 00000111 (~0.38 V)
-;   0x80 – 0x9F : 00001111 (~0.50 V)
-;   0xA0 – 0xBF : 00011111 (~0.63 V)
-;   0xC0 – 0xDF : 00111111 (~0.75 V)
-;   0xE0 – 0xFF : 11111111 (~0.88 V – 1.0 V)
+; s0 = XADC sample, s1 = led[7:0], s2 = led[15:8]
 
 CONSTANT xadc_port, 00
-CONSTANT led_port,  00
+CONSTANT led_lo,    00
+CONSTANT led_hi,    01
 
 ADDRESS 000
 start:
     LOAD    s1, 00
-    OUTPUT  s1, led_port        ; clear LEDs on start
+    LOAD    s2, 00
+    OUTPUT  s1, led_lo
+    OUTPUT  s2, led_hi
 
 main_loop:
-    INPUT   s0, xadc_port       ; read XADC value (8 MSBs)
+    INPUT   s0, xadc_port
 
-    COMPARE s0, E0              ; C=1 if s0 < 0xE0
-    JUMP    C, check_6
-    LOAD    s1, FF              ; >= 0xE0 -> 8 LEDs
+    COMPARE s0, F0
+    JUMP    C, chk_14
+    LOAD    s1, FF
+    LOAD    s2, FF
     JUMP    output
 
-check_6:
-    COMPARE s0, C0              ; C=1 if s0 < 0xC0
-    JUMP    C, check_5
-    LOAD    s1, 3F              ; 6 LEDs
+chk_14:
+    COMPARE s0, E0
+    JUMP    C, chk_13
+    LOAD    s1, FF
+    LOAD    s2, 3F
     JUMP    output
 
-check_5:
-    COMPARE s0, A0              ; C=1 if s0 < 0xA0
-    JUMP    C, check_4
-    LOAD    s1, 1F              ; 5 LEDs
+chk_13:
+    COMPARE s0, D0
+    JUMP    C, chk_12
+    LOAD    s1, FF
+    LOAD    s2, 1F
     JUMP    output
 
-check_4:
-    COMPARE s0, 80              ; C=1 if s0 < 0x80
-    JUMP    C, check_3
-    LOAD    s1, 0F              ; 4 LEDs
+chk_12:
+    COMPARE s0, C0
+    JUMP    C, chk_11
+    LOAD    s1, FF
+    LOAD    s2, 0F
     JUMP    output
 
-check_3:
-    COMPARE s0, 60              ; C=1 if s0 < 0x60
-    JUMP    C, check_2
-    LOAD    s1, 07              ; 3 LEDs
+chk_11:
+    COMPARE s0, B0
+    JUMP    C, chk_10
+    LOAD    s1, FF
+    LOAD    s2, 07
     JUMP    output
 
-check_2:
-    COMPARE s0, 40              ; C=1 if s0 < 0x40
-    JUMP    C, check_1
-    LOAD    s1, 03              ; 2 LEDs
+chk_10:
+    COMPARE s0, A0
+    JUMP    C, chk_9
+    LOAD    s1, FF
+    LOAD    s2, 03
     JUMP    output
 
-check_1:
-    COMPARE s0, 20              ; C=1 if s0 < 0x20
-    JUMP    C, check_0
-    LOAD    s1, 01              ; 1 LED
+chk_9:
+    COMPARE s0, 90
+    JUMP    C, chk_8
+    LOAD    s1, FF
+    LOAD    s2, 01
     JUMP    output
 
-check_0:
-    LOAD    s1, 00              ; 0 LEDs (dead zone)
+chk_8:
+    COMPARE s0, 80
+    JUMP    C, chk_7
+    LOAD    s1, FF
+    LOAD    s2, 00
+    JUMP    output
+
+chk_7:
+    COMPARE s0, 70
+    JUMP    C, chk_6
+    LOAD    s1, 7F
+    LOAD    s2, 00
+    JUMP    output
+
+chk_6:
+    COMPARE s0, 60
+    JUMP    C, chk_5
+    LOAD    s1, 3F
+    LOAD    s2, 00
+    JUMP    output
+
+chk_5:
+    COMPARE s0, 50
+    JUMP    C, chk_4
+    LOAD    s1, 1F
+    LOAD    s2, 00
+    JUMP    output
+
+chk_4:
+    COMPARE s0, 40
+    JUMP    C, chk_3
+    LOAD    s1, 0F
+    LOAD    s2, 00
+    JUMP    output
+
+chk_3:
+    COMPARE s0, 30
+    JUMP    C, chk_2
+    LOAD    s1, 07
+    LOAD    s2, 00
+    JUMP    output
+
+chk_2:
+    COMPARE s0, 20
+    JUMP    C, chk_1
+    LOAD    s1, 03
+    LOAD    s2, 00
+    JUMP    output
+
+chk_1:
+    COMPARE s0, 10
+    JUMP    C, chk_0
+    LOAD    s1, 01
+    LOAD    s2, 00
+    JUMP    output
+
+chk_0:
+    LOAD    s1, 00
+    LOAD    s2, 00
 
 output:
-    OUTPUT  s1, led_port
+    OUTPUT  s1, led_lo
+    OUTPUT  s2, led_hi
     JUMP    main_loop
 
 ; Interrupt vector (unused)

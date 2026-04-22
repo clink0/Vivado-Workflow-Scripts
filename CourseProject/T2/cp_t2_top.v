@@ -1,11 +1,12 @@
 `timescale 1ns / 1ps
-// Course Project Task 2 — Picoblaze + XADC → binary display on LEDs
+// Course Project Task 2 — Picoblaze + XADC → bar-graph on all 16 LEDs
 // Probes JXADC analog input (VAUXP6/VAUXN6), reads XADC output via
-// Picoblaze, and displays the 8 MSBs on led[7:0] as binary.
+// Picoblaze, and displays a thermometer bar-graph across led[15:0].
 //
 // Picoblaze I/O ports:
 //   INPUT  0x00 : XADC high byte (bits 15:8 of do_out = upper 8 of 12-bit ADC)
-//   OUTPUT 0x00 : LED[7:0]
+//   OUTPUT 0x00 : led[7:0]  (low  byte of bar-graph)
+//   OUTPUT 0x01 : led[15:8] (high byte of bar-graph)
 module cp_t2_top(
     input  wire        CLK100MHZ,
     input  wire        btnC,        // reset
@@ -54,13 +55,16 @@ module cp_t2_top(
 
     assign in_port = (port_id == 8'h00) ? xadc_latch : 8'h00;
 
-    reg [7:0] led_reg;
+    reg [7:0] led_lo_reg, led_hi_reg;
     always @(posedge CLK100MHZ) begin
-        if (rst) led_reg <= 0;
-        else if (write_strobe && port_id == 8'h00) led_reg <= out_port;
+        if (rst) begin led_lo_reg <= 0; led_hi_reg <= 0; end
+        else if (write_strobe) begin
+            if (port_id == 8'h00) led_lo_reg <= out_port;
+            if (port_id == 8'h01) led_hi_reg <= out_port;
+        end
     end
-    assign led[7:0]  = led_reg;
-    assign led[15:8] = 8'h00;
+    assign led[7:0]  = led_lo_reg;
+    assign led[15:8] = led_hi_reg;
 
     // ── Picoblaze core ────────────────────────────────────────────────────
     wire [11:0] address;
