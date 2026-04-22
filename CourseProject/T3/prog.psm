@@ -88,56 +88,56 @@ div10_done:
     JUMP Z, very_slow            ; period < 10 ms = physiologically impossible
 
     ; BPM = 6000 / period_10ms  using iterative 16-bit subtraction
-    ; 6000 decimal = 0x1770
-    LOAD sG, 70
-    LOAD sH, 17
-    LOAD sI, 00                  ; BPM accumulator
+    ; 6000 decimal = 0x1770  (s2=low, s3=high, s4=accumulator)
+    LOAD s2, 70
+    LOAD s3, 17
+    LOAD s4, 00                  ; BPM accumulator
 
 bpm_loop:
-    COMPARE sH, 00
+    COMPARE s3, 00
     JUMP NZ, bpm_sub             ; high byte non-zero -> dividend still >= divisor
-    COMPARE sG, sE
-    JUMP C, bpm_done             ; sG < sE -> done
+    COMPARE s2, sE
+    JUMP C, bpm_done             ; s2 < sE -> done
 bpm_sub:
-    ADD   sI, 01
-    SUB   sG, sE
-    SUBCY sH, 00
+    ADD   s4, 01
+    SUB   s2, sE
+    SUBCY s3, 00
     JUMP  bpm_loop
 bpm_done:
-    ; sI = BPM (max 255)
-    STORE sI, bpm_val
+    ; s4 = BPM (max 255)
+    STORE s4, bpm_val
 
     ; Clamp to 200
-    COMPARE sI, C8               ; 200 = 0xC8
+    COMPARE s4, C8               ; 200 = 0xC8
     JUMP C, no_clamp
-    LOAD sI, C8
+    LOAD s4, C8
 no_clamp:
 
     ; ── Convert BPM to two ASCII digits (tens + units) ───────────────────
-    LOAD sJ, 30                  ; tens digit starts at '0'
-    LOAD sK, sI                  ; working copy
+    LOAD s5, 30                  ; tens digit starts at '0'
+    LOAD s6, s4                  ; working copy
 
     ; Handle 100+ range
-    COMPARE sK, 64               ; 100 = 0x64
+    COMPARE s6, 64               ; 100 = 0x64
     JUMP C, under100
-    SUB   sK, 64
-    LOAD  sJ, 31                 ; hundreds = 1, so tens base = '1'
+    SUB   s6, 64
+    LOAD  s5, 31                 ; hundreds = 1, so tens base = '1'
     JUMP  tens_loop
 under100:
-    LOAD  sJ, 30
+    LOAD  s5, 30
 
 tens_loop:
-    COMPARE sK, 0A
+    COMPARE s6, 0A
     JUMP C, tens_done
-    ADD   sJ, 01
-    SUB   sK, 0A
+    ADD   s5, 01
+    SUB   s6, 0A
     JUMP  tens_loop
 tens_done:
-    ; sJ = tens ASCII, sK = units value
-    ADD sK, 30                   ; convert units to ASCII
+    ; s5 = tens ASCII, s6 = units value
+    ADD s6, 30                   ; convert units to ASCII
 
-    OUTPUT sJ, bpm_tens_p
-    OUTPUT sK, bpm_units_p
+    OUTPUT s5, bpm_tens_p
+    OUTPUT s6, bpm_units_p
 
     JUMP main_loop
 
