@@ -1,15 +1,13 @@
 `timescale 1ns / 1ps
 // Course Project Task 3 — Pulse Sensor Heart Rate Monitor
 // XADC reads raw analog signal from JXADC (VAUXP6/VAUXN6).
-// Arduino (on JC1) sends a digital pulse on each detected heartbeat.
-// Picoblaze measures BPM from XADC peak detection, displays on Pmod OLED (JB).
-// Raw XADC samples streamed over UART (115200 baud) for PC waveform plot.
+// Picoblaze runs adaptive threshold peak detection, measures BPM,
+// and displays it on the Pmod OLED (JB).
 //
 // Picoblaze port map:
 //   INPUT  0x00 : XADC high byte (8 MSBs of 12-bit result)
 //   INPUT  0x01 : ms-timer low  byte
 //   INPUT  0x02 : ms-timer high byte
-//   INPUT  0x03 : peak-detected flag (bit 0; cleared on read)
 //   OUTPUT 0x00 : led[7:0]  (raw XADC value for debug)
 //   OUTPUT 0x01 : BPM tens  digit ASCII -> OLED row 2 col 8
 //   OUTPUT 0x02 : BPM units digit ASCII -> OLED row 2 col 9
@@ -36,9 +34,7 @@ module cp_t3_top(
     output wire        DC,
     output wire        RES,
     output wire        VBAT,
-    output wire        VDD,
-    // UART TX to PC for waveform plot
-    output wire        uart_tx
+    output wire        VDD
 );
     wire rst = btnC;
 
@@ -86,63 +82,6 @@ module cp_t3_top(
     end
 
     // ══════════════════════════════════════════════════════════════════════
-    // Hardware peak detector — IIR baseline + threshold comparator
-    // baseline tracks DC average with tau ≈ 256 XADC samples (~256 ms).
-    // A rising edge of xadc_hi above baseline sets peak_flag.
-    // 300-sample refractory window (~300 ms) prevents double-triggering.
-    // Picoblaze clears peak_flag by reading port 0x03.
-    // ══════════════════════════════════════════════════════════════════════
-    wire pico_read_peak;
-    reg  [15:0] baseline_acc;
-    wire [7:0]  baseline = baseline_acc[15:8];
-    wire        above    = (xadc_hi > baseline);
-    reg         above_d;
-    reg  [8:0]  refrac_cnt;
-    reg         peak_flag;
-
-    always @(posedge CLK100MHZ) begin
-        if (rst) begin
-            baseline_acc <= 16'h8000;
-            above_d      <= 1'b0;
-            refrac_cnt   <= 9'h000;
-            peak_flag    <= 1'b0;
-        end else begin
-            if (pico_read_peak)
-                peak_flag <= 1'b0;
-            if (xadc_drdy) begin
-                // IIR: baseline = (255*baseline + xadc_hi) / 256
-                baseline_acc <= baseline_acc
-                                - {8'h0, baseline_acc[15:8]}
-                                + {8'h0, xadc_hi};
-                above_d <= above;
-                if (refrac_cnt != 9'h000)
-                    refrac_cnt <= refrac_cnt - 1;
-                if (above && !above_d && refrac_cnt == 9'h000) begin
-                    peak_flag  <= 1'b1;
-                    refrac_cnt <= 9'd300;
-                end
-            end
-        end
-    end
-
-    // ══════════════════════════════════════════════════════════════════════
-    // UART TX — streams raw XADC byte at 115200 baud for PC waveform plot
-    // ══════════════════════════════════════════════════════════════════════
-    wire uart_busy;
-    reg  xadc_drdy_d;
-    always @(posedge CLK100MHZ) xadc_drdy_d <= xadc_drdy;
-    wire uart_send = xadc_drdy && !xadc_drdy_d && !uart_busy;
-
-    uart_tx #(.CLK_HZ(100_000_000), .BAUD(115200)) uart_inst(
-        .clk  (CLK100MHZ),
-        .rst  (rst),
-        .send (uart_send),
-        .data (xadc_hi),
-        .busy (uart_busy),
-        .tx   (uart_tx)
-    );
-
-    // ══════════════════════════════════════════════════════════════════════
     // Picoblaze I/O
     // ══════════════════════════════════════════════════════════════════════
     wire [7:0] port_id;
@@ -151,14 +90,11 @@ module cp_t3_top(
     reg  [7:0] in_port;
     wire       rdl;
 
-    assign pico_read_peak = read_strobe && (port_id == 8'h03);
-
     always @(*) begin
         case (port_id)
             8'h00:   in_port = xadc_hi;
             8'h01:   in_port = ms_timer[7:0];
             8'h02:   in_port = ms_timer[15:8];
-            8'h03:   in_port = {7'h0, peak_flag};
             default: in_port = 8'h00;
         endcase
     end
@@ -176,7 +112,7 @@ module cp_t3_top(
     reg [7:0] bpm_tens_char;
     reg [7:0] bpm_units_char;
     always @(posedge CLK100MHZ) begin
-        if (rst) begin bpm_tens_char <= 8'h2D; bpm_units_char <= 8'h2D; end  // '--'
+        if (rst) begin bpm_tens_char <= 8'h2D; bpm_units_char <= 8'h2D; end
         else if (write_strobe) begin
             if (port_id == 8'h01) bpm_tens_char  <= out_port;
             if (port_id == 8'h02) bpm_units_char <= out_port;

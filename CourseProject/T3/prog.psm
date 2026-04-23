@@ -1,168 +1,247 @@
-; CourseProject T3 — Heart Rate Measurement via Arduino JC1 pulse timing
-; Detects rising edges from Arduino on JC1, measures inter-beat period,
-; computes BPM = 6000 / period_10ms, outputs ASCII digits to OLED.
+; CourseProject T3 — Heart Rate Monitor: Picoblaze peak detection + BPM
 ;
-; Port map:
-;   INPUT  0x00 : XADC high byte (8 MSBs) — mirror to LEDs for debug
+; Picoblaze paces itself at ~1 ms/tick using the ms_timer, reads the XADC
+; each tick, and runs an adaptive threshold algorithm identical to the
+; Arduino approach:
+;   threshold = trough + (peak - trough) / 2
+; A rising edge above threshold (with 300 ms minimum period) is a heartbeat.
+; BPM = 6000 / period_10ms, displayed as two ASCII digits on the OLED.
+;
+; Port map (all that Picoblaze uses):
+;   INPUT  0x00 : XADC high byte (8 MSBs)
 ;   INPUT  0x01 : ms-timer low  byte
 ;   INPUT  0x02 : ms-timer high byte
-;   INPUT  0x03 : peak-detected flag (bit 0, cleared by reading)
-;   OUTPUT 0x00 : led[7:0]  (raw XADC for debug)
+;   OUTPUT 0x00 : led[7:0] (raw XADC for debug)
 ;   OUTPUT 0x01 : BPM tens  digit ASCII
 ;   OUTPUT 0x02 : BPM units digit ASCII
 ;
-; Register map:
-;   s0        scratch / XADC byte
-;   s1        peak flag
-;   s2        scratch / div temp
-;   s3-s4     BPM 16-bit dividend (s3=lo, s4=hi)  then BPM result in s3
-;   s5        tens ASCII digit
-;   s6        working copy for digit conversion
-;   sA        current timestamp low  / period low
-;   sB        current timestamp high / period high
-;   sC        previous timestamp low
-;   sD        previous timestamp high
-;   sE        period_10ms (quotient of period/10)
-;
 ; Scratchpad:
-;   0x00  prev_lo   — previous peak timestamp low byte
-;   0x01  prev_hi   — previous peak timestamp high byte
-;   0x03  has_prev  — 0=no previous sample yet, 1=valid
+;   0x00 scr_peak     — running maximum
+;   0x01 scr_trough   — running minimum
+;   0x02 scr_above    — 1 = signal is currently above threshold
+;   0x03 scr_decay    — 8-bit counter; decays peak/trough every 256 ticks
+;   0x04 scr_ms_lo    — ms_timer low  byte at start of last tick
+;   0x05 scr_ms_hi    — ms_timer high byte at start of last tick
+;   0x06 scr_beat_lo  — ms_timer low  byte at previous heartbeat
+;   0x07 scr_beat_hi  — ms_timer high byte at previous heartbeat
+;   0x08 scr_has_prev — 0 = no previous beat timestamp yet
 
 CONSTANT xadc_port,   00
-CONSTANT timer_lo,    01
-CONSTANT timer_hi,    02
-CONSTANT peak_port,   03
+CONSTANT timer_lo_p,  01
+CONSTANT timer_hi_p,  02
 CONSTANT led_port,    00
 CONSTANT bpm_tens_p,  01
 CONSTANT bpm_units_p, 02
 
-CONSTANT prev_lo,     00
-CONSTANT prev_hi,     01
-CONSTANT has_prev,    03
+CONSTANT scr_peak,     00
+CONSTANT scr_trough,   01
+CONSTANT scr_above,    02
+CONSTANT scr_decay,    03
+CONSTANT scr_ms_lo,    04
+CONSTANT scr_ms_hi,    05
+CONSTANT scr_beat_lo,  06
+CONSTANT scr_beat_hi,  07
+CONSTANT scr_has_prev, 08
 
 ; ─────────────────────────────────────────────────────────────────────────
 ADDRESS 000
 start:
-    LOAD s0, 2D                   ; ASCII '-'
+    LOAD   s0, 2D              ; show '--' on OLED at startup
     OUTPUT s0, bpm_tens_p
     OUTPUT s0, bpm_units_p
-    LOAD s0, 00
-    STORE s0, prev_lo
-    STORE s0, prev_hi
-    STORE s0, has_prev             ; no previous sample yet
 
+    LOAD   s0, 80              ; peak and trough start at midscale
+    STORE  s0, scr_peak
+    STORE  s0, scr_trough
+    LOAD   s0, 00
+    STORE  s0, scr_above
+    STORE  s0, scr_decay
+    STORE  s0, scr_has_prev
+
+    INPUT  s0, timer_lo_p      ; snapshot ms_timer
+    INPUT  s1, timer_hi_p
+    STORE  s0, scr_ms_lo
+    STORE  s1, scr_ms_hi
+
+; ─────────────────────────────────────────────────────────────────────────
 main_loop:
+
+    ; ── Wait for 1 ms tick ───────────────────────────────────────────────
+    FETCH  s9, scr_ms_lo
+    FETCH  sA, scr_ms_hi
+wait_tick:
+    INPUT  s1, timer_lo_p
+    INPUT  s2, timer_hi_p
+    COMPARE s1, s9
+    JUMP   NZ, tick_done
+    COMPARE s2, sA
+    JUMP   NZ, tick_done
+    JUMP   wait_tick
+tick_done:
+    STORE  s1, scr_ms_lo
+    STORE  s2, scr_ms_hi
+
+    ; ── Read XADC ─────────────────────────────────────────────────────────
     INPUT  s0, xadc_port
     OUTPUT s0, led_port
 
-    INPUT  s1, peak_port
-    TEST   s1, 01
-    JUMP   Z, main_loop            ; no new peak
+    ; ── Update running peak and trough ────────────────────────────────────
+    FETCH  s4, scr_peak
+    FETCH  s5, scr_trough
 
-    ; Read current timestamp
-    INPUT  sA, timer_lo
-    INPUT  sB, timer_hi
+    COMPARE s0, s4             ; s0 vs stored peak
+    JUMP   C, chk_trough       ; s0 < peak: no update
+    STORE  s0, scr_peak
+    LOAD   s4, s0
+chk_trough:
+    COMPARE s5, s0             ; trough vs s0
+    JUMP   C, calc_thresh      ; trough < s0: not a new minimum
+    STORE  s0, scr_trough
+    LOAD   s5, s0
 
-    ; First beat: just record timestamp, can't compute period yet
-    FETCH  s2, has_prev
-    COMPARE s2, 00
+    ; ── threshold = trough + (peak - trough) / 2 ─────────────────────────
+calc_thresh:
+    LOAD   s6, s4
+    SUB    s6, s5              ; s6 = peak - trough  (amplitude)
+    SR0    s6                  ; s6 = amplitude / 2
+    ADD    s6, s5              ; s6 = trough + amplitude/2  (midpoint)
+
+    ; ── Above / below threshold state machine ─────────────────────────────
+    FETCH  s7, scr_above
+    COMPARE s0, s6             ; xadc_hi vs threshold
+    JUMP   C, going_below      ; s0 < threshold
+
+    ; Signal is above threshold
+    COMPARE s7, 01             ; already flagged above?
+    JUMP   Z, do_decay         ; yes: nothing new
+
+    ; ── Rising edge — new heartbeat ───────────────────────────────────────
+    LOAD   s3, 01
+    STORE  s3, scr_above
+
+    INPUT  sA, timer_lo_p      ; capture beat timestamp
+    INPUT  sB, timer_hi_p
+
+    FETCH  s3, scr_has_prev
+    COMPARE s3, 00
     JUMP   Z, first_beat
 
-    ; Load previous timestamp
-    FETCH  sC, prev_lo
-    FETCH  sD, prev_hi
+    ; Compute inter-beat period (ms)
+    FETCH  sC, scr_beat_lo
+    FETCH  sD, scr_beat_hi
+    STORE  sA, scr_beat_lo     ; save current timestamp as new previous
+    STORE  sB, scr_beat_hi
 
-    ; Save current timestamp as new previous BEFORE subtracting
-    STORE  sA, prev_lo
-    STORE  sB, prev_hi
+    SUB    sA, sC              ; period_lo = current - prev
+    SUBCY  sB, sD              ; period_hi  (16-bit with borrow)
 
-    ; period_ms = current - previous  (16-bit, wraps correctly)
-    SUB    sA, sC
-    SUBCY  sB, sD
-    ; sB:sA = inter-beat period in milliseconds
+    ; Reject periods < 300 ms (BPM > 200): spurious noise
+    ; period_hi (sB) == 0 AND period_lo (sA) < 300... we'll check after /10
+    ; (easier to check period_10ms < 30 below)
 
-    ; ── Divide period_ms by 10 → sE (16-bit iterative) ──────────────────
+    ; ── Divide period_ms by 10 → sE ──────────────────────────────────────
     LOAD   sE, 00
-
 div10_loop:
     COMPARE sB, 00
-    JUMP   NZ, div10_sub           ; sB != 0 → sB:sA definitely >= 10
+    JUMP   NZ, div10_sub       ; high byte != 0: >= 10
     COMPARE sA, 0A
-    JUMP   C, div10_done           ; sA < 10 and sB == 0 → done
+    JUMP   C, div10_done       ; low byte < 10 and high == 0: done
 div10_sub:
     SUB    sA, 0A
     SUBCY  sB, 00
     ADD    sE, 01
-    COMPARE sE, 00                 ; wrapped → period > 2550 ms (< 24 BPM)
-    JUMP   Z, very_slow
+    COMPARE sE, 00             ; overflow: period > 2550 ms → too slow
+    JUMP   Z, show_dash
     JUMP   div10_loop
 div10_done:
 
-    ; sE = period_10ms;  reject if 0 (period < 10 ms, impossible)
     COMPARE sE, 00
-    JUMP   Z, very_slow
+    JUMP   Z, show_dash        ; period < 10 ms: noise
 
-    ; ── BPM = 6000 / period_10ms  (16-bit iterative) ────────────────────
-    ; 6000 = 0x1770  →  s3=0x70 (lo), s4=0x17 (hi),  s2=accumulator
-    LOAD   s3, 70
-    LOAD   s4, 17
-    LOAD   s2, 00                  ; BPM accumulator
+    COMPARE sE, 1E             ; 30 decimal: period < 300 ms → BPM > 200
+    JUMP   C, show_dash        ; reject
 
+    ; ── BPM = 6000 / sE  (16-bit iterative) ─────────────────────────────
+    LOAD   sA, 70              ; 6000 = 0x1770
+    LOAD   sB, 17
+    LOAD   s3, 00              ; BPM accumulator
 bpm_loop:
-    COMPARE s4, 00
-    JUMP   NZ, bpm_sub             ; high byte != 0 → dividend >= divisor
-    COMPARE s3, sE
-    JUMP   C, bpm_done             ; s3 < sE → done
+    COMPARE sB, 00
+    JUMP   NZ, bpm_sub
+    COMPARE sA, sE
+    JUMP   C, bpm_done
 bpm_sub:
-    ADD    s2, 01
-    SUB    s3, sE
-    SUBCY  s4, 00
+    ADD    s3, 01
+    SUB    sA, sE
+    SUBCY  sB, 00
     JUMP   bpm_loop
 bpm_done:
-    ; s2 = BPM; clamp to 200 (0xC8)
-    COMPARE s2, C8
+
+    COMPARE s3, C8             ; clamp to 200 (0xC8)
     JUMP   C, no_clamp
-    LOAD   s2, C8
+    LOAD   s3, C8
 no_clamp:
 
-    ; ── Convert BPM to tens + units ASCII digits ─────────────────────────
-    LOAD   s5, 30                  ; tens digit ('0')
-    LOAD   s6, s2                  ; working copy of BPM
+    ; ── Convert BPM to two ASCII digits ──────────────────────────────────
+    LOAD   s4, 30              ; tens digit ('0')
+    LOAD   s5, s3
 
-    ; Handle 100–199
-    COMPARE s6, 64                 ; 100 = 0x64
+    COMPARE s5, 64             ; >= 100?
     JUMP   C, under100
-    SUB    s6, 64
-    LOAD   s5, 31                  ; '1'
+    SUB    s5, 64
+    LOAD   s4, 31              ; '1'
     JUMP   tens_loop
 under100:
-    LOAD   s5, 30                  ; '0'
+    LOAD   s4, 30
 
 tens_loop:
-    COMPARE s6, 0A
+    COMPARE s5, 0A
     JUMP   C, tens_done
-    ADD    s5, 01
-    SUB    s6, 0A
+    ADD    s4, 01
+    SUB    s5, 0A
     JUMP   tens_loop
 tens_done:
-    ADD    s6, 30                  ; units value → ASCII
+    ADD    s5, 30              ; units → ASCII
 
-    OUTPUT s5, bpm_tens_p
-    OUTPUT s6, bpm_units_p
-    JUMP   main_loop
+    OUTPUT s4, bpm_tens_p
+    OUTPUT s5, bpm_units_p
+    JUMP   do_decay
 
 first_beat:
-    STORE  sA, prev_lo
-    STORE  sB, prev_hi
-    LOAD   s2, 01
-    STORE  s2, has_prev
-    JUMP   main_loop
+    STORE  sA, scr_beat_lo
+    STORE  sB, scr_beat_hi
+    LOAD   s3, 01
+    STORE  s3, scr_has_prev
+    JUMP   do_decay
 
-very_slow:
+show_dash:
     LOAD   s0, 2D
     OUTPUT s0, bpm_tens_p
     OUTPUT s0, bpm_units_p
+    JUMP   do_decay
+
+going_below:
+    LOAD   s3, 00
+    STORE  s3, scr_above
+
+    ; ── Decay peak down and trough up every 256 ticks (~256 ms) ──────────
+do_decay:
+    FETCH  s8, scr_decay
+    ADD    s8, 01
+    STORE  s8, scr_decay
+    COMPARE s8, 00             ; rolled over?
+    JUMP   NZ, main_loop
+
+    FETCH  s4, scr_peak
+    FETCH  s5, scr_trough
+    LOAD   s3, s4
+    SUB    s3, s5              ; amplitude = peak - trough
+    COMPARE s3, 03             ; only decay when amplitude >= 3
+    JUMP   C, main_loop
+    SUB    s4, 01
+    ADD    s5, 01
+    STORE  s4, scr_peak
+    STORE  s5, scr_trough
     JUMP   main_loop
 
 ; ─────────────────────────────────────────────────────────────────────────

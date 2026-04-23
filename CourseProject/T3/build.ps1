@@ -1,4 +1,4 @@
-# CourseProject T3 — Heart Rate Monitor: XADC + Picoblaze + OLED + UART + Arduino JC
+# CourseProject T3 — Heart Rate Monitor: XADC + Picoblaze + OLED
 # Run from repo root: .\CourseProject\T3\build.ps1
 
 $TaskDir  = $PSScriptRoot
@@ -38,7 +38,6 @@ $vFiles = @(
     "$TaskDir\OledInit.v",
     "$TaskDir\OledEX_t3.v",
     "$TaskDir\charLib.v",
-    "$TaskDir\uart_tx.v",
     "$TaskDir\kcpsm6.v",
     "$TaskDir\prog.v"
 )

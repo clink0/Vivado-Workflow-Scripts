@@ -60,6 +60,3 @@ set_property IOSTANDARD LVCMOS33 [get_ports VBAT]
 set_property PACKAGE_PIN C16 [get_ports VDD]
 set_property IOSTANDARD LVCMOS33 [get_ports VDD]
 
-# UART TX — Basys3 USB-UART bridge
-set_property PACKAGE_PIN A18 [get_ports uart_tx]
-set_property IOSTANDARD LVCMOS33 [get_ports uart_tx]
